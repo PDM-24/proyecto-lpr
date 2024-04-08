@@ -1,4 +1,4 @@
-package com.app.denuncia.sivar.ui.theme
+package com.denuncia.sivar.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -16,18 +16,18 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = blue80,
+    secondary = blue50,
+    tertiary = blue100
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = blue80,
+    secondary = blue50,
+    tertiary = blue100,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
+    background = blue100,
+    /*
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,
@@ -40,18 +40,12 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun DenunciaSivarTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> DarkColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
