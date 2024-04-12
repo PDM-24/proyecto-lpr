@@ -45,6 +45,7 @@ import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
 
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginScreen() {
     Box(
