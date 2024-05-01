@@ -33,43 +33,46 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             DenunciaSivarTheme {
-                val navController = rememberNavController()
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute : String? = navBackStackEntry?.destination?.route
-                val navItems = NavBarItemList()
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Scaffold (
-                        modifier = Modifier,
-                        containerColor = blue100,
-                        bottomBar = {
-                            NavBarComponent(
-                                items = navItems,
-                                currentRoute = currentRoute) {
-                                    currentNavigationItem ->
-                                    navController.navigate(currentNavigationItem.route){
-                                    navController.graph.startDestinationRoute?.let{
-                                            startDestinationRoute ->
-                                        popUpTo(startDestinationRoute){
-                                            saveState = true
-                                        }
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        }
-                    ){
-                        innerPadding -> NavBarGraph(
-                        navController = navController,
-                        innerPadding = innerPadding)
-                    }
+                    NavBar()
                 }
             }
         }
     }
+
+    @Preview
+    @Composable
+    fun NavBar() {
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute: String? = navBackStackEntry?.destination?.route
+        val navItems = NavBarItemList()
+        Scaffold(
+            modifier = Modifier,
+            containerColor = blue100,
+            bottomBar = {
+                NavBarComponent(items = navItems, currentRoute = currentRoute) {
+                    nav -> navController.navigate(nav.route) {
+                        navController.graph.startDestinationRoute?.let {
+                            route -> popUpTo(route) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            }
+        ) { innerPadding ->
+            NavBarGraph(
+                navController = navController,
+                innerPadding = innerPadding
+            )
+        }
+    }
 }
+
 
