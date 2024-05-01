@@ -5,5 +5,4 @@ sealed class ScreenRoute (var route: String) {
     object Historial : ScreenRoute("historial")
     object Profile : ScreenRoute ("profile")
     object Manage : ScreenRoute ("manage")
-    object Exit : ScreenRoute ("salir")
 }

@@ -33,11 +33,5 @@ fun NavBarItemList(): List<NavBarItem>{
             R.drawable.manageuser,
             false,
         ),
-        NavBarItem(
-            "Exit",
-            ScreenRoute.Exit.route,
-            R.drawable.ic_exit,
-            false,
-        ),
     )
 }
