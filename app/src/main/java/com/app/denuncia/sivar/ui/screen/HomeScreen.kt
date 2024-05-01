@@ -1,6 +1,8 @@
 package com.app.denuncia.sivar.ui.screen
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,24 +13,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
+import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
 import com.app.denuncia.sivar.ui.model.PostList
 
 
 @Composable
 fun HomeScreen(innerPadding: PaddingValues){
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(innerPadding)
-    ){
-        items(PostList){
-            postItem -> PostComp(postItem)
+    Column(){
+        TopAppBarHome()
+        LazyColumn(
+            modifier = Modifier
+                .padding(innerPadding)
+        ){
+            items(PostList){
+                    postItem -> PostComp(postItem)
+            }
         }
     }
+
 }
 
-@Preview(showSystemUi = true)
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun HomeScreenPreview(){
-    HomeScreen(innerPadding = PaddingValues(10.dp))
+    HomeScreen(innerPadding = PaddingValues(0.dp))
 }

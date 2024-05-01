@@ -32,10 +32,6 @@ fun NavBarGraph(
         composable(ScreenRoute.Manage.route){
             ManageScreen(innerPadding)
         }
-        composable(ScreenRoute.Exit.route){
-            ExitScreen(innerPadding)
-        }
-
     }
 
 }

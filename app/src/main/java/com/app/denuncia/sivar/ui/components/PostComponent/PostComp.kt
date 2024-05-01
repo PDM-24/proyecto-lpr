@@ -1,5 +1,6 @@
 package com.app.denuncia.sivar.ui.components.PostComponent
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -204,4 +207,23 @@ fun PostComp(post: PostData) {
             }
         }
     }
+}
+
+@Composable
+@Preview(showSystemUi = true, showBackground = true)
+fun PostCompPreview() {
+    PostComp(
+        PostData(
+            1,
+            R.drawable.photoexample,
+            "Roberto Loza",
+            "Robo",
+            "Pendiente",
+            "San Salvador",
+            "Hace dos horas",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            R.drawable.photodenuncia,
+            5
+        )
+    )
 }

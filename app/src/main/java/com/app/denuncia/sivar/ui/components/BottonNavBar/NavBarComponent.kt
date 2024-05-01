@@ -66,7 +66,7 @@ fun NavBarComponent(
                         )
                     }
                 },
-                alwaysShowLabel = false,
+
                 label = {
                     Text(
                         text = navBarItem.title,
