@@ -1,4 +1,4 @@
-package com.app.denuncia.sivar.ui.model
+package com.app.denuncia.sivar.model
 
 import com.app.denuncia.sivar.R
 

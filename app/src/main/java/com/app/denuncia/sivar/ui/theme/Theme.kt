@@ -25,7 +25,6 @@ private val LightColorScheme = lightColorScheme(
     primary = blue80,
     secondary = blue50,
     tertiary = blue100,
-
     background = blue100,
     /*
     surface = Color(0xFFFFFBFE),
