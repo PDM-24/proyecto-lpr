@@ -111,22 +111,39 @@ fun PostComp(post: PostData) {
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                             ) {
-                                DropdownMenuItem(
+                                Column(
                                     modifier = Modifier
                                         .border(1.dp, blue20, RoundedCornerShape(10.dp)),
-                                    text = { (
-                                            Text(
-                                                text = "Eliminar denuncia",
-                                                color = blue20)) },
-                                    leadingIcon = {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.ic_delete_user),
-                                            contentDescription = "delete",
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    },
-                                    onClick = { expanded = false }
-                                )
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { (
+                                                Text(
+                                                    text = "Eliminar denuncia",
+                                                    color = blue20)) },
+                                        leadingIcon = {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.ic_delete_user),
+                                                contentDescription = "delete",
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = { expanded = false }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { (
+                                                Text(
+                                                    text = "Cambiar estado",
+                                                    color = blue20)) },
+                                        leadingIcon = {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.ic_ntercambiar),
+                                                contentDescription = "delete",
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = { expanded = false }
+                                    )
+                                }
                             }
                         }
                     }
