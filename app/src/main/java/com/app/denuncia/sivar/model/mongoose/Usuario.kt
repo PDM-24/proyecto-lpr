@@ -1,5 +1,6 @@
-package com.app.denuncia.sivar.model
+package com.app.denuncia.sivar.model.mongoose
 
+import com.app.denuncia.sivar.model.mongoose.image
 import com.google.gson.annotations.SerializedName
 
 data class usuario(
@@ -7,7 +8,7 @@ data class usuario(
     var _id:String = "",
 
     @SerializedName(value = "image")
-    var image:image = image("", ""),
+    var image: image = image("", ""),
 
     @SerializedName(value = "username")
     var username:String = "",
@@ -33,4 +34,4 @@ data class usuario(
     @SerializedName(value = "state")
     var state:Boolean = false,
 
-)
+    )

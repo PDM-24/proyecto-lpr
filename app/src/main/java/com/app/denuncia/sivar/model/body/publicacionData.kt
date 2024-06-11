@@ -2,7 +2,7 @@ package com.app.denuncia.sivar.model.body
 
 import com.google.gson.annotations.SerializedName
 
-data class uploadPublicacion(
+data class publicacionData(
     @SerializedName(value = "user")
     var user: String = "",
 

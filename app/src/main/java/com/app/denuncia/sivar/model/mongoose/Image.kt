@@ -1,4 +1,4 @@
-package com.app.denuncia.sivar.model
+package com.app.denuncia.sivar.model.mongoose
 
 import com.google.gson.annotations.SerializedName
 
