@@ -27,12 +27,12 @@ fun NavBarComponent(
     items: List<NavBarItem>,
     currentRoute: String?,
     onClick: (NavBarItem) -> Unit
-){
+) {
     NavigationBar(
         modifier = Modifier,
         containerColor = blue80,
     ) {
-        items.forEachIndexed { index, navBarItem ->
+        items.forEach { navBarItem ->
             NavigationBarItem(
                 modifier = Modifier,
                 selected = currentRoute == navBarItem.route,
@@ -47,26 +47,25 @@ fun NavBarComponent(
                 icon = {
                     BadgedBox(
                         badge = {
-                            if (navBarItem.badgetCount != null){
+                            if (navBarItem.badgeCount != null) {
                                 Badge(
                                     contentColor = Color.White,
                                     containerColor = blue50
-                                ){
-                                    Text(text = navBarItem.badgetCount.toString())
+                                ) {
+                                    Text(text = navBarItem.badgeCount.toString())
                                 }
-                            } else if(navBarItem.hasNews){
+                            } else if (navBarItem.hasNews) {
                                 Badge()
                             }
                         }
                     ) {
                         Icon(
-                            painter = painterResource(id = navBarItem.selectedIconResId),
+                            imageVector = if (currentRoute == navBarItem.route) navBarItem.filledIcon else navBarItem.outlinedIcon,
                             contentDescription = navBarItem.title,
                             modifier = Modifier.size(24.dp),
                         )
                     }
                 },
-
                 label = {
                     Text(
                         text = navBarItem.title,
@@ -76,5 +75,4 @@ fun NavBarComponent(
                 })
         }
     }
-
 }

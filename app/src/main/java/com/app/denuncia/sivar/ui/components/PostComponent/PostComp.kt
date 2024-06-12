@@ -19,10 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PublishedWithChanges
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -115,7 +117,6 @@ fun PostComp(post: PostData) {
                                 imageVector = Icons.Default.MoreVert,
                                 contentDescription = "senIcon",
                                 tint = blue20
-
                             )
                             DropdownMenu(
                                 expanded = expanded,
@@ -131,10 +132,12 @@ fun PostComp(post: PostData) {
                                                     text = "Eliminar denuncia",
                                                     color = blue20)) },
                                         leadingIcon = {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.ic_delete_user),
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(20.dp),
+                                                imageVector = Icons.Default.Delete,
                                                 contentDescription = "delete",
-                                                modifier = Modifier.size(20.dp)
+                                                tint = blue20
                                             )
                                         },
                                         onClick = { expanded = false }
@@ -145,10 +148,12 @@ fun PostComp(post: PostData) {
                                                     text = "Cambiar estado",
                                                     color = blue20)) },
                                         leadingIcon = {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.ic_ntercambiar),
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(20.dp),
+                                                imageVector = Icons.Default.PublishedWithChanges,
                                                 contentDescription = "delete",
-                                                modifier = Modifier.size(20.dp)
+                                                tint = blue20
                                             )
                                         },
                                         onClick = { expanded = false }

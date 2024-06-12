@@ -3,9 +3,14 @@ package com.app.denuncia.sivar.ui.components.TopBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,6 +31,7 @@ import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
+import com.denuncia.sivar.ui.theme.gray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,9 +46,11 @@ fun TopAppBarHome(navController: NavHostController) {
             ),
             actions = {
                 IconButton(onClick = { }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_edit_image), contentDescription = "timer",
-                        modifier = Modifier.size(24.dp)
+                    Icon(
+                        modifier = Modifier.size(27.dp),
+                        imageVector = Icons.Default.Image,
+                        contentDescription = "imageIcon",
+                        tint = blue20
                     )
                 }
                 Button(
@@ -60,9 +68,11 @@ fun TopAppBarHome(navController: NavHostController) {
                         fontFamily = IstokWebFamily)
                 }
                 IconButton(onClick = { /* Acción al hacer clic */ }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_search), contentDescription = "timer",
-                        modifier = Modifier.size(24.dp)
+                    Icon(
+                        modifier = Modifier.size(27.dp),
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "searchIcon",
+                        tint = blue20
                     )
                 }
             }
