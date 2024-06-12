@@ -17,11 +17,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -48,7 +57,6 @@ import com.denuncia.sivar.ui.theme.blue80
 import com.denuncia.sivar.ui.theme.gray
 
 @Composable
-
 fun PostComp(post: PostData) {
     var expanded by remember { mutableStateOf(false) }
     var rol = "admin"
@@ -98,14 +106,16 @@ fun PostComp(post: PostData) {
                         horizontalArrangement = Arrangement.End
                     ) {
                         if (rol == "admin") {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_more),
-                                contentDescription = "More options",
+                            Icon(
                                 modifier = Modifier
-                                    .size(17.dp)
+                                    .size(25.dp)
                                     .clickable {
-                                        expanded = true
-                                    }
+                                    expanded = true
+                                },
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "senIcon",
+                                tint = blue20
+
                             )
                             DropdownMenu(
                                 expanded = expanded,
@@ -144,6 +154,7 @@ fun PostComp(post: PostData) {
                                         onClick = { expanded = false }
                                     )
                                 }
+
                             }
                         }
                     }
@@ -153,9 +164,11 @@ fun PostComp(post: PostData) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_category), contentDescription = "category",
-                        modifier = Modifier.size(12.dp)
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Default.List,
+                        contentDescription = "senIcon",
+                        tint = gray
                     )
                     Text(
                         text = "Categoria:",
@@ -171,9 +184,11 @@ fun PostComp(post: PostData) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_status), contentDescription = "status",
-                        modifier = Modifier.size(12.dp)
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Default.Timelapse,
+                        contentDescription = "senIcon",
+                        tint = gray
                     )
                     Text(
                         text = "Estado:",
@@ -189,9 +204,11 @@ fun PostComp(post: PostData) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_location), contentDescription = "location",
-                        modifier = Modifier.size(12.dp)
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "senIcon",
+                        tint = gray
                     )
                     Text(
                         text = "Ubicación:",
@@ -207,9 +224,11 @@ fun PostComp(post: PostData) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_timer), contentDescription = "timer",
-                        modifier = Modifier.size(12.dp)
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = "senIcon",
+                        tint = gray
                     )
                     Text(
                         text = post.timer,
@@ -239,7 +258,8 @@ fun PostComp(post: PostData) {
                         painter = painterResource(id = R.drawable.ic_sign),
                         contentDescription = "sign",
                         modifier = Modifier.size(25.dp)
-                        )
+                    )
+
                     Button(
                         onClick = { /*TODO*/ },
                         modifier = Modifier

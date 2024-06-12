@@ -6,18 +6,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
 import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
 import com.app.denuncia.sivar.model.PostList
+import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarItemList
+import com.app.denuncia.sivar.ui.components.TopBar.TopBarItemList
 
 
 @Composable
-fun HomeScreen(innerPadding: PaddingValues){
+fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues){
+
     Column(){
-        TopAppBarHome()
+        TopAppBarHome(navController)
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
@@ -33,5 +40,5 @@ fun HomeScreen(innerPadding: PaddingValues){
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun HomeScreenPreview(){
-    HomeScreen(innerPadding = PaddingValues(0.dp))
+    HomeScreen(rememberNavController(), PaddingValues(0.dp))
 }
