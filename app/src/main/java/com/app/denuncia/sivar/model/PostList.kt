@@ -77,3 +77,7 @@ val PostList = mutableListOf<PostData>(
     )
 
 )
+
+val UserData = mutableListOf<PostData>(
+
+)
