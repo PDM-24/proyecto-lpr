@@ -24,7 +24,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +40,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.denuncia.sivar.ui.theme.blue100
@@ -50,7 +51,7 @@ import com.denuncia.sivar.ui.theme.blue80
 
 
 @Composable
-fun ProfileScreen(innerPadding: PaddingValues){
+fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues){
     val mail by remember { mutableStateOf("john@hotmail.com") }
     val username by remember { mutableStateOf("John") }
     val firstName by remember { mutableStateOf("John Estefano") }
@@ -58,7 +59,7 @@ fun ProfileScreen(innerPadding: PaddingValues){
     val password by remember { mutableStateOf("") }
 
     Column {
-        TopBar("Historial", R.drawable.historial)
+        TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = false)
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -156,5 +157,5 @@ fun EditProfileDialog(onDismiss: () -> Unit) {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun ProfileScreenPreview(){
-    ProfileScreen(innerPadding = PaddingValues(0.dp))
+    ProfileScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp))
 }
