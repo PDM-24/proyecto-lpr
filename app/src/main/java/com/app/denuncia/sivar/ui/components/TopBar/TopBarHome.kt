@@ -45,14 +45,10 @@ fun TopAppBarHome(navController: NavHostController) {
                 titleContentColor = blue20,
             ),
             actions = {
-                IconButton(onClick = { }) {
-                    Icon(
-                        modifier = Modifier.size(27.dp),
-                        imageVector = Icons.Default.Image,
-                        contentDescription = "imageIcon",
-                        tint = blue20
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.logowhite),
+                    contentDescription = "logo",
+                )
                 Button(
                     onClick = { navController.navigate(ScreenRoute.CreatePost.route) },
                     modifier = Modifier
