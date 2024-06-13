@@ -3,6 +3,7 @@ package com.app.denuncia.sivar.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -17,13 +18,12 @@ import com.denuncia.sivar.ui.theme.blue100
 
 @Composable
 fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValues){
-    Scaffold(
-        modifier = Modifier.background(blue100),
-        topBar = {
-            TopBar("Historial", R.drawable.historial, navController, showBackIcon = false)
-        }
-    )
-    {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+    ){
+        TopBar("Historial", R.drawable.historial, navController, showBackIcon = false)
     }
 }
 
