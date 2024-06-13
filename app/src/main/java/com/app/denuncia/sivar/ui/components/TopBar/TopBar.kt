@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -17,24 +21,45 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.app.denuncia.sivar.R
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(Title: String, Icon: Int) {
+fun TopBar(
+    title: String,
+    icon: Int,
+    navController: NavHostController,
+    showBackIcon: Boolean = false
+) {
     TopAppBar(
         modifier = Modifier.height(50.dp),
-        title = {  },
+        title = { },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = blue80,
             titleContentColor = blue20,
         ),
+        navigationIcon = {
+            if (showBackIcon) {
+                IconButton(onClick = {
+                    navController.navigate(ScreenRoute.Home.route) // Navega al Home
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        tint = blue20,
+                        contentDescription = "Back"
+                    )
+                }
+            }
+        },
         actions = {
             Row(
                 modifier = Modifier
@@ -44,23 +69,18 @@ fun TopBar(Title: String, Icon: Int) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "$Title",
+                    text = title,
                     color = blue20,
                     fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Bold,
                     fontFamily = IstokWebFamily,
                     fontSize = 18.sp
                 )
                 Spacer(modifier = Modifier.size(5.dp))
-                Image(painter = painterResource(id = Icon), contentDescription = "ic_historial", modifier = Modifier.size(24.dp))
+                Image(painter = painterResource(id = icon), contentDescription = "ic_historial", modifier = Modifier.size(24.dp))
             }
         }
     )
-}
-
-@Composable
-@Preview(showSystemUi = true, showBackground = true)
-fun TopBar2Preview() {
-    TopBar("Tu historial", R.drawable.historial)
 }
 
 
