@@ -124,7 +124,7 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) 
         TopBar("Administrar usuarios", R.drawable.manageuser, navController, showBackIcon = false)
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(8.dp)
                 .fillMaxSize()
                 .fillMaxWidth()
         ) {
@@ -139,11 +139,12 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) 
                     fontSize = 19.sp
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .background(blue50),
+                    .background(blue50)
+                    .height(30.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Row(
@@ -224,4 +225,10 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) 
             }
         )
     }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun ManageScreenPreview() {
+    ManageScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp))
 }

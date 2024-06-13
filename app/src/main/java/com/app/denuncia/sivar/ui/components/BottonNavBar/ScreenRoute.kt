@@ -6,4 +6,5 @@ sealed class ScreenRoute (var route: String) {
     object Profile : ScreenRoute ("profile")
     object Manage : ScreenRoute ("manage")
     object CreatePost : ScreenRoute ("createPost")
+    object Filter : ScreenRoute ("filter")
 }
