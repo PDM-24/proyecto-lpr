@@ -181,8 +181,8 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
-                            , // Ajusta la altura según sea necesario
-                            maxLines = 3 // Permitir hasta 5 líneas de texto
+                            ,
+                            maxLines = 3
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         if (selectedImageUri != null) {

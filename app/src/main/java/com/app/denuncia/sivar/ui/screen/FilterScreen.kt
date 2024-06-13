@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -53,9 +55,11 @@ import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.CategoriaList
 import com.app.denuncia.sivar.model.DepartamentList
+import com.app.denuncia.sivar.model.PostList
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
+import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
@@ -175,6 +179,13 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues) 
                 selectedOption = selectedKind,
                 onOptionSelected = { selectedKind = it.nombre }
             )
+        }
+        LazyColumn(
+            modifier = Modifier
+        ){
+            items(PostList){
+                    postItem -> PostComp(postItem)
+            }
         }
     }
 }
