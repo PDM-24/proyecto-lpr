@@ -63,7 +63,11 @@ fun TopAppBarHome(navController: NavHostController) {
                         fontStyle = FontStyle.Normal,
                         fontFamily = IstokWebFamily)
                 }
-                IconButton(onClick = { /* Acción al hacer clic */ }) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(ScreenRoute.Filter.route)
+                    }
+                ) {
                     Icon(
                         modifier = Modifier.size(27.dp),
                         imageVector = Icons.Default.Search,

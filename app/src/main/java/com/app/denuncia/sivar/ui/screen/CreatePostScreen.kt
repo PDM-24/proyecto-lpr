@@ -85,15 +85,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
+import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValues)
 {
-    var selectedCategory by remember { mutableStateOf(Categoria(0, "Selecciona una categoria")) }
-    var selectedDepartment by remember { mutableStateOf(Departamentos(0, "Selecciona un departamento")) }
     var textAreaContent by remember { mutableStateOf("") }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var selectedDepartment by remember { mutableStateOf("Seleccione el departamento") }
+    var selectedKind by remember { mutableStateOf("Seleccione una categoria") }
 
     val context = LocalContext.current
 
@@ -151,30 +153,35 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 color = blue20,
                             )
                         }
-                        CategoryDropDownList(
-                            selectedCategory = selectedCategory,
-                            onCategorySelected = { selectedCategory = it }
+                        CustomDropdownDepartment(
+                            options = DepartamentList,
+                            selectedOption = selectedDepartment,
+                            onOptionSelected = { selectedDepartment = it.nombre }
                         )
-                        DepartmentDropDownList(
-                            selectedDepartment = selectedDepartment,
-                            onDepartmentSelected = { selectedDepartment = it }
+                        Spacer(modifier = Modifier.height(7.dp))
+                        CustomDropdownKind(
+                            options = CategoriaList,
+                            selectedOption = selectedKind,
+                            onOptionSelected = { selectedKind = it.nombre }
                         )
                         OutlinedTextField(
+                            shape = RoundedCornerShape(12.dp),
                             value = textAreaContent,
                             onValueChange = { textAreaContent = it },
-                            label = { Text(text = "Descripción de la denuncia", color = Color.White) },
+                            label = { Text(text = "Descripción de la denuncia", color = blue20) },
                             colors = OutlinedTextFieldDefaults.colors(
-                                cursorColor = Color.White,
-                                focusedBorderColor = Color.White,
-                                unfocusedBorderColor = Color.White,
-                                disabledBorderColor = Color.White,
+                                cursorColor = blue50,
+                                focusedBorderColor = blue50,
+                                unfocusedBorderColor = blue50,
+                                disabledBorderColor = blue50,
                                 errorBorderColor = Color.Red,
-                                focusedLabelColor = Color.White,
-                                unfocusedLabelColor = Color.White
+                                focusedLabelColor = blue80,
+                                unfocusedLabelColor = blue80
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp), // Ajusta la altura según sea necesario
+                                .height(100.dp)
+                            , // Ajusta la altura según sea necesario
                             maxLines = 3 // Permitir hasta 5 líneas de texto
                         )
                         Spacer(modifier = Modifier.height(7.dp))
@@ -191,7 +198,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                         }
                         Button(
                             onClick = { imagePickerLauncher.launch("image/*") },
-                            colors = ButtonDefaults.buttonColors(containerColor = blue50)
+                            colors = ButtonDefaults.buttonColors(containerColor = blue80)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -207,7 +214,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                             onClick = {
                                 showToast(context, "Denuncia enviada")
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = blue50)
+                            colors = ButtonDefaults.buttonColors(containerColor = blue80)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -228,114 +235,6 @@ fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CategoryDropDownList(
-    selectedCategory: Categoria,
-    onCategorySelected: (Categoria) -> Unit
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    Box {
-        OutlinedTextField(
-            value = selectedCategory.nombre,
-            onValueChange = { },
-            label = { Text(
-                text = "Categoria",
-                color = Color.White
-            ) },
-            colors = OutlinedTextFieldDefaults.colors(
-                cursorColor = Color.White,
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.White,
-                disabledBorderColor = Color.White,
-                errorBorderColor = Color.Red,
-                focusedLabelColor = Color.White,
-                unfocusedLabelColor = Color.White
-            ),
-            readOnly = true,
-            trailingIcon = {
-                Icon(
-                    tint = Color.White,
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Desplegar",
-                    modifier = Modifier.clickable { isExpanded = !isExpanded }
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }
-        ) {
-            CategoriaList.forEach { category ->
-                DropdownMenuItem(
-                    text = { Text(category.nombre) },
-                    onClick = {
-                        onCategorySelected(category)
-                        isExpanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DepartmentDropDownList(
-    selectedDepartment: Departamentos,
-    onDepartmentSelected: (Departamentos) -> Unit
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    Box {
-        OutlinedTextField(
-            value = selectedDepartment.nombre,
-            onValueChange = { },
-            label = { Text(
-                text = "Departamento",
-                color = Color.White
-            ) },
-            colors = OutlinedTextFieldDefaults.colors(
-                cursorColor = Color.White,
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.White,
-                disabledBorderColor = Color.White,
-                errorBorderColor = Color.Red,
-                focusedLabelColor = Color.White,
-                unfocusedLabelColor = Color.White
-            ),
-            readOnly = true,
-            trailingIcon = {
-                Icon(
-                    tint = Color.White,
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Desplegar",
-                    modifier = Modifier.clickable { isExpanded = !isExpanded }
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }
-        ) {
-            DepartamentList.forEach { department ->
-                DropdownMenuItem(
-                    text = { Text(department.nombre) },
-                    onClick = {
-                        onDepartmentSelected(department)
-                        isExpanded = false
-                    }
-                )
-            }
-        }
-    }
-}
 
 
 
