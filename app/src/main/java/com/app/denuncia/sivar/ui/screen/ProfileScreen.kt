@@ -1,5 +1,6 @@
 package com.app.denuncia.sivar.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,8 +27,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +38,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -64,7 +69,17 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues)
     var exitDialog by remember { mutableStateOf(false) }
     var editDialog by remember { mutableStateOf(false) }
 
+    var showToast by remember { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+    // LaunchedEffect to show toast based on state changes
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
+            showToast = false // Reset toast state
+        }
+    }
     if (exitDialog) {
         ExitDialog(
             onDismiss = {
@@ -73,6 +88,8 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues)
             onConfirm = {
                 // Add logic here to handle session closure
                 exitDialog = false
+                toastMessage = "Sesión cerrada"
+                showToast = true
                 //Ir a Login Screen & borrar token
             }
         )
@@ -93,6 +110,8 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues)
                 lastName = newLastName
                 password = newPassword
                 editDialog = false
+                toastMessage = "Perfil actualizado"
+                showToast = true
             }
         )
     }
@@ -233,10 +252,10 @@ fun ExitDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
             }
         },
         title = {
-            Text(text = "Cerrar sesión")
+            Text(text = "Cerrar sesión", color = blue20)
         },
         text = {
-            Text("¿Estás seguro de que deseas cerrar sesión?")
+            Text("¿Estás seguro de que deseas cerrar sesión?", color = blue20)
         }
     )
 }
@@ -280,35 +299,95 @@ fun EditProfileDialog(
             }
         },
         title = {
-            Text(text = "Editar Perfil")
+            Text(text = "Editar Perfil", color = blue20)
         },
         text = {
             Column {
                 OutlinedTextField(
                     value = tempMail,
                     onValueChange = { tempMail = it },
-                    label = { Text("Email") }
+                    label = { Text("Email", color = blue20) },
+                    maxLines = 1,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        errorBorderColor = Color.Red,
+                        cursorColor = blue50,
+                        focusedBorderColor = blue50,
+                        unfocusedBorderColor = blue50,
+                        disabledBorderColor = blue50,
+                        focusedLabelColor = blue80,
+                        unfocusedLabelColor = blue80
+                    )
                 )
                 OutlinedTextField(
                     value = tempUsername,
                     onValueChange = { tempUsername = it },
-                    label = { Text("Username") }
+                    label = { Text("Username", color = blue20) },
+                    maxLines = 1,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        errorBorderColor = Color.Red,
+                        cursorColor = blue50,
+                        focusedBorderColor = blue50,
+                        unfocusedBorderColor = blue50,
+                        disabledBorderColor = blue50,
+                        focusedLabelColor = blue80,
+                        unfocusedLabelColor = blue80
+                    )
                 )
                 OutlinedTextField(
                     value = tempFirstName,
                     onValueChange = { tempFirstName = it },
-                    label = { Text("First Name") }
+                    label = { Text("First Name", color = blue20) },
+                    maxLines = 1,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        errorBorderColor = Color.Red,
+                        cursorColor = blue50,
+                        focusedBorderColor = blue50,
+                        unfocusedBorderColor = blue50,
+                        disabledBorderColor = blue50,
+                        focusedLabelColor = blue80,
+                        unfocusedLabelColor = blue80
+                    )
                 )
                 OutlinedTextField(
                     value = tempLastName,
                     onValueChange = { tempLastName = it },
-                    label = { Text("Last Name") }
+                    label = { Text("Last Name", color = blue20) },
+                    maxLines = 1,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        errorBorderColor = Color.Red,
+                        cursorColor = blue50,
+                        focusedBorderColor = blue50,
+                        unfocusedBorderColor = blue50,
+                        disabledBorderColor = blue50,
+                        focusedLabelColor = blue80,
+                        unfocusedLabelColor = blue80
+                    )
                 )
                 OutlinedTextField(
                     value = tempPassword,
                     onValueChange = { tempPassword = it },
-                    label = { Text("Password") },
+                    label = { Text("Password", color = blue20) },
                     visualTransformation = PasswordVisualTransformation(),
+                    maxLines = 1,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        errorBorderColor = Color.Red,
+                        cursorColor = blue50,
+                        focusedBorderColor = blue50,
+                        unfocusedBorderColor = blue50,
+                        disabledBorderColor = blue50,
+                        focusedLabelColor = blue80,
+                        unfocusedLabelColor = blue80
+                    )
                 )
             }
         }
