@@ -54,6 +54,11 @@ android {
 
 dependencies {
 
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
     //Para DatePicker
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
