@@ -2,7 +2,6 @@ package com.app.denuncia.sivar.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,21 +12,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
-import com.app.denuncia.sivar.ui.components.ListUsers.User
-import com.app.denuncia.sivar.ui.components.ListUsers.UserTable
-import com.app.denuncia.sivar.ui.components.ListUsers.userList
+import com.app.denuncia.sivar.ui.components.ListUsersComps.User
+import com.app.denuncia.sivar.ui.components.ListUsersComps.UserTable
+import com.app.denuncia.sivar.ui.components.ListUsersComps.userList
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20

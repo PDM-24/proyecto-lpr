@@ -50,7 +50,7 @@ fun CustomDropdownDepartment(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .background(blue80)
-                .height(30.dp)
+                .height(35.dp)
                 .width(250.dp),
             verticalArrangement = Arrangement.Center
         ) {
@@ -112,7 +112,7 @@ fun CustomDropdownKind(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .background(blue80)
-                .height(30.dp)
+                .height(35.dp)
                 .width(250.dp),
             verticalArrangement = Arrangement.Center
         ) {
