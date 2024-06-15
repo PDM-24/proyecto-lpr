@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -71,7 +72,8 @@ fun UserTable(
     users: List<User>,
     onRoleChange: (User) -> Unit,
     onDelete: (User) -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    viewModel: ViewModelMain
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -237,10 +239,12 @@ fun UserTable(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun UserTablePreview() {
+    val  viewModelMain = ViewModelMain()
     UserTable(
         users = userList,
         onRoleChange = {},
         onDelete = {},
-        onLoadMore = {}
+        onLoadMore = {},
+        viewModel = viewModelMain
     )
 }

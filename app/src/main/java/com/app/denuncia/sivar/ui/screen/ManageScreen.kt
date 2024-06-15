@@ -50,12 +50,13 @@ import com.app.denuncia.sivar.ui.components.ListUsers.User
 import com.app.denuncia.sivar.ui.components.ListUsers.UserTable
 import com.app.denuncia.sivar.ui.components.ListUsers.userList
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 
 @Composable
-fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) {
+fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModel: ViewModelMain) {
     val textState = remember { mutableStateOf(TextFieldValue()) }
 
     var users by remember { mutableStateOf(userList.toMutableStateList()) }
@@ -184,7 +185,7 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) 
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            UserTable(users = filteredUsers, onRoleChange = ::onRoleChange, onDelete = ::onDelete, onLoadMore = ::onLoadMore)
+            UserTable(users = filteredUsers, onRoleChange = ::onRoleChange, onDelete = ::onDelete, onLoadMore = ::onLoadMore, viewModel)
         }
     }
 
@@ -225,10 +226,4 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) 
             }
         )
     }
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun ManageScreenPreview() {
-    ManageScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp))
 }

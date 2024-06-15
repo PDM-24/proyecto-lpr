@@ -18,10 +18,13 @@ import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarComponent
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarGraph
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarItemList
 import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.blue100
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel = ViewModelMain()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavBar()
+                    NavBar(viewModel)
                 }
             }
         }
@@ -40,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    fun NavBar() {
+    fun NavBar(viewModel:ViewModelMain) {
         val navController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute: String? = navBackStackEntry?.destination?.route
@@ -62,10 +65,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         ) { innerPadding ->
-            NavBarGraph(
-                navController = navController,
-                innerPadding = innerPadding
-            )
+            NavBarGraph(navController, innerPadding, viewModel)
         }
     }
 }

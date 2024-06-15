@@ -61,6 +61,7 @@ import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -69,7 +70,7 @@ import com.denuncia.sivar.ui.theme.blue80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues) {
+fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModelMain: ViewModelMain) {
     var selectedDepartment by remember { mutableStateOf("Por departamento") }
     var selectedKind by remember { mutableStateOf("Por tipo") }
 
@@ -188,12 +189,4 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues) 
             }
         }
     }
-}
-
-
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun FilterScreenPreview() {
-    FilterScreen(navController = rememberNavController(), PaddingValues(0.dp))
 }

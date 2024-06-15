@@ -53,6 +53,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
@@ -60,7 +61,7 @@ import com.denuncia.sivar.ui.theme.blue80
 
 
 @Composable
-fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues) {
+fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues, viewModelMain: ViewModelMain) {
     var mail by remember { mutableStateOf("john@hotmail.com") }
     var username by remember { mutableStateOf("John") }
     var firstName by remember { mutableStateOf("John Estefano") }
@@ -392,11 +393,4 @@ fun EditProfileDialog(
             }
         }
     )
-}
-
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp))
 }

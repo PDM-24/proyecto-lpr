@@ -15,11 +15,13 @@ import com.app.denuncia.sivar.ui.screen.HistorialScreen
 import com.app.denuncia.sivar.ui.screen.HomeScreen
 import com.app.denuncia.sivar.ui.screen.ManageScreen
 import com.app.denuncia.sivar.ui.screen.ProfileScreen
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 
 @Composable
 fun NavBarGraph(
     navController: NavHostController,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    viewModel: ViewModelMain
 ){
     NavHost(
         navController = navController,
@@ -28,22 +30,22 @@ fun NavBarGraph(
         exitTransition = { ExitTransition.None}
     ) {
         composable(ScreenRoute.Home.route){
-            HomeScreen(navController, innerPadding)
+            HomeScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Historial.route){
-            HistorialScreen(navController, innerPadding)
+            HistorialScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Profile.route){
-            ProfileScreen(navController, innerPadding)
+            ProfileScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Manage.route){
-            ManageScreen(navController, innerPadding)
+            ManageScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.CreatePost.route){
-            CreatePostScreen(navController, innerPadding)
+            CreatePostScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Filter.route){
-            FilterScreen(navController, innerPadding)
+            FilterScreen(navController, innerPadding, viewModel)
         }
     }
 }
