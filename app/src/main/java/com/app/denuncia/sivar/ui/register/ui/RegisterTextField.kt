@@ -1,11 +1,9 @@
-package com.denuncia.sivar.ui.login.ui
+package com.app.denuncia.sivar.ui.register.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,11 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -27,33 +23,32 @@ import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTextField(
+fun RegisterTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
+    label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    iconResId: Int,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     height: Dp = 50.dp
 ){
-    Row (modifier = modifier){
-        Image(
-            painter = painterResource(id = iconResId),
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .align(Alignment.CenterVertically),
-            contentScale = ContentScale.Fit
-        )
-        Spacer(modifier = Modifier.width(10.dp))
+    // Texto arriba de TextField
+    Text(
+        modifier = modifier.fillMaxWidth(),
+        text = label,
+        fontSize = 15.sp,
+        color = blue20
+    )
+    Spacer(modifier = Modifier.height(2.dp))
+    Row(modifier = modifier) {
         TextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
+                .height(50.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp)),
             placeholder = {
@@ -62,7 +57,9 @@ fun MyTextField(
                     modifier = Modifier,
                     color = blue20.copy(alpha = 0.5f),
                     fontFamily = IstokWebFamily,
-                )},
+                    fontSize = 15.sp
+                )
+            },
             keyboardOptions = keyboardOptions,
             singleLine = true,
             maxLines = 1,
@@ -70,8 +67,8 @@ fun MyTextField(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = blue100,
                 unfocusedContainerColor = blue100,
-                focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-                unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             )
         )
     }
