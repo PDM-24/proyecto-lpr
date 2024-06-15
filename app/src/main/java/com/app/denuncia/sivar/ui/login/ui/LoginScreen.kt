@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.login.ui.PasswordLogin
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
@@ -54,6 +55,7 @@ fun LoginScreen() {
 
     val usernameState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    val viewModel = ViewModelMain()
 
     Box(
         modifier = Modifier
