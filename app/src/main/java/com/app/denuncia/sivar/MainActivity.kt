@@ -25,7 +25,7 @@ import com.denuncia.sivar.ui.theme.blue100
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel = ViewModelMain()
+    private val viewModel = ViewModelMain()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
