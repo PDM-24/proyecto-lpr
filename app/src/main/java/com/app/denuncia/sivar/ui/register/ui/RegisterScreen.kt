@@ -33,16 +33,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.app.denuncia.sivar.R
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.denuncia.sivar.ui.login.ui.isSmallScreenHeight
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
 
-@Preview(showBackground = true, showSystemUi = true)
+
 @Composable
-fun LoginScreen() {
+fun RegisterScreen(navController: NavController) {
 
     val nameState = remember { mutableStateOf("") }
     val surnameState = remember { mutableStateOf("") }
@@ -182,7 +184,9 @@ fun LoginScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Button(
-                        onClick = { },
+                        onClick = {
+                            navController.navigate(route = ScreenRoute.Login.route)
+                        },
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(250.dp),

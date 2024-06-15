@@ -113,7 +113,7 @@ fun SelectedDate(
                     Text(
                         text = "DD/MM/YYYY",
                         modifier = Modifier,
-                        color = blue20,
+                        color = blue20.copy(alpha = 0.5f),
                         fontFamily = IstokWebFamily,
                         fontSize = 15.sp
                     )

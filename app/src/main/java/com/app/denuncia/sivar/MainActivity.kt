@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarComponent
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarGraph
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarItemList
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.blue100
@@ -45,19 +46,24 @@ class MainActivity : ComponentActivity() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute: String? = navBackStackEntry?.destination?.route
         val navItems = NavBarItemList()
+
+        val shouldShowBottomBar = currentRoute != ScreenRoute.Login.route && currentRoute != ScreenRoute.Register.route
+
         Scaffold(
             modifier = Modifier,
             containerColor = blue100,
             bottomBar = {
-                NavBarComponent(items = navItems, currentRoute = currentRoute) {
-                    nav -> navController.navigate(nav.route) {
-                        navController.graph.startDestinationRoute?.let {
-                            route -> popUpTo(route) {
-                                saveState = true
+                if (shouldShowBottomBar) {
+                    NavBarComponent(items = navItems, currentRoute = currentRoute) { nav ->
+                        navController.navigate(nav.route) {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             }
