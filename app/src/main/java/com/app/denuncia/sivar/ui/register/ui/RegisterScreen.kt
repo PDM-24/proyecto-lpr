@@ -1,8 +1,7 @@
-package com.denuncia.sivar.ui.login.ui
+package com.app.denuncia.sivar.ui.register.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,30 +18,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.denuncia.sivar.R
-import com.app.denuncia.sivar.ui.login.ui.PasswordLogin
-import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
+import com.denuncia.sivar.ui.login.ui.isSmallScreenHeight
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -52,7 +44,10 @@ import com.denuncia.sivar.ui.theme.blue80
 @Composable
 fun LoginScreen() {
 
+    val nameState = remember { mutableStateOf("") }
+    val surnameState = remember { mutableStateOf("") }
     val usernameState = remember { mutableStateOf("") }
+    val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
 
     Box(
@@ -67,7 +62,7 @@ fun LoginScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.35f),
+                    .fillMaxHeight(0.1f),
                 contentAlignment = Alignment.Center
             ){
                 Image(
@@ -75,7 +70,7 @@ fun LoginScreen() {
                     contentDescription = "Logo Denuncia Sivar",
                     modifier = Modifier
                         .size(width = 200.dp, height = 200.dp),
-                        contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Fit
                 )
             }
             Column(
@@ -90,10 +85,10 @@ fun LoginScreen() {
                     Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 }
                 else{
-                    Spacer(modifier = Modifier.fillMaxSize(0.1f))
+                    Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 }
                 Text(
-                    text = "Iniciar Sesión",
+                    text = "Registrarte",
                     fontFamily = IstokWebFamily,
                     fontWeight = FontWeight.Bold,
                     color = blue20,
@@ -105,75 +100,97 @@ fun LoginScreen() {
                 else{
                     Spacer(modifier = Modifier.fillMaxSize(0.1f))
                 }
-                MyTextField(
+                RegisterTextField(
                     modifier = Modifier,
-                    placeholder = "Nombre de usuario:",
+                    label = "Nombre: ",
+                    placeholder = "Ingrese su nombre",
+                    value = nameState.value,
+                    onValueChange = {
+                        updateString ->
+                        nameState.value = updateString
+                                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    keyboardActions = KeyboardActions.Default
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+
+                RegisterTextField(
+                    modifier = Modifier,
+                    label = "Apellido: ",
+                    placeholder = "Ingrese su apellido",
+                    value = surnameState.value,
+                    onValueChange = {
+                            updateString ->
+                        surnameState.value = updateString
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    keyboardActions = KeyboardActions.Default
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+
+                RegisterTextField(
+                    modifier = Modifier,
+                    label = "Usuario:",
+                    placeholder = "Ingrese su nombre de usuario",
                     value = usernameState.value,
                     onValueChange = {
                             updateString ->
                         usernameState.value = updateString
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    keyboardActions = KeyboardActions.Default,
-                    iconResId = R.drawable.user
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    keyboardActions = KeyboardActions.Default
                 )
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                PasswordLogin(
+                RegisterTextField(
                     modifier = Modifier,
-                    placeholder = "Contraseña:",
-                    value = passwordState.value,
+                    label = "Email: ",
+                    placeholder = "Ingrese su dirección de correo",
+                    value = emailState.value,
                     onValueChange = {
                             updateString ->
-                        passwordState.value = updateString
+                        emailState.value = updateString
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    keyboardActions = KeyboardActions.Default,
-                    iconResId = R.drawable.password
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    keyboardActions = KeyboardActions.Default
                 )
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(2.dp))
+
+                SelectedDate(
+                    modifier = Modifier,
+                    label = "Fecha de nacimiento: ",
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    keyboardActions = KeyboardActions.Default,
+                    iconResIdDate = R.drawable.user
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+
+                PasswordTextField(
+                    modifier = Modifier,
+                    label = "Contraseña: ",
+                    placeholder = "Ingrese su contraseña",
+                    value = passwordState.value,
+                    onValueChange = { passwordState.value = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 Row (
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    Row(
-                        modifier = Modifier,
-
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.adduser),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .align(Alignment.CenterVertically),
-                            contentScale = ContentScale.Fit
-                        )
-                        Spacer(modifier = Modifier.width(7.dp))
-                        Text(
-                            text = "Registrarse en Denuncia Sivar",
-                            modifier = Modifier
-                                .clickable { }
-                                .align(Alignment.CenterVertically)
-                                .width(100.dp),
-                            fontFamily = IstokWebFamily,
-                            textDecoration = TextDecoration.Underline,
-                            color = blue20,
-
-                        )
-                    }
                     Button(
                         onClick = { },
                         modifier = Modifier
                             .fillMaxHeight()
-                            .width(120.dp),
+                            .width(250.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = blue20),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Text(
-                            text = "Login",
+                            text = "Registrarse",
                             modifier = Modifier,
                             color = blue100,
                             fontFamily = IstokWebFamily,
@@ -182,6 +199,5 @@ fun LoginScreen() {
                 }
             }
         }
-   }
+    }
 }
-
