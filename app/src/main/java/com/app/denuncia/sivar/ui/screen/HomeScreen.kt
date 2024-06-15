@@ -18,10 +18,11 @@ import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
 import com.app.denuncia.sivar.model.PostList
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarItemList
 import com.app.denuncia.sivar.ui.components.TopBar.TopBarItemList
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 
 
 @Composable
-fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues){
+fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel:ViewModelMain){
 
     Column(){
         TopAppBarHome(navController)
@@ -40,5 +41,5 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues){
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun HomeScreenPreview(){
-    HomeScreen(rememberNavController(), PaddingValues(0.dp))
+    HomeScreen(rememberNavController(), PaddingValues(0.dp), ViewModelMain())
 }

@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.login.ui.PasswordLogin
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
@@ -52,7 +53,7 @@ import com.denuncia.sivar.ui.theme.blue80
 
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
 
     val usernameState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }

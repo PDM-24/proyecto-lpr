@@ -14,10 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 
 @Composable
-fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValues){
+fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain){
     Column(
         modifier = Modifier
             .fillMaxSize()

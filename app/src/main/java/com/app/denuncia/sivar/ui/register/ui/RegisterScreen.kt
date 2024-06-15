@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.login.ui.isSmallScreenHeight
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
@@ -44,7 +45,7 @@ import com.denuncia.sivar.ui.theme.blue80
 
 
 @Composable
-fun RegisterScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
 
     val nameState = remember { mutableStateOf("") }
     val surnameState = remember { mutableStateOf("") }

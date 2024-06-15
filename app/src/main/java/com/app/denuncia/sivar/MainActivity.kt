@@ -19,10 +19,13 @@ import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarGraph
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarItemList
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.blue100
 
 class MainActivity : ComponentActivity() {
+
+    val viewModel = ViewModelMain()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,10 +71,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         ) { innerPadding ->
-            NavBarGraph(
-                navController = navController,
-                innerPadding = innerPadding
-            )
+            NavBarGraph(navController, innerPadding, viewModel)
         }
     }
 }

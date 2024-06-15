@@ -87,10 +87,11 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValues)
+fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModel: ViewModelMain)
 {
     var textAreaContent by remember { mutableStateOf("") }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -254,5 +255,5 @@ fun showToast(context: Context, message: String) {
 @Preview
 @Composable
 fun PreviewCreatePostScreen(){
-    CreatePostScreen(navController = rememberNavController(), PaddingValues(0.dp))
+    CreatePostScreen(navController = rememberNavController(), PaddingValues(0.dp), ViewModelMain())
 }

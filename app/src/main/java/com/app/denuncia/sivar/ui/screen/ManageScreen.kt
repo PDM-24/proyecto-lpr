@@ -42,12 +42,13 @@ import com.app.denuncia.sivar.ui.components.ListUsersComps.User
 import com.app.denuncia.sivar.ui.components.ListUsersComps.UserTable
 import com.app.denuncia.sivar.ui.components.ListUsersComps.userList
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 
 @Composable
-fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) {
+fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModel: ViewModelMain) {
     val textState = remember { mutableStateOf(TextFieldValue()) }
 
     var users by remember { mutableStateOf(userList.toMutableStateList()) }
@@ -222,5 +223,5 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues) 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun ManageScreenPreview() {
-    ManageScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp))
+    ManageScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp), ViewModelMain())
 }
