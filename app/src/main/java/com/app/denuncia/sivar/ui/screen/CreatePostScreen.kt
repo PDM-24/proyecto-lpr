@@ -196,32 +196,44 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 contentScale = ContentScale.Crop
                             )
                         }
-                        Button(
-                            onClick = { imagePickerLauncher.launch("image/*") },
-                            colors = ButtonDefaults.buttonColors(containerColor = blue80)
+                        Spacer(modifier = Modifier.height(7.dp))
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(blue80)
+                                .height(35.dp)
+                                .width(180.dp)
+                                .clickable { imagePickerLauncher.launch("image/*") },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.Image, contentDescription = "senIcon", tint = Color.White)
-                                Text("Agregar imagen", color = Color.White)
+                                Icon(imageVector = Icons.Default.Image, contentDescription = "senIcon", tint = blue20)
+                                Text("Agregar imagen", color = blue20)
                             }
                         }
-                        Spacer(modifier = Modifier.height(7.dp))
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                showToast(context, "Denuncia enviada")
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = blue80)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(blue80)
+                                .height(35.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    showToast(context, "Denuncia enviada")
+                                },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(Icons.Default.Publish, contentDescription = "Send Icon", tint = Color.White)
-                                Text("Realizar Denuncia", color = Color.White)
+                                Icon(Icons.Default.Publish, contentDescription = "Send Icon", tint = blue20)
+                                Text("Realizar denuncia", color = blue20)
                             }
                         }
                     }
