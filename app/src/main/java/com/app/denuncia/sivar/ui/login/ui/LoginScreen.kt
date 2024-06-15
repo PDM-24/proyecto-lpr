@@ -40,7 +40,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.app.denuncia.sivar.R
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.login.ui.PasswordLogin
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.IstokWebFamily
@@ -48,9 +50,9 @@ import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
 
-@Preview(showBackground = true, showSystemUi = true)
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
 
     val usernameState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
@@ -155,7 +157,9 @@ fun LoginScreen() {
                         Text(
                             text = "Registrarse en Denuncia Sivar",
                             modifier = Modifier
-                                .clickable { }
+                                .clickable {
+                                    navController.navigate(route = ScreenRoute.Register.route)
+                                }
                                 .align(Alignment.CenterVertically)
                                 .width(100.dp),
                             fontFamily = IstokWebFamily,
@@ -165,7 +169,9 @@ fun LoginScreen() {
                         )
                     }
                     Button(
-                        onClick = { },
+                        onClick = {
+                            navController.navigate(route = ScreenRoute.Home.route)
+                        },
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(120.dp),

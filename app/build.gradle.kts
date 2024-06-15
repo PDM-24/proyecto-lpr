@@ -54,11 +54,7 @@ android {
 
 dependencies {
 
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.gson)
-    implementation(libs.converter.gson)
+
     //Para DatePicker
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
@@ -66,6 +62,12 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended:1.0.0")
     implementation ("io.coil-kt:coil-compose:2.1.0")
 
+
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
