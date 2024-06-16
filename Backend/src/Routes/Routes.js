@@ -2,12 +2,12 @@ import express from 'express';
 import { GetCategories, UploadCategory } from '../Controller/Categoria.js';
 import { GetSupportByComplaint, SupportComplaint } from '../Controller/Apoyo.js';
 import { DeleteComplaint, GetComplaints, GetComplaintsByUserId, UpdateComplaint, UploadComplaint } from '../Controller/Publicacion.js';
-import { ChangeRol, DeleteUser, GetUsers, StateUser, Login, SendEmailCode, SignUp, UpdatePass, UpdatePhoto, UpdateProfile, VerifyToken } from "../Controller/Usuario.js";
+import { ChangeRol, DeleteUser, GetUsers, StateUser, Login, SendEmailCode, SingUp, UpdatePass, UpdatePhoto, UpdateProfile, VerifyToken } from "../Controller/Usuario.js";
 
 const Routes = express.Router();
 
 //Post
-Routes.post('/singup', SignUp)
+Routes.post('/singup', SingUp)
 Routes.post('/login', Login);
 Routes.post('/uploadcategory', UploadCategory)
 Routes.post('/uploadcomplaint', UploadComplaint)

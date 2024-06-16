@@ -1,5 +1,6 @@
 package com.app.denuncia.sivar.ui.register.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,10 +18,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,6 +49,7 @@ import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -52,7 +59,40 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
     val surnameState = remember { mutableStateOf("") }
     val usernameState = remember { mutableStateOf("") }
     val emailState = remember { mutableStateOf("") }
+    val birthdateState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    val isLoading = remember { mutableStateOf(false) }
+    val signUpState by viewModel.singUpState.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val showDialog = remember { mutableStateOf(false) }
+    val rolState = remember { mutableStateOf("Usuario") }
+
+    LaunchedEffect(signUpState) {
+        if (signUpState) {
+            isLoading.value = false
+            navController.navigate(route = ScreenRoute.Home.route) {
+                popUpTo(ScreenRoute.Register.route) { inclusive = true }
+            }
+        }
+    }
+
+    LaunchedEffect(errorMessage) {
+        if (errorMessage.isNotEmpty()) {
+            isLoading.value = false
+            showDialog.value = true
+        }
+    }
+
+    LaunchedEffect(isLoading.value) {
+        if (isLoading.value) {
+            delay(5000)
+            if (isLoading.value) {
+                isLoading.value = false
+                viewModel.setErrorMessage("Usuario o contraseña incorrectos. Intente de nuevo o verfifique su conexion a internet.")
+                showDialog.value = true
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -163,9 +203,11 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                 SelectedDate(
                     modifier = Modifier,
                     label = "Fecha de nacimiento: ",
+                    onDateSelected = { birthdateState.value = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    keyboardActions = KeyboardActions.Default,
+                    keyboardActions = KeyboardActions.Default
                 )
+
                 Spacer(modifier = Modifier.height(2.dp))
 
                 PasswordTextField(
@@ -186,23 +228,51 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                 ){
                     Button(
                         onClick = {
-                            navController.navigate(route = ScreenRoute.Login.route)
+                            isLoading.value = true
+                            viewModel.singUp(
+                                usernameState.value,
+                                nameState.value,
+                                surnameState.value,
+                                emailState.value,
+                                birthdateState.value,
+                                passwordState.value,
+                                rolState.value
+                            )
                         },
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(250.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = blue20),
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(20.dp),
+                        enabled = !isLoading.value
                     ) {
-                        Text(
-                            text = "Registrarse",
-                            modifier = Modifier,
-                            color = blue100,
-                            fontFamily = IstokWebFamily,
-                        )
+                        if (isLoading.value) {
+                            CircularProgressIndicator(color = blue100)
+                        } else {
+                            Text(
+                                text = "Registrarse",
+                                modifier = Modifier,
+                                color = blue100,
+                                fontFamily = IstokWebFamily
+                            )
+                        }
                     }
                 }
             }
+        }
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = { Text(text = "Error") },
+                text = { Text(text = errorMessage, fontSize = 17.sp) },
+                confirmButton = {
+                    Button(
+                        onClick = { showDialog.value = false }
+                    ) {
+                        Text(text = "OK", color = blue20)
+                    }
+                }
+            )
         }
     }
 }
