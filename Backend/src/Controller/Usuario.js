@@ -7,7 +7,7 @@ import Jwt from "jsonwebtoken";
 import { remove } from 'fs-extra';
 import { UserEmail } from "../SettingEnv.js";
 
-export const SignUp = async (req, res) => {
+export const SingUp = async (req, res) => {
   const { username, name, surname, email, birthdate, rol, pass } = req.body;
   try {
     if (username && name && surname && email && birthdate && rol && pass) {

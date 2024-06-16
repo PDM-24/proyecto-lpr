@@ -199,7 +199,10 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                     Button(
                         onClick = {
                             isLoading.value = true
-                            viewModel.loginUser(usernameState.value, passwordState.value)
+                            viewModel.loginUser(
+                                usernameState.value,
+                                passwordState.value
+                            )
                         },
                         modifier = Modifier
                             .fillMaxHeight()

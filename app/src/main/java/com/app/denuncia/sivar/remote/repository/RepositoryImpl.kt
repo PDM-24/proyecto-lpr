@@ -1,8 +1,8 @@
 package com.app.denuncia.sivar.remote.repository
 
+import android.util.Log
 import com.app.denuncia.sivar.model.body.login
-import com.app.denuncia.sivar.model.body.signup
-import com.app.denuncia.sivar.model.mongoose.publicacion
+import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
 import com.app.denuncia.sivar.remote.model.UserSession
@@ -32,21 +32,21 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun signUp(data: signup): Resources<JsonResponse> {
+    override suspend fun singUp(data: singup): Resources<JsonResponse> {
         try {
-            val response = service.signup(data)
-            if(response.isSuccessful){
+            val response = service.singup(data)
+            if (response.isSuccessful) {
                 return Resources.Success(response.body()!!)
-            }else{
+            } else {
                 val errorBody = response.errorBody()?.string()!!
                 try {
                     val errorResponse = gson.fromJson(errorBody, ErrorResponse::class.java)
-                    return Resources.Error(errorResponse.details)
-                }catch (e:Exception){
+                    return Resources.Error(errorResponse.message)
+                } catch (e: Exception) {
                     return Resources.Error(e.message.toString())
                 }
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             return Resources.Error(e.message.toString())
         }
     }

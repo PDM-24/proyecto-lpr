@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.denuncia.sivar.model.Denuncia
 import com.app.denuncia.sivar.model.body.login
-import com.app.denuncia.sivar.model.body.signup
+import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.ApiProvider
@@ -34,8 +34,8 @@ class ViewModelMain : ViewModel() {
     private val _stateApp = MutableStateFlow(false)
 
     // Estado de registro
-    private val _signUpState = MutableStateFlow(false)
-    val signUpState: StateFlow<Boolean> = _signUpState
+    private val _singUpState = MutableStateFlow(false)
+    val singUpState: StateFlow<Boolean> = _singUpState
 
     // Mensaje de error
     private val _errorMessage = MutableStateFlow("")
@@ -105,26 +105,28 @@ class ViewModelMain : ViewModel() {
         _errorMessage.value = message
     }
 
-    fun signUp(username: String, email: String, password: String) {
-        val body = signup(username, email, password)
+    fun singUp(
+        username: String, name: String, surname: String, email: String, birthdate: String, pass: String, rol: String
+    ) {
+        val body = singup(username, name, surname, email, birthdate, pass, rol)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                when (val response = apiRest.signUp(body)) {
+                when (val response = apiRest.singUp(body)) {
                     is Resources.Success -> {
                         _details.value = response.data.details
                         _stateApp.value = response.data.state
-                        _signUpState.value = true
+                        _singUpState.value = true
                     }
                     is Resources.Error -> {
                         _details.value = response.message
                         _stateApp.value = false
-                        _signUpState.value = false
+                        _singUpState.value = false
                     }
                 }
             } catch (e: Exception) {
                 _details.value = e.message.toString()
                 _stateApp.value = false
-                _signUpState.value = false
+                _singUpState.value = false
             }
         }
     }

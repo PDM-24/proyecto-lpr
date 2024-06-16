@@ -46,31 +46,29 @@ import java.time.ZoneId
 fun SelectedDate(
     modifier: Modifier = Modifier,
     label: String,
+    onDateSelected: (String) -> Unit,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     height: Dp = 50.dp
-){
-
+) {
     val state = rememberDatePickerState()
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
+    var showDialog by remember { mutableStateOf(false) }
     val date = state.selectedDateMillis
 
-
     //Texto arriba de TextField
-    Text(modifier = modifier
-        .fillMaxWidth()
-        , text = "$label",
+    Text(
+        modifier = modifier.fillMaxWidth(),
+        text = label,
         fontSize = 15.sp,
         color = blue20
     )
     Spacer(modifier = Modifier.height(2.dp))
-    Row (modifier = modifier
-        .height(height)
-        .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically){
-
+    Row(
+        modifier = modifier
+            .height(height)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Button(
             onClick = { showDialog = true },
             modifier = Modifier
@@ -86,56 +84,56 @@ fun SelectedDate(
             )
         }
         //DatePicker
-        if (showDialog){
-            DatePickerDialog(onDismissRequest = { showDialog = false },
-                confirmButton = { Button(
-                    onClick = { showDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = blue20)
-                ) {
-                    Text(text = "Confirmar",
-                        modifier = Modifier,
-                        color = blue100,
-                        fontFamily = IstokWebFamily,)
-                } }) {
+        //DatePicker
+        if (showDialog) {
+            DatePickerDialog(
+                onDismissRequest = { showDialog = false },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showDialog = false
+                            date?.let {
+                                val localDate = Instant.ofEpochMilli(it)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                                val formattedDate = "${localDate.year}-${localDate.monthValue.toString().padStart(2, '0')}-${localDate.dayOfMonth.toString().padStart(2, '0')}T00:00:00.000+00:00"
+                                onDateSelected(formattedDate)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = blue20)
+                    ) {
+                        Text(
+                            text = "Confirmar",
+                            color = blue100,
+                            fontFamily = IstokWebFamily
+                        )
+                    }
+                }
+            ) {
                 DatePicker(state = state)
             }
         }
 
         TextField(
-            value = "",
+            value = date?.let {
+                val localDate = Instant.ofEpochMilli(it)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                "${localDate.dayOfMonth}/${localDate.monthValue}/${localDate.year}"
+            } ?: "",
             onValueChange = {},
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp)),
             placeholder = {
-
-                if (date == null){
-                    Text(
-                        text = "DD/MM/YYYY",
-                        modifier = Modifier,
-                        color = blue20.copy(alpha = 0.5f),
-                        fontFamily = IstokWebFamily,
-                        fontSize = 15.sp
-                    )
-                }
-                else{
-                    date.let {
-
-                        //Para insertar fecha
-                        val localDate = Instant.ofEpochMilli(it).atZone(ZoneId.of("UTC")).toLocalDate()
-
-                        Text(
-                            text = "${localDate.dayOfMonth}/${localDate.monthValue}/${localDate.year}",
-                            modifier = Modifier,
-                            color = blue20,
-                            fontFamily = IstokWebFamily,
-                            fontSize = 15.sp
-                        ) }
-
-                }
+                Text(
+                    text = "DD/MM/YYYY",
+                    color = blue20.copy(alpha = 0.5f),
+                    fontFamily = IstokWebFamily,
+                    fontSize = 15.sp
+                )
             },
-
             keyboardOptions = keyboardOptions,
             singleLine = true,
             maxLines = 1,
