@@ -1,95 +1,114 @@
 package com.app.denuncia.sivar.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.denuncia.sivar.model.Denuncia
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.signup
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.remote.ApiProvider
 import com.app.denuncia.sivar.resources.Resources
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ViewModelMain: ViewModel() {
-
+class ViewModelMain : ViewModel() {
     private val apiRest = ApiProvider.repository
 
-    //Sesion del usuario
-    private val token = mutableStateOf("")
-    val session = mutableStateOf(false)
-    val profile = mutableStateOf(Usuario())
+    // Sesión del usuario
+    private val _session = MutableStateFlow(false)
+    val session: StateFlow<Boolean> = _session
+    private val _token = MutableStateFlow("")
+    private val _profile = MutableStateFlow(Usuario())
+    private val _details = MutableStateFlow("")
+    private val _stateApp = MutableStateFlow(false)
 
-    //Mensaje de error o exito de la operacion
-    val details = mutableStateOf("")
-    val stateApp = mutableStateOf(false)
+    // Estado de registro
+    private val _signUpState = MutableStateFlow(false)
+    val signUpState: StateFlow<Boolean> = _signUpState
 
-    fun verifyToken(){
-        viewModelScope.launch(Dispatchers.IO){
+    // Mensaje de error
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String> = _errorMessage
+
+    private val _denuncias = MutableStateFlow<List<Denuncia>>(emptyList())
+    val denuncias: StateFlow<List<Denuncia>> = _denuncias
+
+
+    fun verifyToken() {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                when (val response = apiRest.verifyToken(token.value)) {
+                when (val response = apiRest.verifyToken(_token.value)) {
                     is Resources.Success -> {
-                        session.value = response.data.state
-                        profile.value = response.data.usuario!!
-                        Log.i("Session", response.data.state.toString())
-                        Log.i("profile", profile.value.toString())
+                        _session.value = response.data.state
+                        _profile.value = response.data.usuario!!
                     }
                     is Resources.Error -> {
-                        stateApp.value = false
-                        details.value = response.message
+                        _stateApp.value = false
+                        _details.value = response.message
                     }
                 }
-            }catch (e:Exception){
-                details.value = e.message.toString()
-                stateApp.value = false
-                Log.i("error", e.message.toString())
+            } catch (e: Exception) {
+                _details.value = e.message.toString()
+                _stateApp.value = false
             }
         }
     }
 
-    fun loginUser(username:String, password:String){
+    fun loginUser(username: String, password: String) {
         val body = login(username, password)
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                when(val response = apiRest.login(body)){
+                when (val response = apiRest.login(body)) {
                     is Resources.Success -> {
-                        token.value = response.data.token
-                        stateApp.value = response.data.state
+                        _token.value = response.data.token
+                        _stateApp.value = response.data.state
+                        _errorMessage.value = ""
                         verifyToken()
                     }
-
                     is Resources.Error -> {
-                        details.value = response.message
-                        stateApp.value = false
-                        Log.i("error", response.message)
+                        _details.value = response.message
+                        _stateApp.value = false
+                        _errorMessage.value = "Nombre de usuario o contraseña incorrectos"
+                        _session.value = false
                     }
                 }
-            }catch (e:Exception){
-                details.value = e.message.toString()
-                stateApp.value = false
-                Log.i("error", e.message.toString())
+            } catch (e: Exception) {
+                _details.value = e.message.toString()
+                _stateApp.value = false
+                _errorMessage.value = "Error de conexión. Por favor, inténtalo de nuevo."
+                _session.value = false
             }
         }
     }
 
-    fun signUp(body:signup){
-        viewModelScope.launch(Dispatchers.IO){
+    fun setErrorMessage(message: String) {
+        _errorMessage.value = message
+    }
+
+    fun signUp(username: String, email: String, password: String) {
+        val body = signup(username, email, password)
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                when(val response = apiRest.signUp(body)){
+                when (val response = apiRest.signUp(body)) {
                     is Resources.Success -> {
-                        details.value = response.data.details
-                        stateApp.value = response.data.state
+                        _details.value = response.data.details
+                        _stateApp.value = response.data.state
+                        _signUpState.value = true
                     }
                     is Resources.Error -> {
-                        details.value = response.message
-                        stateApp.value = false
+                        _details.value = response.message
+                        _stateApp.value = false
+                        _signUpState.value = false
                     }
                 }
-            }catch (e:Exception){
-                details.value = e.message.toString()
-                stateApp.value = false
+            } catch (e: Exception) {
+                _details.value = e.message.toString()
+                _stateApp.value = false
+                _signUpState.value = false
             }
         }
     }
+
 }

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
+import com.denuncia.sivar.ui.theme.blue80
 import java.time.Instant
 import java.time.ZoneId
 
@@ -43,7 +46,6 @@ import java.time.ZoneId
 fun SelectedDate(
     modifier: Modifier = Modifier,
     label: String,
-    iconResIdDate: Int,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     height: Dp = 50.dp
@@ -78,10 +80,9 @@ fun SelectedDate(
             shape = RoundedCornerShape(20.dp)
         ) {
             Icon(
-                painter = painterResource(id = iconResIdDate),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = Color.White
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = "Date Picker",
+                tint = blue80,
             )
         }
         //DatePicker

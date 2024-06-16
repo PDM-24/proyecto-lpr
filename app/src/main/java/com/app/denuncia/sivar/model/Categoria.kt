@@ -1,6 +1,6 @@
 package com.app.denuncia.sivar.model
 
 data class Categoria(
-    val id: Int,
+    val _id: Int,
     val nombre: String
 )
