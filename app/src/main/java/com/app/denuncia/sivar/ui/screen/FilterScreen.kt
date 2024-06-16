@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,12 +56,12 @@ import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.CategoriaList
 import com.app.denuncia.sivar.model.DepartamentList
-import com.app.denuncia.sivar.model.PostList
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -69,9 +70,10 @@ import com.denuncia.sivar.ui.theme.blue80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues) {
+fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
     var selectedDepartment by remember { mutableStateOf("Por departamento") }
     var selectedKind by remember { mutableStateOf("Por tipo") }
+    var denuncias = viewModel.denuncias.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -183,7 +185,7 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues) 
         LazyColumn(
             modifier = Modifier
         ){
-            items(PostList){
+            items(denuncias){
                     postItem -> PostComp(postItem)
             }
         }
@@ -195,5 +197,5 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues) 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun FilterScreenPreview() {
-    FilterScreen(navController = rememberNavController(), PaddingValues(0.dp))
+    FilterScreen(navController = rememberNavController(), PaddingValues(0.dp), ViewModelMain())
 }

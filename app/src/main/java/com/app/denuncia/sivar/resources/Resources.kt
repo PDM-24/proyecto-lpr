@@ -7,5 +7,5 @@ sealed class Resources<T> {
 
 data class ErrorResponse (
     val state:Boolean = false,
-    val message: String = ""
+    val details: String = ""
 )

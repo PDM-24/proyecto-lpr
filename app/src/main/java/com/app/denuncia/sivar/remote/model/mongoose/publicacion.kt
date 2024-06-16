@@ -6,6 +6,10 @@ import com.app.denuncia.sivar.remote.model.mongoose.Image
 import com.google.gson.annotations.SerializedName
 
 data class publicacion(
+
+    @SerializedName(value = "apoyo")
+    var apoyo : List<Apoyo> = emptyList(),
+
     @SerializedName(value = "_id")
     var _id : String = "",
 
@@ -14,6 +18,9 @@ data class publicacion(
 
     @SerializedName(value = "usuario")
     var usuario : Usuario = Usuario("", Image("",""),"","","","","","","", false),
+
+    @SerializedName(value = "departamento")
+    var departamento : String = "",
 
     @SerializedName(value = "image")
     var image : Image = Image("",""),
@@ -25,8 +32,5 @@ data class publicacion(
     var date : String = "",
 
     @SerializedName(value = "state")
-    var state : String = "",
-
-    @SerializedName(value = "apoyo")
-    var apoyo : List<Apoyo> = emptyList()
+    var state : String = ""
 )

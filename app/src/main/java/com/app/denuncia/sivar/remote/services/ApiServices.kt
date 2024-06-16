@@ -10,7 +10,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface Services {
 
@@ -21,6 +20,9 @@ interface Services {
     suspend fun singup(@Body body: singup): Response<JsonResponse>
 
     @GET("verifytoken/{TokenKey}")
-    suspend fun verifytoken(@Path("TokenKey") token: String): Response<UserSession>
+    suspend fun verifyToken(@Path("TokenKey") token: String): Response<UserSession>
+
+    @GET("getcomplaints")
+    suspend fun getComplaints(): Response<List<publicacion>>
 
 }
