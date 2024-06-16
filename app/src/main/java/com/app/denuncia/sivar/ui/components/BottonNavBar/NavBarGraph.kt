@@ -47,7 +47,7 @@ fun NavBarGraph(
             CreatePostScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Filter.route){
-            FilterScreen(navController, innerPadding)
+            FilterScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Login.route){
             LoginScreen(navController, viewModel)

@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
@@ -50,17 +49,55 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.PostData
+import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
 import com.denuncia.sivar.ui.theme.gray
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Composable
-fun PostComp(post: PostData) {
+fun PostComp(post: publicacion) {
     var expanded by remember { mutableStateOf(false) }
+
+    val formatter = DateTimeFormatter.ISO_DATE_TIME
+
+
+    fun getTiempo(fecha: String): String {
+        var tiempo = ""
+
+        val fechaDada = LocalDateTime.parse(fecha, formatter)
+        val fechaActual = LocalDateTime.now()
+
+        val minutos = ChronoUnit.MINUTES.between(fechaDada, fechaActual)
+        val horas = ChronoUnit.HOURS.between(fechaDada, fechaActual)
+        val dias = ChronoUnit.DAYS.between(fechaDada, fechaActual)
+        val meses = ChronoUnit.MONTHS.between(fechaDada, fechaActual)
+        val years = ChronoUnit.YEARS.between(fechaDada, fechaActual)
+
+        tiempo = if (minutos < 60) {
+            "hace $minutos minutos"
+        } else if (horas < 24) {
+            "hace $horas horas"
+        } else if (dias < 30){
+            "hace $dias dias"
+        } else if (meses < 12){
+            "hace $meses meses"
+        } else{
+            "hace $years años"
+        }
+
+
+        return tiempo
+
+    }
+
     var rol = "admin"
     OutlinedCard(
         modifier = Modifier
@@ -76,14 +113,25 @@ fun PostComp(post: PostData) {
                 .padding(10.dp)
                 .fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = post.userImage),
-                contentDescription = "profilePhoto",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(50.dp))
-            )
+            if(post.usuario.image.url.isNotEmpty()){
+                AsyncImage(
+                    model = "https://${post.usuario.image.url.removePrefix("http://")}",
+                    contentDescription = "profilePhoto",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50.dp))
+                )
+            }else{
+                AsyncImage(
+                    model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
+                    contentDescription = "profilePhoto",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50.dp))
+                )
+            }
             Spacer(modifier = Modifier.size(10.dp))
             Column {
                 Row(
@@ -94,7 +142,7 @@ fun PostComp(post: PostData) {
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
-                            text = post.username,
+                            text = post.usuario.username,
                             fontWeight = FontWeight.Bold,
                             color = blue20,
                         )
@@ -112,8 +160,8 @@ fun PostComp(post: PostData) {
                                 modifier = Modifier
                                     .size(25.dp)
                                     .clickable {
-                                    expanded = true
-                                },
+                                        expanded = true
+                                    },
                                 imageVector = Icons.Default.MoreVert,
                                 contentDescription = "senIcon",
                                 tint = blue20
@@ -181,7 +229,7 @@ fun PostComp(post: PostData) {
                         color = gray,
                     )
                     Text(
-                        text = post.category,
+                        text = post.categoria.name,
                         color = gray,
                     )
                 }
@@ -201,7 +249,7 @@ fun PostComp(post: PostData) {
                         color = gray,
                     )
                     Text(
-                        text = post.status,
+                        text = post.state,
                         color = gray,
                     )
                 }
@@ -221,7 +269,7 @@ fun PostComp(post: PostData) {
                         color = gray,
                     )
                     Text(
-                        text = post.location,
+                        text = post.departamento,
                         color = gray,
                     )
                 }
@@ -236,24 +284,26 @@ fun PostComp(post: PostData) {
                         tint = gray
                     )
                     Text(
-                        text = post.timer,
+                        text = getTiempo(post.date),
                         color = gray,
                     )
                 }
                 Spacer(modifier = Modifier.size(2.dp))
                 Text(
-                    text = post.description,
+                    text = post.details,
                     color = blue20
                 )
                 Spacer(modifier = Modifier.size(5.dp))
-                Image(
-                    painter = painterResource(id = post.image),
-                    contentDescription = "photoDenuncia",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(15.dp))
-                )
+                if (post.image.url != "") {
+                    AsyncImage(
+                        model = "https://${post.image.url.removePrefix("http://")}",
+                        contentDescription = "photoDenuncia",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(15.dp))
+                        )
+                }
                 Spacer(modifier = Modifier.size(10.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -289,7 +339,7 @@ fun PostComp(post: PostData) {
                         contentAlignment = Alignment.Center
                     ){
                         Text(
-                            text = post.supportCount.toString(),
+                            text = post.apoyo.size.toString(),
                             fontSize = 13.sp,
                             color = colorResource(id = R.color.white),
                         )
@@ -299,23 +349,4 @@ fun PostComp(post: PostData) {
             }
         }
     }
-}
-
-@Composable
-@Preview(showSystemUi = true, showBackground = true)
-fun PostCompPreview() {
-    PostComp(
-        PostData(
-            1,
-            R.drawable.photoexample,
-            "Roberto Loza",
-            "Robo",
-            "Pendiente",
-            "San Salvador",
-            "Hace dos horas",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            R.drawable.photodenuncia,
-            5
-        )
-    )
 }

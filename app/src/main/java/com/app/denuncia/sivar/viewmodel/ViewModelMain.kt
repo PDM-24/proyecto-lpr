@@ -1,12 +1,15 @@
 package com.app.denuncia.sivar.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.denuncia.sivar.model.Denuncia
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.signup
 import com.app.denuncia.sivar.model.mongoose.Usuario
+import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.ApiProvider
+import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import com.app.denuncia.sivar.resources.Resources
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,11 +19,17 @@ import kotlinx.coroutines.launch
 class ViewModelMain : ViewModel() {
     private val apiRest = ApiProvider.repository
 
-    // Sesión del usuario
+    // Sesión
     private val _session = MutableStateFlow(false)
     val session: StateFlow<Boolean> = _session
+
+    // Token
     private val _token = MutableStateFlow("")
+
+    // Perfil
     private val _profile = MutableStateFlow(Usuario())
+    val profile: StateFlow<Usuario> = _profile
+
     private val _details = MutableStateFlow("")
     private val _stateApp = MutableStateFlow(false)
 
@@ -32,8 +41,17 @@ class ViewModelMain : ViewModel() {
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage
 
-    private val _denuncias = MutableStateFlow<List<Denuncia>>(emptyList())
-    val denuncias: StateFlow<List<Denuncia>> = _denuncias
+    // Denuncias
+    private val _denuncias = MutableStateFlow<List<publicacion>>(emptyList())
+    val denuncias: StateFlow<List<publicacion>> = _denuncias
+
+    //Departamento
+    private val _categorias = MutableStateFlow<List<Categoria>>(emptyList())
+    val categorias: StateFlow<List<Categoria>> = _categorias
+
+    init {
+        getComplainst()
+    }
 
 
     fun verifyToken() {
@@ -107,6 +125,27 @@ class ViewModelMain : ViewModel() {
                 _details.value = e.message.toString()
                 _stateApp.value = false
                 _signUpState.value = false
+            }
+        }
+    }
+
+    private fun getComplainst(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when (val response = apiRest.getComplaints()) {
+                    is Resources.Success -> {
+                        _denuncias.value = response.data
+                        _denuncias.value.forEach {
+                            Log.d("DENUNCIAS", it.toString())
+                        }
+                    }
+                    is Resources.Error -> {
+                        setErrorMessage(response.message)
+                    }
+                }
+            }catch (e: Exception){
+                setErrorMessage(e.message.toString())
+                Log.d("ERROR", e.message.toString())
             }
         }
     }
