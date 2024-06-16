@@ -53,6 +53,10 @@ class ViewModelMain : ViewModel() {
         getComplainst()
     }
 
+    fun getUserDenuncias(): List<publicacion> {
+        return _denuncias.value.filter { it.usuario._id == _profile.value._id }
+    }
+
 
     fun verifyToken() {
         viewModelScope.launch(Dispatchers.IO) {
