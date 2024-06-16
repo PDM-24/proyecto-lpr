@@ -20,6 +20,6 @@ interface Services {
     @POST("signup")
     suspend fun signup(@Body body: signup): Response<JsonResponse>
 
-    @GET("verifytoken")
+    @GET("verifytoken/{TokenKey}")
     suspend fun verifytoken(@Path("TokenKey") token: String): Response<UserSession>
 }

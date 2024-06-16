@@ -32,7 +32,7 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun signup(data: signup): Resources<JsonResponse> {
+    override suspend fun signUp(data: signup): Resources<JsonResponse> {
         try {
             val response = service.signup(data)
             if(response.isSuccessful){
@@ -51,7 +51,7 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun verifytoken(token: String): Resources<UserSession> {
+    override suspend fun verifyToken(token: String): Resources<UserSession> {
         try {
             val response = service.verifytoken(token)
             if(response.isSuccessful){
