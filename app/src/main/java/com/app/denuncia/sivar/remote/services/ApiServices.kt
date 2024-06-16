@@ -2,6 +2,7 @@ package com.app.denuncia.sivar.remote.services
 
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
 import com.app.denuncia.sivar.remote.model.UserSession
