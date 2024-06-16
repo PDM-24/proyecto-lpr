@@ -19,10 +19,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,9 +39,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.login.ui.PasswordLogin
@@ -44,13 +52,44 @@ import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
+import kotlinx.coroutines.delay
 
 
 @Composable
-fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
-
+fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
     val usernameState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    val isLoading = remember { mutableStateOf(false) }
+    val loginState by viewModel.session.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val showDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(loginState) {
+        if (loginState) {
+            isLoading.value = false
+            navController.navigate(route = ScreenRoute.Home.route) {
+                popUpTo(ScreenRoute.Login.route) { inclusive = true }
+            }
+        }
+    }
+
+    LaunchedEffect(errorMessage) {
+        if (errorMessage.isNotEmpty()) {
+            isLoading.value = false
+            showDialog.value = true
+        }
+    }
+
+    LaunchedEffect(isLoading.value) {
+        if (isLoading.value) {
+            delay(5000)
+            if (isLoading.value) {
+                isLoading.value = false
+                viewModel.setErrorMessage("Usuario o contraseña incorrectos. Intente de nuevo o verfifique su conexion a internet.")
+                showDialog.value = true
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -66,13 +105,13 @@ fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.35f),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.logowhite),
                     contentDescription = "Logo Denuncia Sivar",
                     modifier = Modifier
                         .size(width = 200.dp, height = 200.dp),
-                        contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Fit
                 )
             }
             Column(
@@ -83,10 +122,9 @@ fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
                     .padding(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(isSmallScreenHeight()){
+                if (isSmallScreenHeight()) {
                     Spacer(modifier = Modifier.fillMaxSize(0.05f))
-                }
-                else{
+                } else {
                     Spacer(modifier = Modifier.fillMaxSize(0.1f))
                 }
                 Text(
@@ -96,18 +134,16 @@ fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
                     color = blue20,
                     fontSize = 25.sp
                 )
-                if(isSmallScreenHeight()){
+                if (isSmallScreenHeight()) {
                     Spacer(modifier = Modifier.fillMaxSize(0.05f))
-                }
-                else{
+                } else {
                     Spacer(modifier = Modifier.fillMaxSize(0.1f))
                 }
                 MyTextField(
                     modifier = Modifier,
                     placeholder = "Nombre de usuario:",
                     value = usernameState.value,
-                    onValueChange = {
-                            updateString ->
+                    onValueChange = { updateString ->
                         usernameState.value = updateString
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -120,8 +156,7 @@ fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
                     modifier = Modifier,
                     placeholder = "Contraseña:",
                     value = passwordState.value,
-                    onValueChange = {
-                            updateString ->
+                    onValueChange = { updateString ->
                         passwordState.value = updateString
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -129,16 +164,15 @@ fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
                     iconResId = R.drawable.password
                 )
                 Spacer(modifier = Modifier.height(50.dp))
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Row(
                         modifier = Modifier,
-
                     ) {
                         Image(
                             painter = painterResource(R.drawable.adduser),
@@ -160,32 +194,59 @@ fun LoginScreen(navController: NavController,  viewModel: ViewModelMain) {
                             fontFamily = IstokWebFamily,
                             textDecoration = TextDecoration.Underline,
                             color = blue20,
-
                         )
                     }
                     Button(
                         onClick = {
-                            viewModel.loginUser(username = usernameState.value, password = passwordState.value)
-                            if(viewModel.session.value){
-                                navController.navigate(route = ScreenRoute.Home.route)
-                            }
+                            isLoading.value = true
+                            viewModel.loginUser(usernameState.value, passwordState.value)
                         },
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(120.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = blue20),
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(20.dp),
+                        enabled = !isLoading.value
                     ) {
-                        Text(
-                            text = "Login",
-                            modifier = Modifier,
-                            color = blue100,
-                            fontFamily = IstokWebFamily,
-                        )
+                        if (isLoading.value) {
+                            CircularProgressIndicator(
+                                color = blue100,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Login",
+                                color = blue100,
+                                fontFamily = IstokWebFamily,
+                            )
+                        }
                     }
                 }
             }
         }
-   }
+
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = { Text(text = "Error") },
+                text = { Text(text = errorMessage, fontSize = 17.sp) },
+                confirmButton = {
+                    Button(
+                        onClick = { showDialog.value = false }
+                    ) {
+                        Text(text = "OK", color = blue20)
+                    }
+                }
+            )
+        }
+    }
+}
+
+
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(navController = rememberNavController(), viewModel = ViewModelMain())
 }
 

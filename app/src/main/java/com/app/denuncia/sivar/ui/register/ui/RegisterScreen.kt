@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
@@ -164,7 +165,6 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                     label = "Fecha de nacimiento: ",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     keyboardActions = KeyboardActions.Default,
-                    iconResIdDate = R.drawable.user
                 )
                 Spacer(modifier = Modifier.height(2.dp))
 
@@ -205,4 +205,10 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
             }
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewRegisterScreen(){
+    RegisterScreen(rememberNavController(), viewModel = ViewModelMain())
 }
