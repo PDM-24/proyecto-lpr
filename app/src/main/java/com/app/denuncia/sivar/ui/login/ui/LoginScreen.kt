@@ -1,6 +1,6 @@
 package com.denuncia.sivar.ui.login.ui
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,12 +28,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,41 +54,47 @@ import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
+
+    val context = LocalContext.current
+
     val usernameState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
-    val isLoading = remember { mutableStateOf(false) }
-    val loginState by viewModel.session.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    val isLoading by viewModel.loading.collectAsState()
+    val loginState by viewModel.loginState.collectAsState()
+
+    val error by viewModel.errorRequest.collectAsState()
+    val detailsError by viewModel.detailsErrorRequest.collectAsState()
+
     val showDialog = remember { mutableStateOf(false) }
 
-    LaunchedEffect(loginState) {
-        if (loginState) {
-            isLoading.value = false
-            navController.navigate(route = ScreenRoute.Home.route) {
-                popUpTo(ScreenRoute.Login.route) { inclusive = true }
-            }
-        }
-    }
+    val launchLogin = remember {mutableStateOf(false)}
 
-    LaunchedEffect(errorMessage) {
-        if (errorMessage.isNotEmpty()) {
-            isLoading.value = false
-            showDialog.value = true
-        }
-    }
 
-    LaunchedEffect(isLoading.value) {
-        if (isLoading.value) {
-            delay(5000)
-            if (isLoading.value) {
-                isLoading.value = false
-                viewModel.setErrorMessage("Usuario o contraseña incorrectos. Intente de nuevo o verfifique su conexion a internet.")
-                showDialog.value = true
+    if(launchLogin.value){
+        if(!isLoading){
+            if (loginState) {
+                navController.navigate(ScreenRoute.Home.route) {
+                    popUpTo(ScreenRoute.Login.route) { inclusive = true }
+                }
+                launchLogin.value = false
+            }else{
+                if (error) {
+                    showDialog.value = true
+                    launchLogin.value = false
+                }else{
+                    Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                    launchLogin.value = false
+                }
             }
         }
     }
@@ -198,20 +206,20 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                     }
                     Button(
                         onClick = {
-                            isLoading.value = true
-                            viewModel.loginUser(
-                                usernameState.value,
-                                passwordState.value
-                            )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModel.loginUser(usernameState.value, passwordState.value)
+                                delay(1000)
+                                launchLogin.value = true
+                            }
                         },
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(120.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = blue20),
                         shape = RoundedCornerShape(20.dp),
-                        enabled = !isLoading.value
+                        enabled = !isLoading
                     ) {
-                        if (isLoading.value) {
+                        if (isLoading) {
                             CircularProgressIndicator(
                                 color = blue100,
                                 modifier = Modifier.size(20.dp)
@@ -232,7 +240,7 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
             AlertDialog(
                 onDismissRequest = { showDialog.value = false },
                 title = { Text(text = "Error") },
-                text = { Text(text = errorMessage, fontSize = 17.sp) },
+                text = { Text(text = detailsError, fontSize = 17.sp) },
                 confirmButton = {
                     Button(
                         onClick = { showDialog.value = false }
@@ -244,6 +252,7 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
         }
     }
 }
+
 
 
 

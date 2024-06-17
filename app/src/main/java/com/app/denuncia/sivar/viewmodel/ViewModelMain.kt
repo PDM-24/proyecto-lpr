@@ -1,9 +1,9 @@
 package com.app.denuncia.sivar.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.denuncia.sivar.model.Denuncia
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
@@ -19,6 +19,9 @@ import kotlinx.coroutines.launch
 class ViewModelMain : ViewModel() {
     private val apiRest = ApiProvider.repository
 
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+
     // Sesión
     private val _session = MutableStateFlow(false)
     val session: StateFlow<Boolean> = _session
@@ -30,16 +33,21 @@ class ViewModelMain : ViewModel() {
     private val _profile = MutableStateFlow(Usuario())
     val profile: StateFlow<Usuario> = _profile
 
-    private val _details = MutableStateFlow("")
-    private val _stateApp = MutableStateFlow(false)
+    //Errores en las solicitudes de las api
+    private val _errorRequest = MutableStateFlow(false)
+    val errorRequest: StateFlow<Boolean> = _errorRequest
+
+    private val _detailsErrorRequest = MutableStateFlow("")
+    val detailsErrorRequest: StateFlow<String> = _detailsErrorRequest
+
 
     // Estado de registro
     private val _singUpState = MutableStateFlow(false)
     val singUpState: StateFlow<Boolean> = _singUpState
 
-    // Mensaje de error
-    private val _errorMessage = MutableStateFlow("")
-    val errorMessage: StateFlow<String> = _errorMessage
+    //Estado del login
+    private val _loginState = MutableStateFlow(false)
+    val loginState: StateFlow<Boolean> = _loginState
 
     // Denuncias
     private val _denuncias = MutableStateFlow<List<publicacion>>(emptyList())
@@ -48,6 +56,7 @@ class ViewModelMain : ViewModel() {
     //Departamento
     private val _categorias = MutableStateFlow<List<Categoria>>(emptyList())
     val categorias: StateFlow<List<Categoria>> = _categorias
+
 
     init {
         getComplainst()
@@ -67,91 +76,93 @@ class ViewModelMain : ViewModel() {
                         _profile.value = response.data.usuario!!
                     }
                     is Resources.Error -> {
-                        _stateApp.value = false
-                        _details.value = response.message
+                        _session.value = false
+                        _detailsErrorRequest.value = response.message
                     }
                 }
             } catch (e: Exception) {
-                _details.value = e.message.toString()
-                _stateApp.value = false
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _session.value = false
             }
         }
     }
 
     fun loginUser(username: String, password: String) {
+        _loading.value = true
         val body = login(username, password)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 when (val response = apiRest.login(body)) {
                     is Resources.Success -> {
                         _token.value = response.data.token
-                        _stateApp.value = response.data.state
-                        _errorMessage.value = ""
+                        _loginState.value = response.data.state
+                        _errorRequest.value = false
                         verifyToken()
                     }
                     is Resources.Error -> {
-                        _details.value = response.message
-                        _stateApp.value = false
-                        _errorMessage.value = "Nombre de usuario o contraseña incorrectos"
+                        _detailsErrorRequest.value = "Error al iniciar sesión ${response.message}"
+                        _errorRequest.value = true
+                        _loginState.value = false
                         _session.value = false
                     }
                 }
+                _loading.value = false
             } catch (e: Exception) {
-                _details.value = e.message.toString()
-                _stateApp.value = false
-                _errorMessage.value = "Error de conexión. Por favor, inténtalo de nuevo."
+                _detailsErrorRequest.value = e.message.toString()
+                _loginState.value = false
                 _session.value = false
+                _loading.value = false
+                _errorRequest.value = true
             }
         }
     }
 
-    fun setErrorMessage(message: String) {
-        _errorMessage.value = message
-    }
-
-    fun singUp(
-        username: String, name: String, surname: String, email: String, birthdate: String, pass: String, rol: String
-    ) {
+    fun singUp(username: String, name: String, surname: String, email: String, birthdate: String, pass: String, rol: String) {
+        _loading.value = true
         val body = singup(username, name, surname, email, birthdate, pass, rol)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                when (val response = apiRest.singUp(body)) {
-                    is Resources.Success -> {
-                        _details.value = response.data.details
-                        _stateApp.value = response.data.state
-                        _singUpState.value = true
-                    }
-                    is Resources.Error -> {
-                        _details.value = response.message
-                        _stateApp.value = false
-                        _singUpState.value = false
-                    }
+                val response = apiRest.singUp(body)
+                if (response is Resources.Success) {
+                    _singUpState.value = true
+                    _errorRequest.value = false
+                }else if (response is Resources.Error){
+                    _detailsErrorRequest.value = response.message
+                    _singUpState.value = false
+                    _errorRequest.value = true
                 }
+                _loading.value = false
+                Log.i("Registro", "singUp: ${_singUpState.value}")
             } catch (e: Exception) {
-                _details.value = e.message.toString()
-                _stateApp.value = false
+                _detailsErrorRequest.value = e.message.toString()
                 _singUpState.value = false
+                _errorRequest.value = true
+                _loading.value = false
             }
+
         }
     }
 
     private fun getComplainst(){
+        _loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 when (val response = apiRest.getComplaints()) {
                     is Resources.Success -> {
                         _denuncias.value = response.data
-                        _denuncias.value.forEach {
-                            Log.d("DENUNCIAS", it.toString())
-                        }
+                        _errorRequest.value = false
                     }
                     is Resources.Error -> {
-                        setErrorMessage(response.message)
+                        _errorRequest.value = true
+                        _detailsErrorRequest.value = response.message
                     }
                 }
+                _loading.value = false
             }catch (e: Exception){
-                setErrorMessage(e.message.toString())
-                Log.d("ERROR", e.message.toString())
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _loading.value = false
             }
         }
     }
