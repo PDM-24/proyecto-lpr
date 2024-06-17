@@ -190,9 +190,7 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                     }
                     Button(
                         onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                viewModel.loginUser(usernameState.value, passwordState.value)
-                            }
+                            viewModel.loginUser(usernameState.value, passwordState.value)
                             if(!loginState){
                                 if (error) {
                                     showDialog.value = true

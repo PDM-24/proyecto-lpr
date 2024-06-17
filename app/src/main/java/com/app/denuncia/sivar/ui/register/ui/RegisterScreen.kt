@@ -225,17 +225,15 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                     ){
                         Button(
                             onClick = {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.singUp(
-                                        usernameState.value,
-                                        nameState.value,
-                                        surnameState.value,
-                                        emailState.value,
-                                        birthdateState.value,
-                                        passwordState.value,
-                                        rolState.value
-                                    )
-                                }
+                                viewModel.singUp(
+                                    usernameState.value,
+                                    nameState.value,
+                                    surnameState.value,
+                                    emailState.value,
+                                    birthdateState.value,
+                                    passwordState.value,
+                                    rolState.value
+                                )
                               if(!signUpState){
                                   if(error){
                                       showDialog.value = true
