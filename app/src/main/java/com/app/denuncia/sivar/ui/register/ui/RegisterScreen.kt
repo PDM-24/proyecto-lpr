@@ -238,7 +238,7 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                                 }
                               if(!signUpState){
                                   if(error){
-                                      Toast.makeText(context, detailsErrorRequest, Toast.LENGTH_SHORT).show()
+                                      showDialog.value = true
                                   }else{
                                       Toast.makeText(context, "Usuario o correo ya existen en la base de datos", Toast.LENGTH_SHORT).show()
                                   }
