@@ -75,10 +75,26 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
 
     val showDialog = remember { mutableStateOf(false) }
 
-    LaunchedEffect(loginState) {
-        if (loginState) {
-            navController.navigate(ScreenRoute.Home.route) {
-                popUpTo(ScreenRoute.Login.route) { inclusive = true }
+    val launchLogin = remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(launchLogin.value) {
+        if(launchLogin.value){
+            viewModel.loginUser(usernameState.value, passwordState.value)
+            if (loginState) {
+                launchLogin.value = false
+                navController.navigate(ScreenRoute.Home.route) {
+                    popUpTo(ScreenRoute.Login.route) { inclusive = true }
+                }
+            }else{
+                if (error) {
+                    launchLogin.value = false
+                    showDialog.value = true
+                }else{
+                    launchLogin.value = false
+                    Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -190,16 +206,11 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                     }
                     Button(
                         onClick = {
-                            viewModel.loginUser(usernameState.value, passwordState.value)
-                            if(!loginState){
-                                if (error) {
-                                    showDialog.value = true
-                                }else{
-                                    Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-                                }
-                            }
+                            launchLogin.value = true
                         },
-                        modifier = Modifier.fillMaxHeight().width(120.dp),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(120.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = blue20),
                         shape = RoundedCornerShape(20.dp),
                         enabled = !isLoading

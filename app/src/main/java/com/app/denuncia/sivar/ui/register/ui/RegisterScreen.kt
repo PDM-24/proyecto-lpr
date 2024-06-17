@@ -68,11 +68,11 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
     val birthdateState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
 
-    val isLoading by viewModel.loading.collectAsState()
+    val isLoading = viewModel.loading.collectAsState().value
     val signUpState = viewModel.singUpState.collectAsState().value
 
-    val error by viewModel.errorRequest.collectAsState()
-    val detailsErrorRequest by viewModel.detailsErrorRequest.collectAsState()
+    val error = viewModel.errorRequest.collectAsState().value
+    val detailsErrorRequest = viewModel.detailsErrorRequest.collectAsState().value
 
     val showDialog = remember { mutableStateOf(false) }
 
@@ -80,13 +80,25 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
 
     val context = LocalContext.current
 
-    LaunchedEffect(signUpState){
-        if(signUpState){
-            showDialog.value = false
-            Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-            navController.navigate(ScreenRoute.Login.route){
-                popUpTo(ScreenRoute.Register.route){inclusive = true}
+    val launchSignUp = remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(launchSignUp.value){
+        if(launchSignUp.value){
+            if(error){
+                showDialog.value = true
+            }else{
+                if(signUpState){
+                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    navController.navigate(ScreenRoute.Login.route){
+                        popUpTo(ScreenRoute.Register.route){inclusive = true}
+                    }
+                }else{
+                    Toast.makeText(context, "Error al registrarse", Toast.LENGTH_SHORT).show()
+                }
             }
+            launchSignUp.value = false
         }
     }
 
@@ -225,22 +237,8 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                     ){
                         Button(
                             onClick = {
-                                viewModel.singUp(
-                                    usernameState.value,
-                                    nameState.value,
-                                    surnameState.value,
-                                    emailState.value,
-                                    birthdateState.value,
-                                    passwordState.value,
-                                    rolState.value
-                                )
-                              if(!signUpState){
-                                  if(error){
-                                      showDialog.value = true
-                                  }else{
-                                      Toast.makeText(context, "Usuario o correo ya existen en la base de datos", Toast.LENGTH_SHORT).show()
-                                  }
-                              }
+                                viewModel.singUp(usernameState.value,nameState.value,surnameState.value,emailState.value,birthdateState.value,passwordState.value,rolState.value)
+                                launchSignUp.value = true
                             },
                             modifier = Modifier
                                 .fillMaxHeight()

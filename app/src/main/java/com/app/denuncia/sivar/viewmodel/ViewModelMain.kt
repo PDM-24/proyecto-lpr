@@ -123,24 +123,24 @@ class ViewModelMain : ViewModel() {
         val body = singup(username, name, surname, email, birthdate, pass, rol)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                when (val response = apiRest.singUp(body)) {
-                    is Resources.Success -> {
-                        _singUpState.value = response.data.state
-                        _errorRequest.value = false
-                    }
-                    is Resources.Error -> {
-                        _errorRequest.value = true
-                        _detailsErrorRequest.value = response.message
-                        _singUpState.value = false
-                    }
+                val response = apiRest.singUp(body)
+                if (response is Resources.Success) {
+                    _singUpState.value = true
+                    _errorRequest.value = false
+                }else if (response is Resources.Error){
+                    _detailsErrorRequest.value = response.message
+                    _singUpState.value = false
+                    _errorRequest.value = true
                 }
                 _loading.value = false
+                Log.i("Registro", "singUp: ${_singUpState.value}")
             } catch (e: Exception) {
                 _detailsErrorRequest.value = e.message.toString()
                 _singUpState.value = false
                 _errorRequest.value = true
                 _loading.value = false
             }
+
         }
     }
 
