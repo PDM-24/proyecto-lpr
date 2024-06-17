@@ -70,19 +70,23 @@ fun PostComp(post: publicacion) {
         val inicio = LocalDateTime.parse(fecha, formatter)
         val fin = LocalDateTime.now()
 
+        val segundos = ChronoUnit.SECONDS.between(inicio, fin)
         val minutes = ChronoUnit.MINUTES.between(inicio, fin)
         val horas = ChronoUnit.HOURS.between(inicio, fin)
         val dias = ChronoUnit.DAYS.between(inicio, fin)
         val mounths = ChronoUnit.MONTHS.between(inicio, fin)
         val years = ChronoUnit.YEARS.between(inicio, fin)
 
-        return if (minutes < 60) {
+        return if(segundos < 60){
+            "hace $segundos segundos"
+        }
+        else if (minutes < 60 ) {
             "hace $minutes minutos"
-        } else if (horas < 24 && minutes > 60) {
+        } else if (horas < 24) {
             "hace $horas horas"
-        }else if(dias < 30 && horas > 24){
+        }else if(dias < 30 ){
             "hace $dias dias"
-        }else if(mounths < 12 && dias > 30){
+        }else if(mounths < 12){
             "hace $mounths meses"
         }else{
             "hace $years años"
