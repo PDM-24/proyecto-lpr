@@ -87,7 +87,6 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
                 exitDialog = false
             },
             onConfirm = {
-                // Add logic here to handle session closure
                 exitDialog = false
                 toastMessage = "Sesión cerrada"
                 showToast = true
