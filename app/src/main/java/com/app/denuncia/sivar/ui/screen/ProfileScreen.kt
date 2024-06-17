@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
@@ -62,10 +65,13 @@ import com.denuncia.sivar.ui.theme.blue80
 
 @Composable
 fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
-    var mail by remember { mutableStateOf("john@hotmail.com") }
-    var username by remember { mutableStateOf("John") }
-    var firstName by remember { mutableStateOf("John Estefano") }
-    var lastName by remember { mutableStateOf("Canizales Montenegro") }
+
+    val profile = viewModel.profile.collectAsState().value
+
+    var mail by remember { mutableStateOf(profile.email) }
+    var username by remember { mutableStateOf(profile.username) }
+    var firstName by remember { mutableStateOf(profile.name) }
+    var lastName by remember { mutableStateOf(profile.surname) }
     var password by remember { mutableStateOf("") }
     var exitDialog by remember { mutableStateOf(false) }
     var editDialog by remember { mutableStateOf(false) }
@@ -119,7 +125,7 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
 
     Column {
         TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = false)
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
@@ -127,98 +133,112 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            OutlinedCard(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .padding(16.dp)
-                    .wrapContentHeight(),
-                colors = CardDefaults.cardColors(containerColor = blue100),
-                border = BorderStroke(2.dp, blue50),
-                shape = RoundedCornerShape(20.dp),
-            ) {
-                Column(
+            item {
+                OutlinedCard(
                     modifier = Modifier
+                        .fillMaxWidth(0.9f)
                         .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .wrapContentHeight(),
+                    colors = CardDefaults.cardColors(containerColor = blue100),
+                    border = BorderStroke(2.dp, blue50),
+                    shape = RoundedCornerShape(20.dp),
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logowhite),
-                        contentDescription = "Logo",
+                    Column(
                         modifier = Modifier
-                            .size(width = 100.dp, height = 100.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.photoexample),
-                        contentDescription = "profile picture",
-                        modifier = Modifier
-                            .size(150.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "¡Bienvenido ${username}!",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = blue20,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = mail,
-                        textDecoration = TextDecoration.Underline,
-                        fontSize = 16.sp,
-                        color = blue20,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = firstName,
-                        fontSize = 16.sp,
-                        color = blue20,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = lastName,
-                        fontSize = 16.sp,
-                        color = blue20,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { editDialog = true },
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = blue80
-                        )
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Icon",
-                            tint = blue20
+                        Image(
+                            painter = painterResource(id = R.drawable.logowhite),
+                            contentDescription = "Logo",
+                            modifier = Modifier
+                                .size(width = 100.dp, height = 100.dp),
+                            contentScale = ContentScale.Fit
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Editar tu perfil", color = blue20)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { exitDialog = true }, // Toggle the exit dialog state to show it
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = blue20
+                        Spacer(modifier = Modifier.height(8.dp))
+                        if(profile.image.url.isNotEmpty()){
+                            AsyncImage(
+                                model = "https://${profile.image.url.removePrefix("http://")}",
+                                contentDescription = "profile picture",
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        }else{
+                            AsyncImage(
+                                model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
+                                contentDescription = "profile picture",
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "¡Bienvenido ${username}!",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = blue20,
                         )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ExitToApp,
-                            contentDescription = "Close session Icon",
-                            tint = blue80
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = mail,
+                            textDecoration = TextDecoration.Underline,
+                            fontSize = 16.sp,
+                            color = blue20,
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Cerrar sesión", color = blue80)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = firstName,
+                            fontSize = 16.sp,
+                            color = blue20,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = lastName,
+                            fontSize = 16.sp,
+                            color = blue20,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { editDialog = true },
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = blue80
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit Icon",
+                                tint = blue20
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Editar tu perfil", color = blue20)
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { exitDialog = true }, // Toggle the exit dialog state to show it
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = blue20
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ExitToApp,
+                                contentDescription = "Close session Icon",
+                                tint = blue80
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Cerrar sesión", color = blue80)
+                        }
                     }
                 }
+
             }
         }
     }
@@ -230,9 +250,7 @@ fun ExitDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
         onDismissRequest = onDismiss, // Here we expect to pass a lambda that does nothing
         confirmButton = {
             Button(
-                onClick =
-
-                onConfirm,
+                onClick = onConfirm,
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = blue20
