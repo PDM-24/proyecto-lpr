@@ -41,17 +41,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
-import com.app.denuncia.sivar.model.PostData
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -70,32 +67,26 @@ fun PostComp(post: publicacion) {
 
 
     fun getTiempo(fecha: String): String {
-        var tiempo = ""
+        val inicio = LocalDateTime.parse(fecha, formatter)
+        val fin = LocalDateTime.now()
 
-        val fechaDada = LocalDateTime.parse(fecha, formatter)
-        val fechaActual = LocalDateTime.now()
+        val minutes = ChronoUnit.MINUTES.between(inicio, fin)
+        val horas = ChronoUnit.HOURS.between(inicio, fin)
+        val dias = ChronoUnit.DAYS.between(inicio, fin)
+        val mounths = ChronoUnit.MONTHS.between(inicio, fin)
+        val years = ChronoUnit.YEARS.between(inicio, fin)
 
-        val minutos = ChronoUnit.MINUTES.between(fechaDada, fechaActual)
-        val horas = ChronoUnit.HOURS.between(fechaDada, fechaActual)
-        val dias = ChronoUnit.DAYS.between(fechaDada, fechaActual)
-        val meses = ChronoUnit.MONTHS.between(fechaDada, fechaActual)
-        val years = ChronoUnit.YEARS.between(fechaDada, fechaActual)
-
-        tiempo = if (minutos < 60) {
-            "hace $minutos minutos"
-        } else if (horas < 24) {
+        return if (minutes < 60) {
+            "hace $minutes minutos"
+        } else if (horas < 24 && minutes > 60) {
             "hace $horas horas"
-        } else if (dias < 30){
+        }else if(dias < 30 && horas > 24){
             "hace $dias dias"
-        } else if (meses < 12){
-            "hace $meses meses"
-        } else{
+        }else if(mounths < 12 && dias > 30){
+            "hace $mounths meses"
+        }else{
             "hace $years años"
         }
-
-
-        return tiempo
-
     }
 
     var rol = "admin"
