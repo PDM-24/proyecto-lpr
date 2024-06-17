@@ -55,6 +55,7 @@ import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -68,37 +69,37 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
     val birthdateState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
 
-    val isLoading = viewModel.loading.collectAsState().value
-    val signUpState = viewModel.singUpState.collectAsState().value
+    val isLoading by viewModel.loading.collectAsState()
+    val signUpState by viewModel.singUpState.collectAsState()
 
-    val error = viewModel.errorRequest.collectAsState().value
-    val detailsErrorRequest = viewModel.detailsErrorRequest.collectAsState().value
+    val error by viewModel.errorRequest.collectAsState()
+    val detailsErrorRequest by viewModel.detailsErrorRequest.collectAsState()
 
-    val showDialog = remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     val rolState = remember { mutableStateOf("Usuario") }
 
     val context = LocalContext.current
 
-    val launchSignUp = remember {
-        mutableStateOf(false)
-    }
+    var launchSignUp by remember {mutableStateOf(false)}
 
-    LaunchedEffect(launchSignUp.value){
-        if(launchSignUp.value){
-            if(error){
-                showDialog.value = true
+    if(launchSignUp){
+        if(!isLoading){
+            if(signUpState){
+                Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                navController.navigate(ScreenRoute.Login.route){
+                    popUpTo(ScreenRoute.Register.route){inclusive = true}
+                }
+                launchSignUp = false
             }else{
-                if(signUpState){
-                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    navController.navigate(ScreenRoute.Login.route){
-                        popUpTo(ScreenRoute.Register.route){inclusive = true}
-                    }
+                if(error){
+                    showDialog = true
+                    launchSignUp = false
                 }else{
                     Toast.makeText(context, "Error al registrarse", Toast.LENGTH_SHORT).show()
+                    launchSignUp = false
                 }
             }
-            launchSignUp.value = false
         }
     }
 
@@ -237,8 +238,11 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                     ){
                         Button(
                             onClick = {
-                                viewModel.singUp(usernameState.value,nameState.value,surnameState.value,emailState.value,birthdateState.value,passwordState.value,rolState.value)
-                                launchSignUp.value = true
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.singUp(usernameState.value,nameState.value,surnameState.value,emailState.value,birthdateState.value,passwordState.value,rolState.value)
+                                    delay(1000)
+                                    launchSignUp = true
+                                }
                             },
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -263,14 +267,14 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
             }
         }
 
-        if (showDialog.value) {
+        if (showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog.value = false },
+                onDismissRequest = { showDialog = false },
                 title = { Text(text = "Error") },
                 text = { Text(text = detailsErrorRequest, fontSize = 17.sp) },
                 confirmButton = {
                     Button(
-                        onClick = { showDialog.value = false }
+                        onClick = { showDialog = false }
                     ) {
                         Text(text = "OK", color = blue20)
                     }

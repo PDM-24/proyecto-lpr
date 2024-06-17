@@ -56,6 +56,8 @@ import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue80
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -75,25 +77,23 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
 
     val showDialog = remember { mutableStateOf(false) }
 
-    val launchLogin = remember {
-        mutableStateOf(false)
-    }
+    val launchLogin = remember {mutableStateOf(false)}
 
-    LaunchedEffect(launchLogin.value) {
-        if(launchLogin.value){
-            viewModel.loginUser(usernameState.value, passwordState.value)
+
+    if(launchLogin.value){
+        if(!isLoading){
             if (loginState) {
-                launchLogin.value = false
                 navController.navigate(ScreenRoute.Home.route) {
                     popUpTo(ScreenRoute.Login.route) { inclusive = true }
                 }
+                launchLogin.value = false
             }else{
                 if (error) {
-                    launchLogin.value = false
                     showDialog.value = true
-                }else{
                     launchLogin.value = false
+                }else{
                     Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                    launchLogin.value = false
                 }
             }
         }
@@ -206,7 +206,11 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                     }
                     Button(
                         onClick = {
-                            launchLogin.value = true
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModel.loginUser(usernameState.value, passwordState.value)
+                                delay(1000)
+                                launchLogin.value = true
+                            }
                         },
                         modifier = Modifier
                             .fillMaxHeight()

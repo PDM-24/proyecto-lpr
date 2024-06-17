@@ -97,14 +97,14 @@ class ViewModelMain : ViewModel() {
                     is Resources.Success -> {
                         _token.value = response.data.token
                         _loginState.value = response.data.state
-                        verifyToken()
                         _errorRequest.value = false
+                        verifyToken()
                     }
                     is Resources.Error -> {
                         _detailsErrorRequest.value = "Error al iniciar sesión ${response.message}"
+                        _errorRequest.value = true
                         _loginState.value = false
                         _session.value = false
-                        _errorRequest.value = true
                     }
                 }
                 _loading.value = false
