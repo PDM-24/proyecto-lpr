@@ -27,8 +27,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,12 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +51,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
@@ -62,66 +59,65 @@ import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
 
-
 @Composable
-fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
-
+fun ProfileScreen(
+    navController: NavHostController,
+    innerPadding: PaddingValues,
+    viewModel: ViewModelMain
+) {
+    //MAIN VIEW MODEL
     val profile = viewModel.profile.collectAsState().value
-
-    var mail by remember { mutableStateOf(profile.email) }
-    var username by remember { mutableStateOf(profile.username) }
-    var firstName by remember { mutableStateOf(profile.name) }
-    var lastName by remember { mutableStateOf(profile.surname) }
-    var password by remember { mutableStateOf("") }
+    //VARIABLES FROM VIEW MODEL
+    val mail by remember { mutableStateOf(profile.email) }
+    val username by remember { mutableStateOf(profile.username) }
+    val firstName by remember { mutableStateOf(profile.name) }
+    val lastName by remember { mutableStateOf(profile.surname) }
+    //STATES
     var exitDialog by remember { mutableStateOf(false) }
-    var editDialog by remember { mutableStateOf(false) }
-
+    //TOAST
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
-
     val context = LocalContext.current
-    // LaunchedEffect to show toast based on state changes
     LaunchedEffect(showToast) {
         if (showToast) {
             Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
             showToast = false // Reset toast state
         }
     }
+    //NAVIGATION
+    val launchLogin = remember { mutableStateOf(false) }
+    val launchEditProfile = remember { mutableStateOf(false) }
+    //NAV to Login
+    if (launchLogin.value) {
+        navController.navigate(ScreenRoute.Login.route) {
+            popUpTo(ScreenRoute.Profile.route) { inclusive = true }
+        }
+        launchLogin.value = false
+    }
+    //NAV to EditProfile
+    if (launchEditProfile.value) {
+        navController.navigate(ScreenRoute.EditProfile.route) {
+            popUpTo(ScreenRoute.Profile.route) { inclusive = true }
+        }
+        launchEditProfile.value = false
+    }
+    //DIALOGS
     if (exitDialog) {
         ExitDialog(
             onDismiss = {
                 exitDialog = false
             },
             onConfirm = {
+                //TO-DO: CLEAR TOKEN FROM DATA STORE
+                //NAVIGATION
                 exitDialog = false
                 toastMessage = "Sesión cerrada"
                 showToast = true
-                //Ir a Login Screen & borrar token
+                launchLogin.value = true
             }
         )
     }
-
-    if (editDialog) {
-        EditProfileDialog(
-            mail = mail,
-            username = username,
-            firstName = firstName,
-            lastName = lastName,
-            password = password,
-            onDismiss = { editDialog = false },
-            onConfirm = { newMail, newUsername, newFirstName, newLastName, newPassword ->
-                mail = newMail
-                username = newUsername
-                firstName = newFirstName
-                lastName = newLastName
-                password = newPassword
-                editDialog = false
-                toastMessage = "Perfil actualizado"
-                showToast = true
-            }
-        )
-    }
-
+    //VIEW
     Column {
         TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = false)
         LazyColumn(
@@ -135,7 +131,7 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
             item {
                 OutlinedCard(
                     modifier = Modifier
-                        .fillMaxWidth(0.9f)
+                        .fillMaxWidth()
                         .padding(16.dp)
                         .wrapContentHeight(),
                     colors = CardDefaults.cardColors(containerColor = blue100),
@@ -156,7 +152,7 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
                             contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        if(profile.image.url.isNotEmpty()){
+                        if (profile.image.url.isNotEmpty()) {
                             AsyncImage(
                                 model = "https://${profile.image.url.removePrefix("http://")}",
                                 contentDescription = "profile picture",
@@ -165,7 +161,7 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop
                             )
-                        }else{
+                        } else {
                             AsyncImage(
                                 model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
                                 contentDescription = "profile picture",
@@ -175,37 +171,37 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
                                 contentScale = ContentScale.Crop
                             )
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "¡Bienvenido ${username}!",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
+                            fontSize = 22.sp,
                             color = blue20,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = mail,
                             textDecoration = TextDecoration.Underline,
-                            fontSize = 16.sp,
+                            fontSize = 20.sp,
                             color = blue20,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = firstName,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             color = blue20,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = lastName,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             color = blue20,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Button(
-                            onClick = { editDialog = true },
+                            onClick = { launchEditProfile.value = true },
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = blue80
@@ -216,12 +212,14 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
                                 contentDescription = "Edit Icon",
                                 tint = blue20
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(text = "Editar tu perfil", color = blue20)
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Button(
-                            onClick = { exitDialog = true }, // Toggle the exit dialog state to show it
+                            onClick = {
+                                exitDialog = true
+                            }, // Toggle the exit dialog state to show it
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = blue20
@@ -232,7 +230,7 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
                                 contentDescription = "Close session Icon",
                                 tint = blue80
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(text = "Cerrar sesión", color = blue80)
                         }
                     }
@@ -246,7 +244,7 @@ fun ProfileScreen(navController: NavHostController, innerPadding: PaddingValues,
 @Composable
 fun ExitDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     AlertDialog(
-        onDismissRequest = onDismiss, // Here we expect to pass a lambda that does nothing
+        onDismissRequest = onDismiss,
         confirmButton = {
             Button(
                 onClick = onConfirm,
@@ -278,143 +276,12 @@ fun ExitDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     )
 }
 
-@Composable
-fun EditProfileDialog(
-    mail: String,
-    username: String,
-    firstName: String,
-    lastName: String,
-    password: String,
-    onDismiss: () -> Unit,
-    onConfirm: (String, String, String, String, String) -> Unit
-) {
-    var tempMail by remember { mutableStateOf(mail) }
-    var tempUsername by remember { mutableStateOf(username) }
-    var tempFirstName by remember { mutableStateOf(firstName) }
-    var tempLastName by remember { mutableStateOf(lastName) }
-    var tempPassword by remember { mutableStateOf(password) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm(tempMail, tempUsername, tempFirstName, tempLastName, tempPassword)
-                },
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = blue20)
-            ) {
-                Text(text = "Confirmar", color = blue80)
-            }
-        },
-        dismissButton = {
-            Button(
-                onClick = onDismiss,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = blue80)
-            ) {
-                Text(text = "Cancelar", color = blue20)
-            }
-        },
-        title = {
-            Text(text = "Editar Perfil", color = blue20)
-        },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = tempMail,
-                    onValueChange = { tempMail = it },
-                    label = { Text("Email", color = blue20) },
-                    maxLines = 1,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        errorBorderColor = Color.Red,
-                        cursorColor = blue50,
-                        focusedBorderColor = blue50,
-                        unfocusedBorderColor = blue50,
-                        disabledBorderColor = blue50,
-                        focusedLabelColor = blue80,
-                        unfocusedLabelColor = blue80
-                    )
-                )
-                OutlinedTextField(
-                    value = tempUsername,
-                    onValueChange = { tempUsername = it },
-                    label = { Text("Username", color = blue20) },
-                    maxLines = 1,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        errorBorderColor = Color.Red,
-                        cursorColor = blue50,
-                        focusedBorderColor = blue50,
-                        unfocusedBorderColor = blue50,
-                        disabledBorderColor = blue50,
-                        focusedLabelColor = blue80,
-                        unfocusedLabelColor = blue80
-                    )
-                )
-                OutlinedTextField(
-                    value = tempFirstName,
-                    onValueChange = { tempFirstName = it },
-                    label = { Text("First Name", color = blue20) },
-                    maxLines = 1,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        errorBorderColor = Color.Red,
-                        cursorColor = blue50,
-                        focusedBorderColor = blue50,
-                        unfocusedBorderColor = blue50,
-                        disabledBorderColor = blue50,
-                        focusedLabelColor = blue80,
-                        unfocusedLabelColor = blue80
-                    )
-                )
-                OutlinedTextField(
-                    value = tempLastName,
-                    onValueChange = { tempLastName = it },
-                    label = { Text("Last Name", color = blue20) },
-                    maxLines = 1,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        errorBorderColor = Color.Red,
-                        cursorColor = blue50,
-                        focusedBorderColor = blue50,
-                        unfocusedBorderColor = blue50,
-                        disabledBorderColor = blue50,
-                        focusedLabelColor = blue80,
-                        unfocusedLabelColor = blue80
-                    )
-                )
-                OutlinedTextField(
-                    value = tempPassword,
-                    onValueChange = { tempPassword = it },
-                    label = { Text("Password", color = blue20) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    maxLines = 1,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        errorBorderColor = Color.Red,
-                        cursorColor = blue50,
-                        focusedBorderColor = blue50,
-                        unfocusedBorderColor = blue50,
-                        disabledBorderColor = blue50,
-                        focusedLabelColor = blue80,
-                        unfocusedLabelColor = blue80
-                    )
-                )
-            }
-        }
-    )
-}
-
-
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen(navController = rememberNavController(), innerPadding = PaddingValues(0.dp), ViewModelMain())
+    ProfileScreen(
+        navController = rememberNavController(),
+        innerPadding = PaddingValues(0.dp),
+        ViewModelMain()
+    )
 }

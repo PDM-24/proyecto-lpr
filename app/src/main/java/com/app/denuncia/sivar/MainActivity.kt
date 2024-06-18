@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
         val currentRoute: String? = navBackStackEntry?.destination?.route
         val navItems = NavBarItemList()
 
-        val shouldShowBottomBar = currentRoute != ScreenRoute.Login.route && currentRoute != ScreenRoute.Register.route
+        val shouldShowBottomBar = currentRoute != ScreenRoute.Login.route && currentRoute != ScreenRoute.Register.route && currentRoute != ScreenRoute.EditProfile.route
 
         Scaffold(
             modifier = Modifier,
