@@ -75,6 +75,8 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
     var selectedKind by remember { mutableStateOf("Por tipo") }
     var denuncias = viewModel.denuncias.collectAsState().value
 
+    val categorias = viewModel.categorias.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -177,9 +179,9 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
             )
             Spacer(modifier = Modifier.size(5.dp))
             CustomDropdownKind(
-                options = CategoriaList,
+                options = categorias,
                 selectedOption = selectedKind,
-                onOptionSelected = { selectedKind = it.nombre }
+                onOptionSelected = { selectedKind = it.name }
             )
         }
         LazyColumn(

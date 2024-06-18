@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
@@ -53,13 +54,18 @@ class ViewModelMain : ViewModel() {
     private val _denuncias = MutableStateFlow<List<publicacion>>(emptyList())
     val denuncias: StateFlow<List<publicacion>> = _denuncias
 
-    //Departamento
+    //Restulado del registro de la denuncia
+    private val _stateUploadComplaint = MutableStateFlow<Boolean>(false)
+    val stateUploadComplaint: StateFlow<Boolean> = _stateUploadComplaint
+
+    //Categorias
     private val _categorias = MutableStateFlow<List<Categoria>>(emptyList())
     val categorias: StateFlow<List<Categoria>> = _categorias
 
 
     init {
         getComplainst()
+        getCategoriesList()
     }
 
     fun getUserDenuncias(): List<publicacion> {
@@ -164,6 +170,52 @@ class ViewModelMain : ViewModel() {
                 _detailsErrorRequest.value = e.message.toString()
                 _loading.value = false
             }
+        }
+    }
+
+    fun getCategoriesList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when (val response = apiRest.getCategoriesList()) {
+                    is Resources.Success -> {
+                        _categorias.value = response.data
+                    }
+                    is Resources.Error -> {
+                        _categorias.value = emptyList()
+                        _errorRequest.value = true
+                        _detailsErrorRequest.value = response.message
+                    }
+                }
+            }catch (e:Exception){
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+            }
+        }
+    }
+    fun uploadComplaint(user:String, category:String, departamento:String, details:String, date:String, img:String){
+        _loading.value = true
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                val body = complaint(user, category, departamento, details, date, img)
+                when (val response = apiRest.uploadComplaint(body)) {
+                    is Resources.Success -> {
+                        getComplainst()
+                        _errorRequest.value = false
+                        _stateUploadComplaint.value = true
+                        _loading.value = false
+                    }
+                    is Resources.Error -> {
+                        _errorRequest.value = true
+                        _detailsErrorRequest.value = response.message
+                        _loading.value = false
+                        Log.i("Complaint", response.message)
+                    }
+                }
+            }
+        }catch (e:Exception){
+            _errorRequest.value = true
+            _detailsErrorRequest.value = e.message.toString()
+            _loading.value = false
         }
     }
 

@@ -1,12 +1,13 @@
 package com.app.denuncia.sivar.remote.repository
 
-import android.util.Log
+import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
 import com.app.denuncia.sivar.remote.model.UserSession
+import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import com.app.denuncia.sivar.remote.services.Services
 import com.app.denuncia.sivar.resources.ErrorResponse
 import com.app.denuncia.sivar.resources.Resources
@@ -67,9 +68,39 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
+    override suspend fun getCategoriesList(): Resources<List<Categoria>> {
+        try {
+            val response = service.getCategoriesList()
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val error = response.errorBody()?.string()!!
+                val exception = gson.fromJson(error, ErrorResponse::class.java)
+                return Resources.Error(exception.details)
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
     override suspend fun getComplaints(): Resources<List<publicacion>> {
         try {
             val response = service.getComplaints()
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val error = response.errorBody()?.string()!!
+                val exception = gson.fromJson(error, ErrorResponse::class.java)
+                return Resources.Error(exception.details)
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun uploadComplaint(body: complaint): Resources<JsonResponse> {
+        try {
+            val response = service.uploadComplaint(body)
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{

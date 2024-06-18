@@ -65,7 +65,6 @@ fun PostComp(post: publicacion) {
 
     val formatter = DateTimeFormatter.ISO_DATE_TIME
 
-
     fun getTiempo(fecha: String): String {
         val inicio = LocalDateTime.parse(fecha, formatter)
         val fin = LocalDateTime.now()

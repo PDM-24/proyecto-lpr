@@ -15,8 +15,8 @@ data class complaint(
     @SerializedName(value = "details")
     var details:String = "",
 
-    @SerializedName(value = "date")
-    var date:String = "",
+    @SerializedName(value = "fecha")
+    var fecha:String = "",
 
     @SerializedName(value = "img")
     var img:String = "",

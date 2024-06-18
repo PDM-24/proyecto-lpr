@@ -1,7 +1,9 @@
 package com.app.denuncia.sivar.ui.screen
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,7 +12,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,25 +24,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,59 +42,132 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.app.denuncia.sivar.R
-import com.app.denuncia.sivar.model.Categoria
-import com.app.denuncia.sivar.model.CategoriaList
 import com.app.denuncia.sivar.model.DepartamentList
-import com.app.denuncia.sivar.model.Departamentos
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Publish
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
+
+fun uriToBase64(contentResolver: ContentResolver, uri: Uri): String {
+
+    val inputStream: InputStream = contentResolver.openInputStream(uri) ?: return ""
+
+    val buffer = ByteArrayOutputStream()
+    var bytesRead: Int
+    val data = ByteArray(5000)
+
+    while (inputStream.read(data).also { bytesRead = it } != -1) {
+        buffer.write(data, 0, bytesRead)
+    }
+
+    val imageBytes = buffer.toByteArray()
+
+    return Base64.encodeToString(imageBytes, Base64.DEFAULT)
+}
+
 @Composable
 fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModel: ViewModelMain)
 {
-    var textAreaContent by remember { mutableStateOf("") }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var selectedDepartment by remember { mutableStateOf("Seleccione el departamento") }
-    var selectedKind by remember { mutableStateOf("Seleccione una categoria") }
-
     val context = LocalContext.current
+    val contentResolver = context.contentResolver
+
+    val profile by viewModel.profile.collectAsState()
+    val categories by viewModel.categorias.collectAsState()
+    val isLoading by viewModel.loading.collectAsState()
+    val stateUpload by viewModel.stateUploadComplaint.collectAsState()
+    val error by viewModel.errorRequest.collectAsState()
+    val detailsError by viewModel.detailsErrorRequest.collectAsState()
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val user = profile._id
+    var departamento by remember { mutableStateOf("Seleccione el departamento") }
+    var categoria by remember { mutableStateOf("Seleccione una categoria") }
+    var idcateoria by remember { mutableStateOf("") }
+    var details by remember { mutableStateOf("") }
+    val date = LocalDateTime.now().toString()
+    val img = imageUri?.let { uriToBase64(contentResolver, it) }
+
+    var launchUpload by remember { mutableStateOf(false) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { uri: Uri? ->
-            selectedImageUri = uri
-        }
+        onResult = { imageUri = it }
     )
+
+
+    if(launchUpload){
+        AlertDialog(
+            onDismissRequest = { launchUpload = false},
+            title = {
+                if(isLoading){
+                    Text(text = "Subiendo....")
+                }else{
+                    if(stateUpload){
+                        Text(text = "Denuncia enviada")
+                    }else{
+                        Text(text = "Error al enviar la denuncia")
+                    }
+                }
+            },
+            text = {
+                if(isLoading){
+                    CircularProgressIndicator(
+                        color = blue50,
+                        modifier = Modifier.size(200.dp),
+                    )
+                }else{
+                    if(stateUpload){
+                        Text(text = "Denuncia enviada")
+                    }else{
+                        if(error){
+                            Text(text = detailsError)
+                        }else{
+                            Text(text = "Error al enviar la denuncia")
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                if(!isLoading){
+                    Button(
+                        onClick = { launchUpload = false}
+                    ) {
+                        Text(text = "OK", color = blue20)
+                    }
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -138,37 +200,54 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.photoexample),
-                                contentDescription = "profilePhoto",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .clip(RoundedCornerShape(50.dp))
-                            )
+                            if(profile.image.url.isNotEmpty()){
+                                AsyncImage(
+                                    model = "https://${profile.image.url.removePrefix("http://")}",
+                                    contentDescription = "profilePhoto",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .clip(RoundedCornerShape(50.dp))
+                                )
+                            }else{
+                                AsyncImage(
+                                    model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
+                                    contentDescription = "profilePhoto",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .clip(RoundedCornerShape(50.dp))
+                                )
+                            }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "John Doe",
+                                text = profile.username,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = blue20,
                             )
                         }
+                        Spacer(modifier = Modifier.height(5.dp))
                         CustomDropdownDepartment(
                             options = DepartamentList,
-                            selectedOption = selectedDepartment,
-                            onOptionSelected = { selectedDepartment = it.nombre }
+                            selectedOption = departamento,
+                            onOptionSelected = {
+                                departamento = it.nombre
+                            }
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         CustomDropdownKind(
-                            options = CategoriaList,
-                            selectedOption = selectedKind,
-                            onOptionSelected = { selectedKind = it.nombre }
+                            options = categories,
+                            selectedOption = categoria,
+                            onOptionSelected = {
+                                categoria = it.name
+                                idcateoria = it._id
+                            }
                         )
                         OutlinedTextField(
                             shape = RoundedCornerShape(12.dp),
-                            value = textAreaContent,
-                            onValueChange = { textAreaContent = it },
+                            value = details,
+                            onValueChange = { details = it },
                             label = { Text(text = "Descripción de la denuncia", color = blue20) },
                             colors = OutlinedTextFieldDefaults.colors(
                                 cursorColor = blue50,
@@ -186,9 +265,9 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                             maxLines = 3
                         )
                         Spacer(modifier = Modifier.height(7.dp))
-                        if (selectedImageUri != null) {
+                        if (imageUri != null) {
                             Image(
-                                painter = rememberAsyncImagePainter(selectedImageUri),
+                                painter = rememberAsyncImagePainter(imageUri),
                                 contentDescription = "Selected Image",
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -224,10 +303,21 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 .height(35.dp)
                                 .fillMaxWidth()
                                 .clickable {
-                                    showToast(context, "Denuncia enviada")
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        if (img != null) {
+                                            viewModel.uploadComplaint(user, idcateoria, departamento, details, date, "data:image/jpeg;base64,$img")
+                                            delay(1000)
+                                            launchUpload = true
+                                        }else{
+                                            viewModel.uploadComplaint(user, idcateoria ,departamento, details, date, "")
+                                            delay(1000)
+                                            launchUpload = true
+                                        }
+                                    }
                                 },
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
+
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,

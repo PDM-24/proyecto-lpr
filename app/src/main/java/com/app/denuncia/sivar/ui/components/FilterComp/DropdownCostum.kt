@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.app.denuncia.sivar.model.Categoria
+import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import com.app.denuncia.sivar.model.Departamentos
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
@@ -145,7 +145,7 @@ fun CustomDropdownKind(
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option.nombre) },
+                        text = { Text(option.name) },
                         onClick = {
                             onOptionSelected(option)
                             expanded.value = false
