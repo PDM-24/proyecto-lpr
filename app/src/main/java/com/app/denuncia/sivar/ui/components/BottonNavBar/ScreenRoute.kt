@@ -9,4 +9,5 @@ sealed class ScreenRoute (var route: String) {
     object Filter : ScreenRoute ("filter")
     object Login : ScreenRoute("login")
     object Register : ScreenRoute ("register")
+    object EditProfile : ScreenRoute ("editProfile")
 }

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
 import com.app.denuncia.sivar.ui.register.ui.RegisterScreen
 import com.app.denuncia.sivar.ui.screen.CreatePostScreen
+import com.app.denuncia.sivar.ui.screen.EditProfileScreen
 import com.app.denuncia.sivar.ui.screen.ExitScreen
 import com.app.denuncia.sivar.ui.screen.FilterScreen
 import com.app.denuncia.sivar.ui.screen.HistorialScreen
@@ -39,6 +40,9 @@ fun NavBarGraph(
         }
         composable(ScreenRoute.Profile.route){
             ProfileScreen(navController, innerPadding, viewModel)
+        }
+        composable(ScreenRoute.EditProfile.route){
+            EditProfileScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.Manage.route){
             ManageScreen(navController, innerPadding, viewModel)
