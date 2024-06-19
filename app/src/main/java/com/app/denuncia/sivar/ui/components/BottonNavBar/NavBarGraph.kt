@@ -7,11 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
 import com.app.denuncia.sivar.ui.register.ui.RegisterScreen
 import com.app.denuncia.sivar.ui.screen.CreatePostScreen
 import com.app.denuncia.sivar.ui.screen.EditProfileScreen
-import com.app.denuncia.sivar.ui.screen.ExitScreen
 import com.app.denuncia.sivar.ui.screen.FilterScreen
 import com.app.denuncia.sivar.ui.screen.HistorialScreen
 import com.app.denuncia.sivar.ui.screen.HomeScreen
