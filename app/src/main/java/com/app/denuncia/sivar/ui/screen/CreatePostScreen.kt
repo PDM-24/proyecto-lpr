@@ -142,7 +142,6 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                 }else{
                     if(stateUpload){
                         Text(text = "Denuncia enviada")
-                        launch.value = true //NAVIGATION TO HOME
                     }else{
                         Text(text = "Error al enviar la denuncia")
                     }
@@ -157,7 +156,6 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                 }else{
                     if(stateUpload){
                         Text(text = "Denuncia enviada")
-                        launch.value = true //NAVIGATION TO HOME
                     }else{
                         if(error){
                             Text(text = detailsError)
@@ -170,7 +168,10 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
             confirmButton = {
                 if(!isLoading){
                     Button(
-                        onClick = { launchUpload = false}
+                        onClick = {
+                            launchUpload = false
+                            launch.value = true //NAVIGATION TO HOME
+                        }
                     ) {
                         Text(text = "OK", color = blue20)
                     }
