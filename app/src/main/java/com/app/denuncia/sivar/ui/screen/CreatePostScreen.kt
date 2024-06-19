@@ -1,10 +1,9 @@
 package com.app.denuncia.sivar.ui.screen
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.Context
 import android.net.Uri
 import android.util.Base64
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -64,6 +62,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
@@ -75,8 +74,10 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.LocalDateTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 
+
+
+@SuppressLint("Recycle")
 fun uriToBase64(contentResolver: ContentResolver, uri: Uri): String {
 
     val inputStream: InputStream = contentResolver.openInputStream(uri) ?: return ""
@@ -123,7 +124,14 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
         contract = ActivityResultContracts.GetContent(),
         onResult = { imageUri = it }
     )
-
+    //NAVIGATION TO HOME
+    val launch = remember { mutableStateOf(false) }
+    if (launch.value) {
+        navController.navigate(ScreenRoute.Home.route) {
+            popUpTo(ScreenRoute.CreatePost.route) { inclusive = true }
+        }
+        launch.value = false
+    }
 
     if(launchUpload){
         AlertDialog(
@@ -134,6 +142,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                 }else{
                     if(stateUpload){
                         Text(text = "Denuncia enviada")
+                        launch.value = true //NAVIGATION TO HOME
                     }else{
                         Text(text = "Error al enviar la denuncia")
                     }
@@ -148,6 +157,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                 }else{
                     if(stateUpload){
                         Text(text = "Denuncia enviada")
+                        launch.value = true //NAVIGATION TO HOME
                     }else{
                         if(error){
                             Text(text = detailsError)
@@ -334,9 +344,6 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
     }
 }
 
-fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-}
 
 
 

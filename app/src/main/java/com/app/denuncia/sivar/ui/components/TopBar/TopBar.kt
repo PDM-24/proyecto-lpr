@@ -22,11 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue20
@@ -38,7 +36,7 @@ fun TopBar(
     title: String,
     icon: Int,
     navController: NavHostController,
-    showBackIcon: Boolean = false
+    showBackIcon: Boolean = false,
 ) {
     TopAppBar(
         modifier = Modifier.height(50.dp),
@@ -50,7 +48,7 @@ fun TopBar(
         navigationIcon = {
             if (showBackIcon) {
                 IconButton(onClick = {
-                    navController.navigate(ScreenRoute.Home.route) // Navega al Home
+                    navController.navigate(ScreenRoute.Home.route) // NAVIGATION TO HOME
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -77,16 +75,8 @@ fun TopBar(
                     fontSize = 18.sp
                 )
                 Spacer(modifier = Modifier.size(5.dp))
-                Image(painter = painterResource(id = icon), contentDescription = "ic_historial", modifier = Modifier.size(24.dp))
+                Image(painter = painterResource(id = icon), contentDescription = "history icon", modifier = Modifier.size(24.dp))
             }
         }
     )
 }
-
-
-
-
-
-
-
-
