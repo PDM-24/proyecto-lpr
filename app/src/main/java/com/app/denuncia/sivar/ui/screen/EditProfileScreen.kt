@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +61,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.body.photo
+import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
@@ -125,25 +124,10 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
     var tempUsername by remember { mutableStateOf(username) }
     var tempFirstName by remember { mutableStateOf(firstName) }
     var tempLastName by remember { mutableStateOf(lastName) }
-    var oldPassword by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-
-    //STATES
-    var showToast by remember { mutableStateOf(false) }
-    var toastMessage by remember { mutableStateOf("") }
-    var editDialog by remember { mutableStateOf(false) }
-
 
     //NAVIGATION
 
     if (launchProfile) {
-        navController.navigate(ScreenRoute.Profile.route) {
-            popUpTo(ScreenRoute.EditProfile.route) { inclusive = true }
-        }
-        launchProfile = false
-    }
-
-    if (launchPhoto) {
         AlertDialog(
             onDismissRequest = {
                 launchPhoto = false
@@ -164,7 +148,56 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                 if(loading){
                     CircularProgressIndicator(
                         color = blue50,
-                        modifier = Modifier.size(200.dp),
+                        modifier = Modifier.size(200.dp).fillMaxWidth()
+                    )
+                }else{
+                    if (stateUpdateProfile) {
+                        Text(text = "Perfil actualizado con exito")
+                    }else{
+                        if(error){
+                            Text(text = detailsError)
+                        }else{
+                            Text(text = "Error al actualizar perfil")
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                if(!loading){
+                    Button(
+                        onClick = {
+                            navController.navigate(ScreenRoute.Profile.route) {
+                                popUpTo(ScreenRoute.EditProfile.route) { inclusive = true }
+                            }
+                            launchProfile = false
+                        }
+                    ){
+                        Text(text = "OK")
+                    }
+                }
+            }
+        )
+    }
+
+    if (launchPhoto) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = {
+                if (loading) {
+                    Text(text = "Subiendo....")
+                }else{
+                    if (stateUpdateProfile) {
+                        Text(text = "En hora buena")
+                    }else{
+                        Text(text = "Error")
+                    }
+                }
+            },
+            text = {
+                if(loading){
+                    CircularProgressIndicator(
+                        color = blue50,
+                        modifier = Modifier.size(200.dp).fillMaxWidth()
                     )
                 }else{
                     if (stateUpdateProfile) {
@@ -371,46 +404,6 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                                 unfocusedLabelColor = blue80
                             )
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = oldPassword,
-                            onValueChange = { oldPassword = it },
-                            label = { Text("Contraseña actual", color = blue20) },
-                            visualTransformation = PasswordVisualTransformation(),
-                            maxLines = 1,
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                errorBorderColor = Color.Red,
-                                cursorColor = blue50,
-                                focusedBorderColor = blue50,
-                                unfocusedBorderColor = blue50,
-                                disabledBorderColor = blue50,
-                                focusedLabelColor = blue80,
-                                unfocusedLabelColor = blue80
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = newPassword,
-                            onValueChange = { newPassword = it },
-                            label = { Text("Nueva contraseña", color = blue20) },
-                            visualTransformation = PasswordVisualTransformation(),
-                            maxLines = 1,
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                errorBorderColor = Color.Red,
-                                cursorColor = blue50,
-                                focusedBorderColor = blue50,
-                                unfocusedBorderColor = blue50,
-                                disabledBorderColor = blue50,
-                                focusedLabelColor = blue80,
-                                unfocusedLabelColor = blue80
-                            )
-                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         Row {
                             Button(
@@ -430,7 +423,17 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
-                                onClick = { editDialog = true },
+                                onClick = {
+                                    if(tempMail.isNotEmpty() && tempUsername.isNotEmpty() && tempFirstName.isNotEmpty() && tempLastName.isNotEmpty()){
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            viewModel.updateProfile(profile._id, userBody(tempUsername, tempFirstName, tempLastName, tempMail, "","",""))
+                                            delay(1000)
+                                            launchProfile = true
+                                        }
+                                    }else{
+                                        Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
                                 shape = RoundedCornerShape(50),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = blue80
@@ -450,52 +453,4 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
             }
         }
     }
-}
-
-@Composable
-fun EditProfileDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(
-                onClick = onConfirm,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = blue20
-                )
-            ) {
-                Text(text = "Confirmar", color = blue80)
-            }
-        },
-        dismissButton = {
-            Button(
-                onClick = onDismiss,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = blue80
-                )
-            ) {
-                Text(text = "Cancelar", color = blue20)
-            }
-        },
-        title = {
-            Text(text = "Actualizar perfil", color = blue20)
-        },
-        text = {
-            Text("¿Estás seguro de actualizar tu perfil?", color = blue20)
-        }
-    )
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun EditProfileScreenPreview() {
-    EditProfileScreen(
-        navController = rememberNavController(),
-        innerPadding = PaddingValues(0.dp),
-        ViewModelMain()
-    )
 }

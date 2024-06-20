@@ -3,7 +3,7 @@ package com.app.denuncia.sivar.remote.repository
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.photo
-import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
@@ -36,7 +36,7 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun singUp(data: singup): Resources<JsonResponse> {
+    override suspend fun singUp(data: userBody): Resources<JsonResponse> {
         try {
             val response = service.singup(data)
             if (response.isSuccessful) {
@@ -157,6 +157,25 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
     override suspend fun updatePhoto(id: String, body: photo): Resources<TokenJson> {
         try {
             val response = service.updatePhoto(id, body)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun updateProfile(id: String, body: userBody): Resources<TokenJson> {
+        try {
+            val response = service.updateProfile(id, body)
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{

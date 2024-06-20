@@ -3,7 +3,7 @@ package com.app.denuncia.sivar.remote.services
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.photo
-import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
@@ -16,6 +16,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,7 +27,7 @@ interface Services {
     suspend fun login(@Body body: login): Response<TokenJson>
 
     @POST("singup")
-    suspend fun singup(@Body body: singup): Response<JsonResponse>
+    suspend fun singup(@Body body: userBody): Response<JsonResponse>
 
     @POST("uploadcomplaint")
     suspend fun uploadComplaint(@Body body: complaint): Response<JsonResponse>
@@ -54,7 +55,6 @@ interface Services {
     @PATCH("updatephoto/{Id}")
     suspend fun updatePhoto(@Path("Id") id: String, @Body body: photo): Response<TokenJson>
 
-
-
-
+    @PUT("updateprofile/{Id}")
+    suspend fun updateProfile(@Path("Id") id: String, @Body body: userBody): Response<TokenJson>
 }

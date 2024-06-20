@@ -2,7 +2,7 @@ package com.app.denuncia.sivar.model.body
 
 import com.google.gson.annotations.SerializedName
 
-data class singup(
+data class userBody(
     @SerializedName(value = "username")
     var username:String = "",
 

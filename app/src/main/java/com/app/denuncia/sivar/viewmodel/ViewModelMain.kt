@@ -1,13 +1,12 @@
 package com.app.denuncia.sivar.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.photo
-import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.ApiProvider
@@ -144,7 +143,7 @@ class ViewModelMain : ViewModel() {
 
     fun singUp(username: String, name: String, surname: String, email: String, birthdate: String, pass: String, rol: String) {
         _loading.value = true
-        val body = singup(username, name, surname, email, birthdate, pass, rol)
+        val body = userBody(username, name, surname, email, birthdate, pass, rol)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = apiRest.singUp(body)
@@ -340,4 +339,29 @@ class ViewModelMain : ViewModel() {
         }
     }
 
+    fun updateProfile(id:String, body:userBody){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = apiRest.updateProfile(id, body)
+                if(response is Resources.Success){
+                    _stateUpdateProfile.value = true
+                    _errorRequest.value = false
+                    _token.value = response.data.token
+                    verifyToken()
+                    _loading.value = false
+                }
+                else if(response is Resources.Error){
+                    _errorRequest.value = true
+                    _detailsErrorRequest.value = response.message
+                    _stateUpdateProfile.value = false
+                    _loading.value = false
+                }
+            }catch (e:Exception){
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _stateUpdateProfile.value = false
+                _loading.value = false
+            }
+        }
+    }
 }
