@@ -188,7 +188,7 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
             modifier = Modifier
         ){
             items(denuncias){
-                    postItem -> PostComp(postItem)
+                    postItem -> PostComp(postItem, viewModel)
             }
         }
     }

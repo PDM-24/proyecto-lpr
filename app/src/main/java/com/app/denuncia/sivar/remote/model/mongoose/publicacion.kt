@@ -17,7 +17,7 @@ data class publicacion(
     var categoria : Categoria = Categoria("",""),
 
     @SerializedName(value = "usuario")
-    var usuario : Usuario = Usuario("", Image("",""),"","","","","","","", false),
+    var usuario : Usuario? = Usuario("", Image("",""),"","","","","","","", false),
 
     @SerializedName(value = "departamento")
     var departamento : String = "",

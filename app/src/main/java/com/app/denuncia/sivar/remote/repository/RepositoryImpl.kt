@@ -3,6 +3,7 @@ package com.app.denuncia.sivar.remote.repository
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
@@ -76,6 +77,51 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             }else{
                 val error = response.errorBody()?.string()!!
                 val exception = gson.fromJson(error, ErrorResponse::class.java)
+                return Resources.Error(exception.details)
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun getUsers(search: String): Resources<List<Usuario>> {
+        try {
+            val response = service.getUsers(search)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val error = response.errorBody()?.string()!!
+                val exception = gson.fromJson(error, ErrorResponse::class.java)
+                return Resources.Error(exception.details)
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun changeRol(id: String, rol: String): Resources<JsonResponse> {
+        try {
+            val response = service.changeRol(id, rol)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                return Resources.Error(exception.details)
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun deleteUser(id: String): Resources<JsonResponse> {
+        try {
+            val response = service.deleteUser(id)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
                 return Resources.Error(exception.details)
             }
         }catch (e:Exception){

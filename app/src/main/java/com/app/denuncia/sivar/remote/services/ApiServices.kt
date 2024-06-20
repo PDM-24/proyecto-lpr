@@ -3,6 +3,7 @@ package com.app.denuncia.sivar.remote.services
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
@@ -10,9 +11,12 @@ import com.app.denuncia.sivar.remote.model.UserSession
 import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface Services {
 
@@ -35,5 +39,14 @@ interface Services {
 
     @GET("getcomplaints")
     suspend fun getComplaints(): Response<List<publicacion>>
+
+    @GET("getusers")
+    suspend fun getUsers(@Query("Search") search: String): Response<List<Usuario>>
+
+    @PATCH("changerol/{Id}/{Rol}")
+    suspend fun changeRol(@Path("Id") id: String, @Path("Rol") rol: String): Response<JsonResponse>
+
+    @DELETE("deleteuser/{Id}")
+    suspend fun deleteUser(@Path("Id") id: String): Response<JsonResponse>
 
 }

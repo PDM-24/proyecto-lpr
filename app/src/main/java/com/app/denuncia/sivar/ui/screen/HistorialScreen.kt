@@ -52,7 +52,7 @@ fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValue
         }
         LazyColumn(){
             items(userDenuncias) { postItem ->
-                PostComp(postItem)
+                PostComp(postItem, viewModel)
             }
         }
     }

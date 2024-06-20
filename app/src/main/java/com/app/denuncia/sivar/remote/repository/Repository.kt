@@ -3,6 +3,7 @@ package com.app.denuncia.sivar.remote.repository
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
 import com.app.denuncia.sivar.model.body.singup
+import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
@@ -17,4 +18,8 @@ interface Repository {
     suspend fun getComplaints() : Resources<List<publicacion>>
     suspend fun uploadComplaint(body: complaint): Resources<JsonResponse>
     suspend fun getCategoriesList(): Resources<List<Categoria>>
+    suspend fun getUsers(search:String): Resources<List<Usuario>>
+    suspend fun changeRol(id:String, rol:String): Resources<JsonResponse>
+    suspend fun deleteUser(id:String): Resources<JsonResponse>
+
 }

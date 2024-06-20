@@ -31,7 +31,7 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, vi
                 .padding(innerPadding)
         ){
             items(denuncias){
-                    postItem -> PostComp(postItem)
+                    postItem -> PostComp(postItem, viewModel)
             }
         }
     }

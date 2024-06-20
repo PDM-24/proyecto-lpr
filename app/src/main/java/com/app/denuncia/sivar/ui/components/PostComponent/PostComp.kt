@@ -34,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.mongoose.publicacion
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
@@ -60,9 +62,9 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Composable
-fun PostComp(post: publicacion) {
+fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
     var expanded by remember { mutableStateOf(false) }
-
+    val profile by viewModelMain.profile.collectAsState()
     val formatter = DateTimeFormatter.ISO_DATE_TIME
 
     fun getTiempo(fecha: String): String {
@@ -92,7 +94,7 @@ fun PostComp(post: publicacion) {
         }
     }
 
-    var rol = "admin"
+
     OutlinedCard(
         modifier = Modifier
             .padding(5.dp),
@@ -107,15 +109,26 @@ fun PostComp(post: publicacion) {
                 .padding(10.dp)
                 .fillMaxWidth()
         ) {
-            if(post.usuario.image.url.isNotEmpty()){
-                AsyncImage(
-                    model = "https://${post.usuario.image.url.removePrefix("http://")}",
-                    contentDescription = "profilePhoto",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(50.dp))
-                )
+            if(post.usuario != null){
+                if(post.usuario!!.image.url.isNotEmpty()){
+                    AsyncImage(
+                        model = "https://${post.usuario!!.image.url.removePrefix("http://")}",
+                        contentDescription = "profilePhoto",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(50.dp))
+                    )
+                }else{
+                    AsyncImage(
+                        model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
+                        contentDescription = "profilePhoto",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(50.dp))
+                    )
+                }
             }else{
                 AsyncImage(
                     model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
@@ -136,7 +149,7 @@ fun PostComp(post: publicacion) {
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
-                            text = post.usuario.username,
+                            text = if(post.usuario != null) post.usuario!!.name else "Usuario",
                             fontWeight = FontWeight.Bold,
                             color = blue20,
                         )
@@ -149,7 +162,7 @@ fun PostComp(post: publicacion) {
                         modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if (rol == "admin") {
+                        if (profile.rol == "admin") {
                             Icon(
                                 modifier = Modifier
                                     .size(25.dp)

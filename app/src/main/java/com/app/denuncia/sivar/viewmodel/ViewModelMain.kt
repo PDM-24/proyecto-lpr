@@ -55,12 +55,24 @@ class ViewModelMain : ViewModel() {
     val denuncias: StateFlow<List<publicacion>> = _denuncias
 
     //Restulado del registro de la denuncia
-    private val _stateUploadComplaint = MutableStateFlow<Boolean>(false)
+    private val _stateUploadComplaint = MutableStateFlow(false)
     val stateUploadComplaint: StateFlow<Boolean> = _stateUploadComplaint
 
     //Categorias
     private val _categorias = MutableStateFlow<List<Categoria>>(emptyList())
     val categorias: StateFlow<List<Categoria>> = _categorias
+
+    //Lista de usuarios
+    private val _usuarios = MutableStateFlow<List<Usuario>>(emptyList())
+    val usuarios: StateFlow<List<Usuario>> = _usuarios
+
+    //stateUpdateUser
+    private val _stateUpdateUser = MutableStateFlow(false)
+    val stateUpdateUser: StateFlow<Boolean> = _stateUpdateUser
+
+    //state delete user
+    private val _stateDeleteUser = MutableStateFlow(false)
+    val stateDeleteUser: StateFlow<Boolean> = _stateDeleteUser
 
 
     init {
@@ -69,7 +81,7 @@ class ViewModelMain : ViewModel() {
     }
 
     fun getUserDenuncias(): List<publicacion> {
-        return _denuncias.value.filter { it.usuario._id == _profile.value._id }
+        return _denuncias.value.filter { it.usuario?._id == _profile.value._id }
     }
 
 
@@ -173,7 +185,7 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-    fun getCategoriesList() {
+    private fun getCategoriesList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 when (val response = apiRest.getCategoriesList()) {
@@ -206,6 +218,7 @@ class ViewModelMain : ViewModel() {
                     }
                     is Resources.Error -> {
                         _errorRequest.value = true
+                        _stateUploadComplaint.value = false
                         _detailsErrorRequest.value = response.message
                         _loading.value = false
                         Log.i("Complaint", response.message)
@@ -216,6 +229,81 @@ class ViewModelMain : ViewModel() {
             _errorRequest.value = true
             _detailsErrorRequest.value = e.message.toString()
             _loading.value = false
+        }
+    }
+
+    fun getUsers(search:String){
+        _loading.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when(val response = apiRest.getUsers(search)){
+                    is Resources.Success -> {
+                        _usuarios.value = response.data
+                        _errorRequest.value = false
+                        _loading.value = false
+                    }
+                    is Resources.Error -> {
+                        _usuarios.value = emptyList()
+                        _errorRequest.value = true
+                        _detailsErrorRequest.value = response.message
+                        _loading.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _loading.value = false
+            }
+        }
+    }
+
+    fun changeRol(id:String, rol:String){
+        _loading.value = false
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when(val response = apiRest.changeRol(id, rol)){
+                    is Resources.Success -> {
+                        _stateUpdateUser.value = true
+                        _errorRequest.value = false
+                        _loading.value = false
+                    }
+                    is Resources.Error -> {
+                        _errorRequest.value = true
+                        _detailsErrorRequest.value = response.message
+                        _loading.value = false
+                        _stateUpdateUser.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _loading.value = false
+            }
+        }
+    }
+
+    fun deleteUser(id:String){
+        _loading.value = false
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when(val response = apiRest.deleteUser(id)){
+                    is Resources.Success -> {
+                        _stateDeleteUser.value = true
+                        _errorRequest.value = false
+                        _loading.value = false
+                    }
+                    is Resources.Error -> {
+                        _errorRequest.value = true
+                        _detailsErrorRequest.value = response.message
+                        _loading.value = false
+                        _stateDeleteUser.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _loading.value = false
+            }
         }
     }
 
