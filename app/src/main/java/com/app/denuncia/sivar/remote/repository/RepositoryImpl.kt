@@ -2,6 +2,7 @@ package com.app.denuncia.sivar.remote.repository
 
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
+import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
@@ -24,10 +25,10 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             }else{
                 val errorBody = response.errorBody()?.string()!!
                 try {
-                    val errorResponse = gson.fromJson(errorBody, ErrorResponse::class.java)
-                    return Resources.Error(errorResponse.details)
-                }catch (e:Exception){
-                     return Resources.Error(e.message.toString())
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
                 }
             }
         }catch (e:Exception){
@@ -41,10 +42,14 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             if (response.isSuccessful) {
                 return Resources.Success(response.body()!!)
             } else {
-                val errorBody = response.errorBody()?.string()!!
                 try {
-                    val errorResponse = gson.fromJson(errorBody, ErrorResponse::class.java)
-                    return Resources.Error(errorResponse.details)
+                    val errorBody = response.errorBody()?.string()!!
+                    try {
+                        val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                        return Resources.Error(exception.details)
+                    }catch(e:Exception){
+                        return Resources.Error(errorBody)
+                    }
                 } catch (e: Exception) {
                     return Resources.Error(e.message.toString())
                 }
@@ -60,9 +65,13 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{
-                val error = response.errorBody()?.string()!!
-                val exception = gson.fromJson(error, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())
@@ -75,9 +84,13 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{
-                val error = response.errorBody()?.string()!!
-                val exception = gson.fromJson(error, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())
@@ -90,9 +103,13 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{
-                val error = response.errorBody()?.string()!!
-                val exception = gson.fromJson(error, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())
@@ -106,8 +123,12 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
                 return Resources.Success(response.body()!!)
             }else{
                 val errorBody = response.errorBody()?.string()!!
-                val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())
@@ -121,8 +142,31 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
                 return Resources.Success(response.body()!!)
             }else{
                 val errorBody = response.errorBody()?.string()!!
-                val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun updatePhoto(id: String, body: photo): Resources<TokenJson> {
+        try {
+            val response = service.updatePhoto(id, body)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())
@@ -135,9 +179,13 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{
-                val error = response.errorBody()?.string()!!
-                val exception = gson.fromJson(error, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())
@@ -150,9 +198,13 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{
-                val error = response.errorBody()?.string()!!
-                val exception = gson.fromJson(error, ErrorResponse::class.java)
-                return Resources.Error(exception.details)
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
             }
         }catch (e:Exception){
             return Resources.Error(e.message.toString())

@@ -1,6 +1,8 @@
 package com.app.denuncia.sivar.ui.screen
 
+import android.content.ContentResolver
 import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,10 +28,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.ChangeCircle
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -58,6 +62,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.app.denuncia.sivar.R
+import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
@@ -65,20 +70,56 @@ import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+
 
 @Composable
-fun EditProfileScreen(
-    navController: NavHostController,
-    innerPadding: PaddingValues,
-    viewModel: ViewModelMain
-) {
+fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValues,viewModel: ViewModelMain) {
+
+    fun uriToBase64(contentResolver: ContentResolver, uri: Uri): String {
+        val inputStream: InputStream = contentResolver.openInputStream(uri) ?: return ""
+        val buffer = ByteArrayOutputStream()
+        var bytesRead: Int
+        val data = ByteArray(5000)
+        while (inputStream.read(data).also { bytesRead = it } != -1) {
+            buffer.write(data, 0, bytesRead)
+        }
+        val imageBytes = buffer.toByteArray()
+        return "data:image/jpeg;base64,${Base64.encodeToString(imageBytes, Base64.DEFAULT)}"
+    }
+
+    val context = LocalContext.current
+
+    //IMAGE PICKER
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { selectedImageUri = it }
+    )
+
     //MAIN VIEW MODEL
-    val profile = viewModel.profile.collectAsState().value
+    val profile by viewModel.profile.collectAsState()
+    val loading by viewModel.loading.collectAsState()
+    val error by viewModel.errorRequest.collectAsState()
+    val detailsError by viewModel.detailsErrorRequest.collectAsState()
+    val stateUpdateProfile by viewModel.stateUpdateProfile.collectAsState()
+    val img = selectedImageUri?.let { uriToBase64(context.contentResolver, it) }
+    var launchPhoto by remember { mutableStateOf(false) }
+    var launchProfile by remember { mutableStateOf(false) }
+
+
+
     //VARIABLES FROM VIEW MODEL
     val mail by remember { mutableStateOf(profile.email) }
     val username by remember { mutableStateOf(profile.username) }
     val firstName by remember { mutableStateOf(profile.name) }
     val lastName by remember { mutableStateOf(profile.surname) }
+
     //AUX VARIABLES TO PATCH
     var tempMail by remember { mutableStateOf(mail) }
     var tempUsername by remember { mutableStateOf(username) }
@@ -86,59 +127,73 @@ fun EditProfileScreen(
     var tempLastName by remember { mutableStateOf(lastName) }
     var oldPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
+
     //STATES
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
     var editDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    //TOAST
-    LaunchedEffect(showToast) {
-        if (showToast) {
-            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
-            showToast = false // Reset toast state
-        }
-    }
+
+
     //NAVIGATION
-    val launchProfile = remember { mutableStateOf(false) }
-    if (launchProfile.value) {
+
+    if (launchProfile) {
         navController.navigate(ScreenRoute.Profile.route) {
             popUpTo(ScreenRoute.EditProfile.route) { inclusive = true }
         }
-        launchProfile.value = false
+        launchProfile = false
     }
-    //IMAGE PICKER
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri: Uri? ->
-            selectedImageUri = uri
-        }
-    )
-    //DIALOGS
-    if (editDialog) {
-        EditProfileDialog(
-            onDismiss = {
-                //ROLLBACK without save changes
-                editDialog = false
+
+    if (launchPhoto) {
+        AlertDialog(
+            onDismissRequest = {
+                launchPhoto = false
+                selectedImageUri = null
             },
-            onConfirm = {
-                //SAVE changes and return
-                //Validations
-                if(tempMail.isEmpty()||tempUsername.isEmpty()||tempFirstName.isEmpty()||tempLastName.isEmpty()){
-                    toastMessage = "Error no se permiten campos vacios"
-                    showToast = true
-                    editDialog = false
+            title = {
+                if (loading) {
+                    Text(text = "Subiendo....")
                 }else{
-                    //Main View Model
-                    //Navigation
-                    editDialog = false
-                    toastMessage = "Perfil actualizado"
-                    showToast = true
-                    launchProfile.value = true
+                    if (stateUpdateProfile) {
+                        Text(text = "En hora buena")
+                    }else{
+                        Text(text = "Error")
+                    }
+                }
+            },
+            text = {
+                if(loading){
+                    CircularProgressIndicator(
+                        color = blue50,
+                        modifier = Modifier.size(200.dp),
+                    )
+                }else{
+                    if (stateUpdateProfile) {
+                        Text(text = "Foto de perfil acualizado con exito")
+                    }else{
+                        if(error){
+                            Text(text = detailsError)
+                        }else{
+                            Text(text = "Error al subir la foto")
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                if(!loading){
+                    Button(
+                        onClick = {
+                            launchPhoto = false
+                            selectedImageUri = null
+                        }
+                    ){
+                        Text(text = "OK")
+                    }
                 }
             }
         )
     }
+
+
     //VIEW
     Column{
         TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = true)
@@ -174,50 +229,71 @@ fun EditProfileScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         if (selectedImageUri != null) {
-                            Image(
-                                painter = rememberAsyncImagePainter(selectedImageUri),
-                                contentDescription = "Selected Image",
+
+                        }
+
+                        if (profile.image.url.isNotEmpty()) {
+                            AsyncImage(
+                                model = "https://${profile.image.url.removePrefix("http://")}",
+                                contentDescription = "profile picture",
                                 modifier = Modifier
                                     .size(150.dp)
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop
                             )
                         } else {
-                            if (profile.image.url.isNotEmpty()) {
-                                AsyncImage(
-                                    model = "https://${profile.image.url.removePrefix("http://")}",
-                                    contentDescription = "profile picture",
-                                    modifier = Modifier
-                                        .size(150.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                AsyncImage(
-                                    model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
-                                    contentDescription = "profile picture",
-                                    modifier = Modifier
-                                        .size(150.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                            AsyncImage(
+                                model = "https://cdn-icons-png.freepik.com/512/149/149071.png",
+                                contentDescription = "profile picture",
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = { imagePickerLauncher.launch("image/*") },
-                            shape = RoundedCornerShape(50),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = blue20
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ChangeCircle,
-                                contentDescription = "Change profile image",
-                                tint = blue80
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "Cambiar foto de perfil", color = blue80)
+                        if(selectedImageUri == null){
+                            Button(
+                                onClick = {
+                                    imagePickerLauncher.launch("image/*")
+                                },
+                                shape = RoundedCornerShape(50),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = blue20
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ChangeCircle,
+                                    contentDescription = "Change profile image",
+                                    tint = blue80
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(text = "Cambiar foto de perfil", color = blue80)
+                            }
+                        }else{
+                            Button(
+                                onClick = {
+                                        if (img != null) {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                viewModel.updatePhoto(profile._id, photo(img))
+                                                delay(1000)
+                                                launchPhoto = true
+                                            }
+                                        }
+                                },
+                                shape = RoundedCornerShape(50),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = blue20
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Upload,
+                                    contentDescription = "Change profile image",
+                                    tint = blue80
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(text = "Subir foto de perfil", color = blue80)
+                            }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
@@ -338,7 +414,7 @@ fun EditProfileScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Row {
                             Button(
-                                onClick = { launchProfile.value = true },
+                                onClick = { launchProfile = true },
                                 shape = RoundedCornerShape(50),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = blue20

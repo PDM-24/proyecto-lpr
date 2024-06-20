@@ -74,30 +74,22 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.time.LocalDateTime
 
-
-
-
-@SuppressLint("Recycle")
-fun uriToBase64(contentResolver: ContentResolver, uri: Uri): String {
-
-    val inputStream: InputStream = contentResolver.openInputStream(uri) ?: return ""
-
-    val buffer = ByteArrayOutputStream()
-    var bytesRead: Int
-    val data = ByteArray(5000)
-
-    while (inputStream.read(data).also { bytesRead = it } != -1) {
-        buffer.write(data, 0, bytesRead)
-    }
-
-    val imageBytes = buffer.toByteArray()
-
-    return Base64.encodeToString(imageBytes, Base64.DEFAULT)
-}
-
 @Composable
 fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModel: ViewModelMain)
 {
+
+    fun uriToBase64(contentResolver: ContentResolver, uri: Uri): String {
+        val inputStream: InputStream = contentResolver.openInputStream(uri) ?: return ""
+        val buffer = ByteArrayOutputStream()
+        var bytesRead: Int
+        val data = ByteArray(5000)
+        while (inputStream.read(data).also { bytesRead = it } != -1) {
+            buffer.write(data, 0, bytesRead)
+        }
+        val imageBytes = buffer.toByteArray()
+        return "data:image/jpeg;base64,${Base64.encodeToString(imageBytes, Base64.DEFAULT)}"
+    }
+
     val context = LocalContext.current
     val contentResolver = context.contentResolver
 
@@ -316,7 +308,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 .clickable {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         if (img != null) {
-                                            viewModel.uploadComplaint(user, idcateoria, departamento, details, date, "data:image/jpeg;base64,$img")
+                                            viewModel.uploadComplaint(user, idcateoria, departamento, details, date, img)
                                             delay(1000)
                                             launchUpload = true
                                         }else{

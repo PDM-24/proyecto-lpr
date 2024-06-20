@@ -2,6 +2,7 @@ package com.app.denuncia.sivar.remote.services
 
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
+import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
@@ -43,10 +44,17 @@ interface Services {
     @GET("getusers")
     suspend fun getUsers(@Query("Search") search: String): Response<List<Usuario>>
 
+    @DELETE("deleteuser/{Id}")
+    suspend fun deleteUser(@Path("Id") id: String): Response<JsonResponse>
+
+    //Patch
     @PATCH("changerol/{Id}/{Rol}")
     suspend fun changeRol(@Path("Id") id: String, @Path("Rol") rol: String): Response<JsonResponse>
 
-    @DELETE("deleteuser/{Id}")
-    suspend fun deleteUser(@Path("Id") id: String): Response<JsonResponse>
+    @PATCH("updatephoto/{Id}")
+    suspend fun updatePhoto(@Path("Id") id: String, @Body body: photo): Response<TokenJson>
+
+
+
 
 }

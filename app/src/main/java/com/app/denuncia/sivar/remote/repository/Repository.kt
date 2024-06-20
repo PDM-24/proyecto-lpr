@@ -2,6 +2,7 @@ package com.app.denuncia.sivar.remote.repository
 
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
+import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
@@ -21,5 +22,5 @@ interface Repository {
     suspend fun getUsers(search:String): Resources<List<Usuario>>
     suspend fun changeRol(id:String, rol:String): Resources<JsonResponse>
     suspend fun deleteUser(id:String): Resources<JsonResponse>
-
+    suspend fun updatePhoto(id:String, body:photo): Resources<TokenJson>
 }

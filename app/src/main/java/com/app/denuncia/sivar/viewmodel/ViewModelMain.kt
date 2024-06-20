@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.denuncia.sivar.model.body.complaint
 import com.app.denuncia.sivar.model.body.login
+import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.singup
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
@@ -74,6 +75,10 @@ class ViewModelMain : ViewModel() {
     private val _stateDeleteUser = MutableStateFlow(false)
     val stateDeleteUser: StateFlow<Boolean> = _stateDeleteUser
 
+    //state update propfile
+    private val _stateUpdateProfile = MutableStateFlow(false)
+    val stateUpdateProfile: StateFlow<Boolean> = _stateUpdateProfile
+
 
     init {
         getComplainst()
@@ -113,10 +118,11 @@ class ViewModelMain : ViewModel() {
             try {
                 when (val response = apiRest.login(body)) {
                     is Resources.Success -> {
+                        verifyToken()
                         _token.value = response.data.token
                         _loginState.value = response.data.state
                         _errorRequest.value = false
-                        verifyToken()
+                        _loading.value = false
                     }
                     is Resources.Error -> {
                         _detailsErrorRequest.value = "Error al iniciar sesión ${response.message}"
@@ -302,6 +308,33 @@ class ViewModelMain : ViewModel() {
             }catch (e:Exception){
                 _errorRequest.value = true
                 _detailsErrorRequest.value = e.message.toString()
+                _loading.value = false
+            }
+        }
+    }
+
+    fun updatePhoto(id:String, body:photo){
+        _loading.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = apiRest.updatePhoto(id, body)
+                if(response is Resources.Success){
+                    _stateUpdateProfile.value = true
+                    _errorRequest.value = false
+                    _token.value = response.data.token
+                    verifyToken()
+                    _loading.value = false
+                }
+                else if(response is Resources.Error){
+                    _errorRequest.value = true
+                    _detailsErrorRequest.value = response.message
+                    _stateUpdateProfile.value = false
+                    _loading.value = false
+                }
+            }catch (e:Exception){
+                _errorRequest.value = true
+                _detailsErrorRequest.value = e.message.toString()
+                _stateUpdateProfile.value = false
                 _loading.value = false
             }
         }

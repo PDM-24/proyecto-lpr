@@ -149,7 +149,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
-                            text = if(post.usuario != null) post.usuario!!.name else "Usuario",
+                            text = if(post.usuario != null) post.usuario!!.username else "Usuario",
                             fontWeight = FontWeight.Bold,
                             color = blue20,
                         )
