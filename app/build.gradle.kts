@@ -61,6 +61,8 @@ dependencies {
     //Jetpack Compose
     implementation ("androidx.compose.material:material-icons-extended:1.0.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.20.3")
+
 
 
 

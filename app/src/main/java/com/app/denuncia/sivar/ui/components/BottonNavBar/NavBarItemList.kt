@@ -31,36 +31,30 @@ fun NavBarItemList(viewModel: ViewModelMain): List<NavBarItem> {
                 ScreenRoute.Home.route,
                 Icons.Filled.Home,
                 Icons.Outlined.Home,
-                false,
-                12
             ),
             NavBarItem(
                 "Historial",
                 ScreenRoute.Historial.route,
                 Icons.Filled.History,
                 Icons.Outlined.History,
-                false
             ),
             NavBarItem(
                 "Crear",
                 ScreenRoute.CreatePost.route,
                 Icons.Filled.PostAdd,
                 Icons.Outlined.PostAdd,
-                false
             ),
             NavBarItem(
                 "Perfil",
                 ScreenRoute.Profile.route,
                 Icons.Filled.Person,
                 Icons.Outlined.Person,
-                false
             ),
             NavBarItem(
                 "Admin",
                 ScreenRoute.Manage.route,
                 Icons.Filled.Settings,
                 Icons.Outlined.Settings,
-                false
             ),
         )
     }
@@ -71,29 +65,24 @@ fun NavBarItemList(viewModel: ViewModelMain): List<NavBarItem> {
                 ScreenRoute.Home.route,
                 Icons.Filled.Home,
                 Icons.Outlined.Home,
-                false,
-                12
             ),
             NavBarItem(
                 "Historial",
                 ScreenRoute.Historial.route,
                 Icons.Filled.History,
                 Icons.Outlined.History,
-                false
             ),
             NavBarItem(
                 "Crear",
                 ScreenRoute.CreatePost.route,
                 Icons.Filled.PostAdd,
                 Icons.Outlined.PostAdd,
-                false
             ),
             NavBarItem(
                 "Perfil",
                 ScreenRoute.Profile.route,
                 Icons.Filled.Person,
                 Icons.Outlined.Person,
-                false
             ),
         )
     }

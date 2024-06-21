@@ -7,6 +7,4 @@ data class NavBarItem(
     val route: String,
     val filledIcon: ImageVector,
     val outlinedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
 )

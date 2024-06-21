@@ -47,6 +47,8 @@ import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -197,7 +199,15 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            UserTable(users = users.filter { it._id != viewModel.profile.value._id }, onRoleChange = ::onRoleChange, onDelete = ::onDelete)
+            SwipeRefresh(
+                state = SwipeRefreshState(loading),
+                onRefresh = {
+                    viewModel.getUsers(search)
+                }
+            ) {
+                UserTable(users = users.filter { it._id != viewModel.profile.value._id }, onRoleChange = ::onRoleChange, onDelete = ::onDelete)
+            }
+
         }
     }
 

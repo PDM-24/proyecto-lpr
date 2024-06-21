@@ -5,43 +5,45 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
-import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
-
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
-
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 
 @Composable
-fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel:ViewModelMain){
+fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
+    val denuncias by viewModel.denuncias.collectAsState()
+    val isRefreshing by viewModel.loading.collectAsState()
 
-    val denuncias = viewModel.denuncias.collectAsState().value
-
-    LaunchedEffect(Unit){
-        viewModel.getComplainst("","","")
+    LaunchedEffect(Unit) {
+        viewModel.getComplainst("", "", "")
     }
 
-    Column{
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-        ){
-            items(denuncias){
-                    postItem -> PostComp(postItem, viewModel)
+    Column(
+        modifier = Modifier.padding(innerPadding)
+    ){
+        SwipeRefresh(
+            state = SwipeRefreshState(isRefreshing),
+            onRefresh = {
+                viewModel.getComplainst("", "", "")
+            }
+        ) {
+            LazyColumn(
+            ) {
+                items(denuncias) { postItem ->
+                    PostComp(postItem, viewModel)
+                }
             }
         }
     }
-
 }
+
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable

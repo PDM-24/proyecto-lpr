@@ -58,26 +58,11 @@ fun NavBarComponent(
                     unselectedTextColor = blue20,
                 ),
                 icon = {
-                    BadgedBox(
-                        badge = {
-                            if (navBarItem.badgeCount != null) {
-                                Badge(
-                                    contentColor = Color.White,
-                                    containerColor = blue50
-                                ) {
-                                    Text(text = navBarItem.badgeCount.toString())
-                                }
-                            } else if (navBarItem.hasNews) {
-                                Badge()
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = if (currentRoute == navBarItem.route) navBarItem.filledIcon else navBarItem.outlinedIcon,
-                            contentDescription = navBarItem.title,
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
+                    Icon(
+                        imageVector = if (currentRoute == navBarItem.route) navBarItem.filledIcon else navBarItem.outlinedIcon,
+                        contentDescription = navBarItem.title,
+                        modifier = Modifier.size(24.dp),
+                    )
                 },
             )
         }
