@@ -165,7 +165,7 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-    fun getComplainst(search: String, departamento: String, categorie: String){
+    fun getComplainst(search: String, departamento: String, categorie: String) {
         _loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -179,14 +179,15 @@ class ViewModelMain : ViewModel() {
                         _detailsErrorRequest.value = response.message
                     }
                 }
-                _loading.value = false
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 _errorRequest.value = true
                 _detailsErrorRequest.value = e.message.toString()
+            } finally {
                 _loading.value = false
             }
         }
     }
+
 
     private fun getCategoriesList() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -235,26 +236,25 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-    fun getUsers(search:String){
+    fun getUsers(search: String) {
         _loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                when(val response = apiRest.getUsers(search)){
+                when (val response = apiRest.getUsers(search)) {
                     is Resources.Success -> {
                         _usuarios.value = response.data
                         _errorRequest.value = false
-                        _loading.value = false
                     }
                     is Resources.Error -> {
                         _usuarios.value = emptyList()
                         _errorRequest.value = true
                         _detailsErrorRequest.value = response.message
-                        _loading.value = false
                     }
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 _errorRequest.value = true
                 _detailsErrorRequest.value = e.message.toString()
+            } finally {
                 _loading.value = false
             }
         }

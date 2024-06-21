@@ -117,7 +117,7 @@ fun CustomDropdownKind(
                 .clip(RoundedCornerShape(20.dp))
                 .background(blue80)
                 .height(35.dp)
-                .width(150.dp),
+                .width(250.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Row(
