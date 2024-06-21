@@ -4,6 +4,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -42,7 +44,7 @@ fun NavBarGraph(
         composable(ScreenRoute.EditProfile.route){
             EditProfileScreen(navController, innerPadding, viewModel)
         }
-        composable(ScreenRoute.Manage.route){
+        composable(ScreenRoute.Manage.route) {
             ManageScreen(navController, innerPadding, viewModel)
         }
         composable(ScreenRoute.CreatePost.route){

@@ -119,7 +119,6 @@ fun ProfileScreen(
     }
     //VIEW
     Column {
-        TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = false)
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)

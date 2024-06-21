@@ -136,7 +136,6 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
             .padding(innerPadding)
             .background(blue100)
     ) {
-        TopBar("Administrar usuarios", R.drawable.manageuser, navController, showBackIcon = false)
         Column(
             modifier = Modifier
                 .padding(8.dp)
