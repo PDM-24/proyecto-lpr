@@ -1,20 +1,16 @@
 package com.app.denuncia.sivar.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,12 +18,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,38 +36,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.app.denuncia.sivar.R
-import com.app.denuncia.sivar.model.CategoriaList
 import com.app.denuncia.sivar.model.DepartamentList
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
-import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
-import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
-    var selectedDepartment by remember { mutableStateOf("Por departamento") }
-    var selectedKind by remember { mutableStateOf("Por tipo") }
+
+    var departamento by remember { mutableStateOf("") }
+    var categorie by remember { mutableStateOf("") }
+    var search by remember { mutableStateOf("") }
+
     var denuncias = viewModel.denuncias.collectAsState().value
 
     val categorias = viewModel.categorias.collectAsState().value
+
+    LaunchedEffect(search, departamento, categorie) {
+        viewModel.getComplainst(search, departamento, categorie)
+    }
 
     Column(
         modifier = Modifier
@@ -125,11 +118,10 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
                                 tint = blue20,
                                 modifier = Modifier.size(25.dp)
                             )
-                            val textState = remember { mutableStateOf(TextFieldValue()) }
                             BasicTextField(
-                                value = textState.value,
+                                value = search,
                                 onValueChange = {
-                                    textState.value = it
+                                    search = it
                                 },
                                 singleLine = true,
                                 textStyle = TextStyle(
@@ -139,7 +131,7 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
                                 cursorBrush = SolidColor(blue20),
                                 modifier = Modifier.fillMaxWidth(),
                             ) { innerTextField ->
-                                if (textState.value.text.isEmpty()) {
+                                if (search.isEmpty()) {
                                     Text(
                                         text = "Buscar denuncia...",
                                         color = blue20,
@@ -174,14 +166,16 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
             }
             CustomDropdownDepartment(
                 options = DepartamentList,
-                selectedOption = selectedDepartment,
-                onOptionSelected = { selectedDepartment = it.nombre }
+                selectedOption = departamento.ifEmpty { "Departamento" },
+                onOptionSelected = { departamento = it.nombre }
             )
             Spacer(modifier = Modifier.size(5.dp))
             CustomDropdownKind(
                 options = categorias,
-                selectedOption = selectedKind,
-                onOptionSelected = { selectedKind = it.name }
+                selectedOption = categorie.ifEmpty { "Categoría" },
+                onOptionSelected = {
+                    categorie = it.name
+                }
             )
         }
         LazyColumn(

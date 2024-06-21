@@ -74,13 +74,11 @@ class ViewModelMain : ViewModel() {
     private val _stateDeleteUser = MutableStateFlow(false)
     val stateDeleteUser: StateFlow<Boolean> = _stateDeleteUser
 
-    //state update propfile
+    //state update profile
     private val _stateUpdateProfile = MutableStateFlow(false)
     val stateUpdateProfile: StateFlow<Boolean> = _stateUpdateProfile
 
-
     init {
-        getComplainst()
         getCategoriesList()
     }
 
@@ -167,11 +165,11 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-    private fun getComplainst(){
+    fun getComplainst(search: String, departamento: String, categorie: String){
         _loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                when (val response = apiRest.getComplaints()) {
+                when (val response = apiRest.getComplaints(search, departamento, categorie)) {
                     is Resources.Success -> {
                         _denuncias.value = response.data
                         _errorRequest.value = false
@@ -216,7 +214,7 @@ class ViewModelMain : ViewModel() {
                 val body = complaint(user, category, departamento, details, date, img)
                 when (val response = apiRest.uploadComplaint(body)) {
                     is Resources.Success -> {
-                        getComplainst()
+                        getComplainst("","","")
                         _errorRequest.value = false
                         _stateUploadComplaint.value = true
                         _loading.value = false
@@ -322,7 +320,6 @@ class ViewModelMain : ViewModel() {
                     _errorRequest.value = false
                     _token.value = response.data.token
                     verifyToken()
-                    getComplainst()
                     _loading.value = false
                 }
                 else if(response is Resources.Error){
@@ -349,7 +346,6 @@ class ViewModelMain : ViewModel() {
                     _errorRequest.value = false
                     _token.value = response.data.token
                     verifyToken()
-                    getComplainst()
                     _loading.value = false
                 }
                 else if(response is Resources.Error){

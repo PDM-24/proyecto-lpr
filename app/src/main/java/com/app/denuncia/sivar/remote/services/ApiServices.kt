@@ -40,7 +40,7 @@ interface Services {
     suspend fun getCategoriesList(): Response<List<Categoria>>
 
     @GET("getcomplaints")
-    suspend fun getComplaints(): Response<List<publicacion>>
+    suspend fun getComplaints(@Query("Search") search: String, @Query("Departamento") departamento: String, @Query("Categorie") categorie: String): Response<List<publicacion>>
 
     @GET("getusers")
     suspend fun getUsers(@Query("Search") search: String): Response<List<Usuario>>

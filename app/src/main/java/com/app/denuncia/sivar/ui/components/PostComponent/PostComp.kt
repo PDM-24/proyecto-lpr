@@ -46,6 +46,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -154,7 +155,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                             color = blue20,
                         )
                         Text(
-                            text = "ha realizado una denuncia",
+                            text = "realizo una denuncia",
                             color = blue20,
                         )
                     }
@@ -162,7 +163,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if (profile.rol == "admin") {
+                        if (profile.rol == "Administrador") {
                             Icon(
                                 modifier = Modifier
                                     .size(25.dp)
@@ -237,7 +238,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                     )
                     Text(
                         text = post.categoria.name,
-                        color = gray,
+                        color = gray
                     )
                 }
                 Row(
@@ -245,7 +246,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Icon(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(20.dp),
                         imageVector = Icons.Default.Timelapse,
                         contentDescription = "senIcon",
                         tint = gray

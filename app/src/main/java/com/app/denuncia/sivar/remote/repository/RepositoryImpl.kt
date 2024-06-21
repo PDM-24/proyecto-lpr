@@ -192,9 +192,9 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun getComplaints(): Resources<List<publicacion>> {
+    override suspend fun getComplaints(search: String,departamento: String,categorie: String): Resources<List<publicacion>> {
         try {
-            val response = service.getComplaints()
+            val response = service.getComplaints(search, departamento, categorie)
             if(response.isSuccessful){
                 return Resources.Success(response.body()!!)
             }else{

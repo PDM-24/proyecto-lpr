@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,7 +25,12 @@ import com.app.denuncia.sivar.viewmodel.ViewModelMain
 fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel:ViewModelMain){
 
     val denuncias = viewModel.denuncias.collectAsState().value
-    Column(){
+
+    LaunchedEffect(Unit){
+        viewModel.getComplainst("","","")
+    }
+
+    Column{
         TopAppBarHome(navController)
         LazyColumn(
             modifier = Modifier

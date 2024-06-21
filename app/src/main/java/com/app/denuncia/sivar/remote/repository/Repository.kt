@@ -16,7 +16,7 @@ interface Repository {
     suspend fun login(body:login): Resources<TokenJson>
     suspend fun singUp(body: userBody): Resources<JsonResponse>
     suspend fun verifyToken(token:String): Resources<UserSession>
-    suspend fun getComplaints() : Resources<List<publicacion>>
+    suspend fun getComplaints(search: String, departamento: String, categorie: String) : Resources<List<publicacion>>
     suspend fun uploadComplaint(body: complaint): Resources<JsonResponse>
     suspend fun getCategoriesList(): Resources<List<Categoria>>
     suspend fun getUsers(search:String): Resources<List<Usuario>>
