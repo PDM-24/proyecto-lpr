@@ -322,6 +322,7 @@ class ViewModelMain : ViewModel() {
                     _errorRequest.value = false
                     _token.value = response.data.token
                     verifyToken()
+                    getComplainst()
                     _loading.value = false
                 }
                 else if(response is Resources.Error){
@@ -348,6 +349,7 @@ class ViewModelMain : ViewModel() {
                     _errorRequest.value = false
                     _token.value = response.data.token
                     verifyToken()
+                    getComplainst()
                     _loading.value = false
                 }
                 else if(response is Resources.Error){
