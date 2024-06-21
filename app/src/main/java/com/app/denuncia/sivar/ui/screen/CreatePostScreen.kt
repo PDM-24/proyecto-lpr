@@ -1,6 +1,5 @@
 package com.app.denuncia.sivar.ui.screen
 
-import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.net.Uri
 import android.util.Base64
@@ -43,9 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.DepartamentList
-import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
@@ -177,7 +174,6 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
             .fillMaxSize()
             .padding(innerPadding)
     ) {
-        TopBar("Crear Denuncia", R.drawable.ic_edit_image, navController, showBackIcon = true)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -233,11 +229,10 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                         Spacer(modifier = Modifier.height(5.dp))
                         CustomDropdownDepartment(
                             options = DepartamentList,
-                            selectedOption = departamento,
-                            onOptionSelected = {
-                                departamento = it.nombre
-                            }
-                        )
+                            selectedOption = departamento
+                        ) {
+                            departamento = it.nombre
+                        }
                         Spacer(modifier = Modifier.height(7.dp))
                         CustomDropdownKind(
                             options = categories,

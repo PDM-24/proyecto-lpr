@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PublishedWithChanges
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,12 +45,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
+import com.app.denuncia.sivar.model.EstadoList
 import com.app.denuncia.sivar.model.mongoose.publicacion
+import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
+import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownEstatus
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -64,6 +66,7 @@ import java.time.temporal.ChronoUnit
 
 @Composable
 fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
+    var estado by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     val profile by viewModelMain.profile.collectAsState()
     val formatter = DateTimeFormatter.ISO_DATE_TIME
@@ -198,22 +201,6 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                                         },
                                         onClick = { expanded = false }
                                     )
-                                    DropdownMenuItem(
-                                        text = { (
-                                                Text(
-                                                    text = "Cambiar estado",
-                                                    color = blue20)) },
-                                        leadingIcon = {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(20.dp),
-                                                imageVector = Icons.Default.PublishedWithChanges,
-                                                contentDescription = "delete",
-                                                tint = blue20
-                                            )
-                                        },
-                                        onClick = { expanded = false }
-                                    )
                                 }
 
                             }
@@ -251,15 +238,27 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         contentDescription = "senIcon",
                         tint = gray
                     )
-                    Text(
-                        text = "Estado:",
-                        fontWeight = FontWeight.Bold,
-                        color = gray,
-                    )
-                    Text(
-                        text = post.state,
-                        color = gray,
-                    )
+                    if (profile.rol == "Administrador"){
+                        Text(
+                            text = "Estado:",
+                            fontWeight = FontWeight.Bold,
+                            color = gray,
+                        )
+                        CustomDropdownEstatus(
+                            options = EstadoList,
+                            selectedOption = estado.ifEmpty { post.state }
+                        ) { estado = it.nombre }
+                    }else{
+                        Text(
+                            text = "Estado:",
+                            fontWeight = FontWeight.Bold,
+                            color = gray,
+                        )
+                        Text(
+                            text = post.state,
+                            color = gray,
+                        )
+                    }
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -357,4 +356,10 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
             }
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PostCompPreview() {
+    PostComp(publicacion(), ViewModelMain())
 }

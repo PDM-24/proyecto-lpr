@@ -36,7 +36,6 @@ fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValue
             .fillMaxSize()
             .padding(innerPadding)
     ){
-        TopBar("Historial", R.drawable.historial, navController, showBackIcon = false)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -31,7 +31,6 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, vi
     }
 
     Column{
-        TopAppBarHome(navController)
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)

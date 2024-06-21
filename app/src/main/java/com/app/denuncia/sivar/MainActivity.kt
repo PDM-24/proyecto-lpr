@@ -11,12 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarComponent
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarGraph
 import com.app.denuncia.sivar.ui.components.BottonNavBar.NavBarItemList
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
+import com.app.denuncia.sivar.ui.components.TopBar.TopAppBarHome
+import com.app.denuncia.sivar.ui.components.TopBar.TopBar
+import com.app.denuncia.sivar.ui.components.TopBar.TopBarFilter
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.DenunciaSivarTheme
 import com.denuncia.sivar.ui.theme.blue100
@@ -45,13 +49,14 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute: String? = navBackStackEntry?.destination?.route
-        val navItems = NavBarItemList()
+        val navItems = NavBarItemList(viewModel)
 
         val shouldShowBottomBar = currentRoute != ScreenRoute.Login.route && currentRoute != ScreenRoute.Register.route
 
         Scaffold(
             modifier = Modifier,
             containerColor = blue100,
+            topBar = { TopBarForRoute(currentRoute, navController) },
             bottomBar = {
                 if (shouldShowBottomBar) {
                     NavBarComponent(items = navItems, currentRoute = currentRoute) { nav ->
@@ -73,4 +78,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun TopBarForRoute(currentRoute: String?, navController: NavHostController) {
+    when (currentRoute) {
+        ScreenRoute.Home.route -> TopAppBarHome(navController)
+        ScreenRoute.Historial.route -> TopBar("Historial", R.drawable.historial, navController)
+        ScreenRoute.CreatePost.route -> TopBar("Crear Denuncia", R.drawable.ic_edit_image, navController, showBackIcon = true)
+        ScreenRoute.Profile.route -> TopBar("Perfil", R.drawable.editprofile, navController)
+        ScreenRoute.EditProfile.route -> TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = true)
+        ScreenRoute.Manage.route -> TopBar("Administrar usuarios", R.drawable.manageuser, navController, showBackIcon = false)
+        ScreenRoute.Filter.route -> TopBarFilter(navController)
+        else -> {}
+    }
+}
 

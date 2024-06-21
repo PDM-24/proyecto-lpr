@@ -1,6 +1,18 @@
 package com.app.denuncia.sivar.ui.components.BottonNavBar
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PostAdd
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.PostAdd
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +41,8 @@ fun NavBarComponent(
     onClick: (NavBarItem) -> Unit
 ) {
     NavigationBar(
-        modifier = Modifier,
+        modifier = Modifier
+            .height(57.dp),
         containerColor = blue80,
     ) {
         items.forEach { navBarItem ->
@@ -66,13 +79,8 @@ fun NavBarComponent(
                         )
                     }
                 },
-                label = {
-                    Text(
-                        text = navBarItem.title,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = IstokWebFamily
-                    )
-                })
+            )
         }
     }
 }
+
