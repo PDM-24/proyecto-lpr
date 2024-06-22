@@ -19,11 +19,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Timelapse
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -31,7 +37,12 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,10 +52,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +71,7 @@ import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownEstatus
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
+import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
@@ -67,6 +84,8 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
     var estado by remember { mutableStateOf("") }
+    var showSupportDialog by remember { mutableStateOf(false) }
+    var showSupportTextFieldDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val profile by viewModelMain.profile.collectAsState()
     val formatter = DateTimeFormatter.ISO_DATE_TIME
@@ -323,7 +342,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                     )
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { showSupportDialog = true },
                         modifier = Modifier
                             .weight(1f)
                             .height(30.dp),
@@ -356,6 +375,192 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
             }
         }
     }
+    if (showSupportDialog) {
+        DialogSupport(
+            usuario = post.usuario!!.username,
+            correo = profile.email,
+            onDismissRequest = { showSupportDialog = false },
+            onConfirm = {
+                showSupportDialog = false
+                showSupportTextFieldDialog = true
+            }
+        )
+    }
+
+    if (showSupportTextFieldDialog) {
+        DialogSupportTextField(
+            onDismissRequest = { showSupportTextFieldDialog = false }
+        )
+    }
+}
+
+@Composable
+fun DialogSupport(
+    usuario: String,
+    correo: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit
+){
+
+    AlertDialog(
+        modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
+        containerColor = blue100,
+        onDismissRequest = { },
+        confirmButton = {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(blue80)
+                    .height(30.dp)
+                    .padding(start = 10.dp, end = 10.dp)
+                    .clickable(onClick = onConfirm),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(imageVector = Icons.Default.Mail, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(5.dp))
+                Text(text = "Enviar código", color = blue20)
+            }
+        },
+        dismissButton = {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(blue80)
+                    .height(30.dp)
+                    .padding(start = 10.dp, end = 10.dp)
+                    .clickable(onClick = onDismissRequest),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(imageVector = Icons.Default.Cancel, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(5.dp))
+                Text(text = "Cancelar", color = blue20)
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "¿Está seguro que desea apoyar esta denuncia de ${usuario}?",
+                    color = blue20,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    fontFamily = IstokWebFamily
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                Column {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Para confirmar el apoyo a esta denuncia le enviaremos un código de verificación a su correo electrónico: ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(correo)
+                            }
+                        },
+                        color = blue20,
+                        fontSize = 16.sp,
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun DialogSupportTextField(
+    onDismissRequest: () -> Unit
+){
+
+    var textFieldValue by remember { mutableStateOf("") }
+
+    AlertDialog(
+        modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
+        containerColor = blue100,
+        onDismissRequest = { },
+        confirmButton = {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(blue80)
+                    .height(30.dp)
+                    .padding(start = 10.dp, end = 10.dp)
+                    .clickable(onClick = {}),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(imageVector = Icons.Default.Send, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(5.dp))
+                Text(text = "Confirmar", color = blue20)
+            }
+        },
+        dismissButton = {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(blue80)
+                    .height(30.dp)
+                    .padding(start = 10.dp, end = 10.dp)
+                    .clickable(onClick = onDismissRequest),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(imageVector = Icons.Default.Cancel, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(5.dp))
+                Text(text = "Cancelar", color = blue20)
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Digite su codigo recibido en su correo electrónico",
+                    color = blue20,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    fontFamily = IstokWebFamily
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                OutlinedTextField(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = blue20,
+                        focusedBorderColor = blue20,
+                        unfocusedBorderColor = blue20,
+                        disabledBorderColor = blue20,
+                        errorBorderColor = blue20,
+                        errorLabelColor = blue20,
+                        errorLeadingIconColor = blue20,
+                        errorTrailingIconColor = blue20,
+                        errorPlaceholderColor = blue20,
+                        focusedLabelColor = blue20,
+                        unfocusedLabelColor = blue20,
+                        errorTextColor = Color.Red,
+                    ),
+                    value = textFieldValue,
+                    onValueChange = { textFieldValue = it },
+                    label = {
+                        Text(text = "Ingrese su código")
+                    }
+                )
+            }
+        }
+    )
+}
+
+
+@Preview
+@Composable
+fun DialogSupportPreview() {
+    DialogSupport("No se","david",{},{})
 }
 
 @Preview(showBackground = true, showSystemUi = true)
