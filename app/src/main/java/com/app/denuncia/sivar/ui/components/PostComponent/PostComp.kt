@@ -1,5 +1,6 @@
 package com.app.denuncia.sivar.ui.components.PostComponent
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Mail
@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -40,9 +39,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -68,7 +65,6 @@ import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.EstadoList
 import com.app.denuncia.sivar.model.mongoose.publicacion
-import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownEstatus
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.IstokWebFamily
@@ -77,18 +73,32 @@ import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
 import com.denuncia.sivar.ui.theme.gray
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Composable
 fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
+
     var estado by remember { mutableStateOf("") }
     var showSupportDialog by remember { mutableStateOf(false) }
     var showSupportTextFieldDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    val profile by viewModelMain.profile.collectAsState()
+
+    val context = LocalContext.current
     val formatter = DateTimeFormatter.ISO_DATE_TIME
+
+    val profile by viewModelMain.profile.collectAsState()
+
+    //Email
+    val loadingEmail by viewModelMain.loadingEmail.collectAsState()
+    val stateEmail by viewModelMain.email.collectAsState()
+    val detailsError by viewModelMain.detailsErrorEmail.collectAsState()
+    var launchSendEmail by remember { mutableStateOf(false) }
 
     fun getTiempo(fecha: String): String {
         val inicio = LocalDateTime.parse(fecha, formatter)
@@ -343,15 +353,14 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
 
                     Button(
                         onClick = { showSupportDialog = true },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(30.dp),
+                        modifier = Modifier.weight(1f).height(30.dp),
+                        enabled = post.apoyo.find{ it.usuario == profile._id } == null,
                         contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = blue80)
                         ){
                         Text(
-                            text = "Apoyar denuncia",
+                            text = if(post.apoyo.find{ it.usuario == profile._id } != null) "Denuncia apoyada" else "Apoyar denuncia",
                             color = blue20,
                         )
                     }
@@ -370,37 +379,46 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                             color = colorResource(id = R.color.white),
                         )
                     }
-
                 }
             }
         }
     }
     if (showSupportDialog) {
         DialogSupport(
-            usuario = post.usuario!!.username,
+            usuario = if(post.usuario != null) post.usuario!!.username else "Usuario",
             correo = profile.email,
-            onDismissRequest = { showSupportDialog = false },
+            onDismissRequest = { showSupportDialog = false ; launchSendEmail = false },
             onConfirm = {
-                showSupportDialog = false
-                showSupportTextFieldDialog = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModelMain.getEmailCode()
+                    delay(1000)
+                    launchSendEmail = true
+                }
+
             }
         )
     }
 
+    if (launchSendEmail) {
+        if(!loadingEmail){
+            if(stateEmail){
+                showSupportDialog = false
+                showSupportTextFieldDialog = true
+                launchSendEmail = false
+            }else{
+                Toast.makeText(context, detailsError, Toast.LENGTH_SHORT).show()
+            }
+        }
+        launchSendEmail = false
+    }
+
     if (showSupportTextFieldDialog) {
-        DialogSupportTextField(
-            onDismissRequest = { showSupportTextFieldDialog = false }
-        )
+        DialogSupportTextField(onDismissRequest = { showSupportTextFieldDialog = false }, viewModelMain, post._id)
     }
 }
 
 @Composable
-fun DialogSupport(
-    usuario: String,
-    correo: String,
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit
-){
+fun DialogSupport(usuario: String, correo: String, onDismissRequest: () -> Unit, onConfirm: () -> Unit){
 
     AlertDialog(
         modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
@@ -472,11 +490,28 @@ fun DialogSupport(
 }
 
 @Composable
-fun DialogSupportTextField(
-    onDismissRequest: () -> Unit
-){
+fun DialogSupportTextField(onDismissRequest: () -> Unit, viewModelMain: ViewModelMain, publicacion: String){
 
-    var textFieldValue by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val code by viewModelMain.code.collectAsState()
+    val supportComplaint by viewModelMain.supportState.collectAsState()
+    val supportComplaintDetails by viewModelMain.supportDetails.collectAsState()
+    val loadingSupport by viewModelMain.loadingSupport.collectAsState()
+
+    val txtCode = remember { mutableStateOf("") }
+    var launchSupport by remember { mutableStateOf(false) }
+
+    if(launchSupport){
+        if(!loadingSupport){
+            if(supportComplaint){
+                Toast.makeText(context, supportComplaintDetails, Toast.LENGTH_SHORT).show()
+                launchSupport = false
+            }else{
+                Toast.makeText(context, supportComplaintDetails, Toast.LENGTH_SHORT).show()
+                launchSupport = false
+            }
+        }
+    }
 
     AlertDialog(
         modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
@@ -489,7 +524,17 @@ fun DialogSupportTextField(
                     .background(blue80)
                     .height(30.dp)
                     .padding(start = 10.dp, end = 10.dp)
-                    .clickable(onClick = {}),
+                    .clickable(onClick = {
+                        if(txtCode.value == code){
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModelMain.supportComplaint(publicacion)
+                                delay(1000)
+                                launchSupport = true
+                            }
+                        }else {
+                            Toast.makeText(context, "El codigo ingresado no es el correcto!", Toast.LENGTH_SHORT).show()
+                        }
+                    }),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -522,7 +567,7 @@ fun DialogSupportTextField(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Digite su codigo recibido en su correo electrónico",
+                    text = "Digite el codigo recibido en su correo electrónico!",
                     color = blue20,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
@@ -545,8 +590,8 @@ fun DialogSupportTextField(
                         unfocusedLabelColor = blue20,
                         errorTextColor = Color.Red,
                     ),
-                    value = textFieldValue,
-                    onValueChange = { textFieldValue = it },
+                    value = txtCode.value,
+                    onValueChange = { txtCode.value = it },
                     label = {
                         Text(text = "Ingrese su código")
                     }

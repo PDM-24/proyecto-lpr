@@ -10,6 +10,7 @@ import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.remote.ApiProvider
+import com.app.denuncia.sivar.remote.model.mongoose.Apoyo
 import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import com.app.denuncia.sivar.resources.Resources
 import kotlinx.coroutines.Dispatchers
@@ -77,6 +78,29 @@ class ViewModelMain : ViewModel() {
     //state update profile
     private val _stateUpdateProfile = MutableStateFlow(false)
     val stateUpdateProfile: StateFlow<Boolean> = _stateUpdateProfile
+
+    //Email
+    private val _loadingEmail = MutableStateFlow(false)
+    val loadingEmail: StateFlow<Boolean> = _loadingEmail
+
+    private val _email = MutableStateFlow(false)
+    val email: StateFlow<Boolean> = _email
+    
+    private val _detailsErrorEmail = MutableStateFlow("")
+    val detailsErrorEmail: StateFlow<String> = _detailsErrorEmail
+
+    //Support Complaint
+    private val _loadingSupport = MutableStateFlow(false)
+    val loadingSupport: StateFlow<Boolean> = _loadingSupport
+
+    private val _code = MutableStateFlow("")
+    val code: StateFlow<String> = _code
+
+    private val _supportState = MutableStateFlow(false)
+    val supportState: StateFlow<Boolean> = _supportState
+
+    private val _supportDetails = MutableStateFlow("")
+    val supportDetails: StateFlow<String> = _supportDetails
 
     init {
         getCategoriesList()
@@ -359,6 +383,54 @@ class ViewModelMain : ViewModel() {
                 _detailsErrorRequest.value = e.message.toString()
                 _stateUpdateProfile.value = false
                 _loading.value = false
+            }
+        }
+    }
+
+    fun getEmailCode(){
+        _loadingEmail.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when(val response = apiRest.getEmailCode(profile.value._id)){
+                    is Resources.Success -> {
+                        _code.value = response.data.code
+                        _email.value = true
+                        _loadingEmail.value = false
+                    }
+                    is Resources.Error -> {
+                        _detailsErrorEmail.value = response.message
+                        _email.value = false
+                        _loadingEmail.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _detailsErrorRequest.value = e.message.toString()
+                _email.value = false
+                _loadingEmail.value = false
+            }
+        }
+    }
+
+    fun supportComplaint(id:String){
+        _loadingSupport.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when(val response = apiRest.supportComplaint(id, Apoyo(profile.value._id, code.value))){
+                    is Resources.Success -> {
+                        _supportState.value = response.data.state
+                        _supportDetails.value = response.data.details
+                        _loadingSupport.value = false
+                    }
+                    is Resources.Error -> {
+                        _supportState.value = false
+                        _supportDetails.value = response.message
+                        _loadingSupport.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _detailsErrorRequest.value = e.message.toString()
+                _email.value = false
+                _loadingEmail.value = false
             }
         }
     }

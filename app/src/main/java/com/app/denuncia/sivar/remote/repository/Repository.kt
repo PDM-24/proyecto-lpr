@@ -6,9 +6,11 @@ import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
+import com.app.denuncia.sivar.remote.model.JsonCodeResponse
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
 import com.app.denuncia.sivar.remote.model.UserSession
+import com.app.denuncia.sivar.remote.model.mongoose.Apoyo
 import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import com.app.denuncia.sivar.resources.Resources
 
@@ -24,5 +26,7 @@ interface Repository {
     suspend fun deleteUser(id:String): Resources<JsonResponse>
     suspend fun updatePhoto(id:String, body:photo): Resources<TokenJson>
     suspend fun updateProfile(id:String, body:userBody): Resources<TokenJson>
+    suspend fun getEmailCode(id:String): Resources<JsonCodeResponse>
+    suspend fun supportComplaint(id:String, body:Apoyo): Resources<JsonResponse>
 
 }

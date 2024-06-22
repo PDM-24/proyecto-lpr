@@ -6,9 +6,11 @@ import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
+import com.app.denuncia.sivar.remote.model.JsonCodeResponse
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
 import com.app.denuncia.sivar.remote.model.UserSession
+import com.app.denuncia.sivar.remote.model.mongoose.Apoyo
 import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import retrofit2.Response
 import retrofit2.http.Body
@@ -45,6 +47,10 @@ interface Services {
     @GET("getusers")
     suspend fun getUsers(@Query("Search") search: String): Response<List<Usuario>>
 
+    @GET("getemailcode/{Id}")
+    suspend fun getEmailCode(@Path("Id") id: String): Response<JsonCodeResponse>
+
+    //Delete
     @DELETE("deleteuser/{Id}")
     suspend fun deleteUser(@Path("Id") id: String): Response<JsonResponse>
 
@@ -54,6 +60,9 @@ interface Services {
 
     @PATCH("updatephoto/{Id}")
     suspend fun updatePhoto(@Path("Id") id: String, @Body body: photo): Response<TokenJson>
+
+    @PATCH("supportcomplaint/{Id}")
+    suspend fun supportComplaint(@Path("Id") id: String, @Body body: Apoyo): Response<JsonResponse>
 
     @PUT("updateprofile/{Id}")
     suspend fun updateProfile(@Path("Id") id: String, @Body body: userBody): Response<TokenJson>

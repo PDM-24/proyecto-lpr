@@ -6,9 +6,11 @@ import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.model.mongoose.Usuario
 import com.app.denuncia.sivar.model.mongoose.publicacion
+import com.app.denuncia.sivar.remote.model.JsonCodeResponse
 import com.app.denuncia.sivar.remote.model.JsonResponse
 import com.app.denuncia.sivar.remote.model.TokenJson
 import com.app.denuncia.sivar.remote.model.UserSession
+import com.app.denuncia.sivar.remote.model.mongoose.Apoyo
 import com.app.denuncia.sivar.remote.model.mongoose.Categoria
 import com.app.denuncia.sivar.remote.services.Services
 import com.app.denuncia.sivar.resources.ErrorResponse
@@ -184,6 +186,44 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
                     val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
                     return Resources.Error(exception.details)
                 }catch(e:Exception){
+                    return Resources.Error(errorBody)
+                }
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun getEmailCode(id: String): Resources<JsonCodeResponse> {
+        try {
+            val response = service.getEmailCode(id)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch (e:Exception){
+                    return Resources.Error(errorBody)
+                }
+            }
+        }catch (e:Exception){
+            return Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun supportComplaint(id: String, body: Apoyo): Resources<JsonResponse> {
+        try {
+            val response = service.supportComplaint(id, body)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch (e:Exception){
                     return Resources.Error(errorBody)
                 }
             }
