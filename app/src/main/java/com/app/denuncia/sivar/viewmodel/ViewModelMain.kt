@@ -2,6 +2,7 @@ package com.app.denuncia.sivar.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,6 +58,8 @@ class ViewModelMain : ViewModel() {
     val loginState: StateFlow<Boolean> = _loginState
 
     // Denuncias
+    val search = mutableStateOf("")
+
     private val _denuncias = MutableStateFlow<List<publicacion>>(emptyList())
     val denuncias: StateFlow<List<publicacion>> = _denuncias
 

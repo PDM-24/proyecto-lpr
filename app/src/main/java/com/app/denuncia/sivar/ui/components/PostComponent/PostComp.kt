@@ -375,41 +375,99 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         modifier = Modifier.size(25.dp)
                     )
 
-                    Button(
-                        onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                viewModelMain.getEmailCode()
-                                delay(1000)
-                                launchSendEmail = true
+                    if(post.usuario != null){
+                        if(post.usuario!!._id != profile._id){
+                            Button(
+                                onClick = {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        viewModelMain.getEmailCode()
+                                        delay(1000)
+                                        launchSendEmail = true
+                                    }
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(30.dp),
+                                enabled = post.apoyo.find{ it.usuario == profile._id } == null,
+                                contentPadding = PaddingValues(0.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = blue80)
+                            ){
+                                Text(
+                                    text = if(post.apoyo.find{ it.usuario == profile._id } != null) "Denuncia apoyada" else "Apoyar denuncia",
+                                    color = blue20,
+                                )
                             }
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(30.dp),
-                        enabled = post.apoyo.find{ it.usuario == profile._id } == null,
-                        contentPadding = PaddingValues(0.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = blue80)
+                            Box(
+                                modifier = Modifier
+                                    .width(40.dp)
+                                    .height(30.dp)
+                                    .background(gray, shape = RoundedCornerShape(50))
+                                    .clip(RoundedCornerShape(50))
+                                    .padding(5.dp),
+                                contentAlignment = Alignment.Center
+                            ){
+                                Text(
+                                    text = post.apoyo.size.toString(),
+                                    fontSize = 13.sp,
+                                    color = colorResource(id = R.color.white),
+                                )
+                            }
+                        }else{
+                            Button(
+                                onClick = {},
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(30.dp),
+                                enabled = false,
+                                contentPadding = PaddingValues(0.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = blue80)
+                            ){
+                                Text(
+                                    text = "Apoyos de tu denuncia:  ${post.apoyo.size}",
+                                    color = blue20,
+                                )
+                            }
+
+                        }
+                    }else{
+                        Button(
+                            onClick = {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModelMain.getEmailCode()
+                                    delay(1000)
+                                    launchSendEmail = true
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(30.dp),
+                            enabled = post.apoyo.find{ it.usuario == profile._id } == null,
+                            contentPadding = PaddingValues(0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = blue80)
                         ){
-                        Text(
-                            text = if(post.apoyo.find{ it.usuario == profile._id } != null) "Denuncia apoyada" else "Apoyar denuncia",
-                            color = blue20,
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .width(40.dp)
-                            .height(30.dp)
-                            .background(gray, shape = RoundedCornerShape(50))
-                            .clip(RoundedCornerShape(50))
-                            .padding(5.dp),
-                        contentAlignment = Alignment.Center
-                    ){
-                        Text(
-                            text = post.apoyo.size.toString(),
-                            fontSize = 13.sp,
-                            color = colorResource(id = R.color.white),
-                        )
+                            Text(
+                                text = if(post.apoyo.find{ it.usuario == profile._id } != null) "Denuncia apoyada" else "Apoyar denuncia",
+                                color = blue20,
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(30.dp)
+                                .background(gray, shape = RoundedCornerShape(50))
+                                .clip(RoundedCornerShape(50))
+                                .padding(5.dp),
+                            contentAlignment = Alignment.Center
+                        ){
+                            Text(
+                                text = post.apoyo.size.toString(),
+                                fontSize = 13.sp,
+                                color = colorResource(id = R.color.white),
+                            )
+                        }
                     }
                 }
             }

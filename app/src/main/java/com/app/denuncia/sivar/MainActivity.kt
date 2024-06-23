@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
         Scaffold(
             modifier = Modifier,
             containerColor = blue100,
-            topBar = { TopBarForRoute(currentRoute, navController) },
+            topBar = { TopBarForRoute(currentRoute, navController, viewModel) },
             bottomBar = {
                 if (shouldShowBottomBar) {
                     NavBarComponent(items = navItems, currentRoute = currentRoute) { nav ->
@@ -79,7 +80,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TopBarForRoute(currentRoute: String?, navController: NavHostController) {
+fun TopBarForRoute(currentRoute: String?, navController: NavHostController, viewModel: ViewModelMain) {
     when (currentRoute) {
         ScreenRoute.Home.route -> TopAppBarHome(navController)
         ScreenRoute.Historial.route -> TopBar("Historial", R.drawable.historial, navController)
@@ -87,7 +88,7 @@ fun TopBarForRoute(currentRoute: String?, navController: NavHostController) {
         ScreenRoute.Profile.route -> TopBar("Perfil", R.drawable.editprofile, navController)
         ScreenRoute.EditProfile.route -> TopBar("Perfil", R.drawable.editprofile, navController, showBackIcon = true)
         ScreenRoute.Manage.route -> TopBar("Administrar usuarios", R.drawable.manageuser, navController, showBackIcon = false)
-        ScreenRoute.Filter.route -> TopBarFilter(navController)
+        ScreenRoute.Filter.route -> TopBarFilter(navController, viewModel)
         else -> {}
     }
 }

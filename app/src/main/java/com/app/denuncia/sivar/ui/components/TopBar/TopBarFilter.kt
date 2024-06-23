@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
+import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -41,9 +42,9 @@ import com.denuncia.sivar.ui.theme.blue80
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarFilter(
-    navController: NavHostController,
+    navController: NavHostController, viewModel: ViewModelMain
 ){
-    var search by remember { mutableStateOf("") }
+    var search by viewModel.search
     TopAppBar(
         modifier = Modifier.height(50.dp),
         title = { },

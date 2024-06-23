@@ -41,10 +41,12 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, vi
     val session by viewModel.session.collectAsState()
     val loadingSession by viewModel.loadingSession.collectAsState()
     val launchSession = remember {mutableStateOf(false)}
+    var search by viewModel.search
 
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.getComplainst("", "", "")
+            search = ""
+            viewModel.getComplainst(search, "", "")
             viewModel.verifyToken(context)
             delay(1000)
             launchSession.value = true

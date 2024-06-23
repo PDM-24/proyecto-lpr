@@ -46,7 +46,7 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
 
     var departamento by remember { mutableStateOf("") }
     var categorie by remember { mutableStateOf("") }
-    var search by remember { mutableStateOf("") }
+    val search by viewModel.search
 
     var denuncias = viewModel.denuncias.collectAsState().value
 
