@@ -1,6 +1,8 @@
 package com.app.denuncia.sivar.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.denuncia.sivar.model.body.complaint
@@ -19,6 +21,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ViewModelMain : ViewModel() {
+
+
     private val apiRest = ApiProvider.repository
 
     private val _loading = MutableStateFlow(false)
@@ -28,8 +32,9 @@ class ViewModelMain : ViewModel() {
     private val _session = MutableStateFlow(false)
     val session: StateFlow<Boolean> = _session
 
-    // Token
-    private val _token = MutableStateFlow("")
+    private val _loadingSession = MutableStateFlow(false)
+    val loadingSession: StateFlow<Boolean> = _loadingSession
+
 
     // Perfil
     private val _profile = MutableStateFlow(Usuario())
@@ -102,6 +107,20 @@ class ViewModelMain : ViewModel() {
     private val _supportDetails = MutableStateFlow("")
     val supportDetails: StateFlow<String> = _supportDetails
 
+    //Update Complaint
+    private val _updateComplaint = MutableStateFlow(false)
+    val updateComplaint:StateFlow<Boolean> = _updateComplaint
+
+    private val _detailsUpdateComplaint = MutableStateFlow("")
+    val detailsUpdateComplaint:StateFlow<String> = _detailsUpdateComplaint
+
+    //Delete COmplaint
+    private val _deleteComplaint = MutableStateFlow(false)
+    val deleteComplaint:StateFlow<Boolean> = _deleteComplaint
+
+    private val _detailsDeleteComplaint = MutableStateFlow("")
+    val detailsDeleteComplaint:StateFlow<String> = _detailsDeleteComplaint
+
     init {
         getCategoriesList()
     }
@@ -111,38 +130,45 @@ class ViewModelMain : ViewModel() {
     }
 
 
-    fun verifyToken() {
+    fun verifyToken(context: Context) {
+        val store = UserDataStorage(context)
+        _loadingSession.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                when (val response = apiRest.verifyToken(_token.value)) {
+                when (val response = apiRest.verifyToken(store.getToken().toString())) {
                     is Resources.Success -> {
+                        Log.i("Token", store.getToken().toString())
                         _session.value = response.data.state
                         _profile.value = response.data.usuario!!
+                        _loadingSession.value = false
                     }
                     is Resources.Error -> {
                         _session.value = false
                         _detailsErrorRequest.value = response.message
+                        _loadingSession.value = false
                     }
                 }
             } catch (e: Exception) {
                 _errorRequest.value = true
                 _detailsErrorRequest.value = e.message.toString()
                 _session.value = false
+                _loadingSession.value = false
             }
         }
     }
 
-    fun loginUser(username: String, password: String) {
+    fun loginUser(username: String, password: String, context: Context) {
+        val store = UserDataStorage(context)
         _loading.value = true
         val body = login(username, password)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 when (val response = apiRest.login(body)) {
                     is Resources.Success -> {
-                        verifyToken()
-                        _token.value = response.data.token
                         _loginState.value = response.data.state
                         _errorRequest.value = false
+                        store.saveToken(response.data.token)
+                        verifyToken(context)
                         _loading.value = false
                     }
                     is Resources.Error -> {
@@ -161,6 +187,12 @@ class ViewModelMain : ViewModel() {
                 _errorRequest.value = true
             }
         }
+    }
+
+    fun logout(context: Context){
+        val store = UserDataStorage(context)
+        store.removeToken()
+        verifyToken(context)
     }
 
     fun singUp(username: String, name: String, surname: String, email: String, birthdate: String, pass: String, rol: String) {
@@ -212,7 +244,6 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-
     private fun getCategoriesList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -232,6 +263,7 @@ class ViewModelMain : ViewModel() {
             }
         }
     }
+
     fun uploadComplaint(user:String, category:String, departamento:String, details:String, date:String, img:String){
         _loading.value = true
         try {
@@ -334,7 +366,8 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-    fun updatePhoto(id:String, body:photo){
+    fun updatePhoto(id:String, body:photo, context: Context){
+        val store = UserDataStorage(context)
         _loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -342,8 +375,8 @@ class ViewModelMain : ViewModel() {
                 if(response is Resources.Success){
                     _stateUpdateProfile.value = true
                     _errorRequest.value = false
-                    _token.value = response.data.token
-                    verifyToken()
+                    store.saveToken(response.data.token)
+                    verifyToken(context)
                     _loading.value = false
                 }
                 else if(response is Resources.Error){
@@ -361,15 +394,17 @@ class ViewModelMain : ViewModel() {
         }
     }
 
-    fun updateProfile(id:String, body:userBody){
+    fun updateProfile(id:String, body:userBody, context: Context){
+        val store = UserDataStorage(context)
+        _loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = apiRest.updateProfile(id, body)
                 if(response is Resources.Success){
                     _stateUpdateProfile.value = true
                     _errorRequest.value = false
-                    _token.value = response.data.token
-                    verifyToken()
+                    store.saveToken(response.data.token)
+                    verifyToken(context)
                     _loading.value = false
                 }
                 else if(response is Resources.Error){
@@ -432,6 +467,46 @@ class ViewModelMain : ViewModel() {
                 _detailsErrorRequest.value = e.message.toString()
                 _email.value = false
                 _loadingEmail.value = false
+            }
+        }
+    }
+
+    fun updateComplaint(id:String, state:String){
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                when(val response = apiRest.updateComplaint(id, state)){
+                    is Resources.Success -> {
+                        _detailsUpdateComplaint.value = response.data.details
+                        _updateComplaint.value = response.data.state
+                    }
+                    is Resources.Error -> {
+                        _detailsUpdateComplaint.value = response.message
+                        _updateComplaint.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _detailsUpdateComplaint.value = e.message.toString()
+                _updateComplaint.value = false
+            }
+        }
+    }
+
+    fun deleteComplaint(id:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when(val response = apiRest.deleteComplaint(id)){
+                    is Resources.Success -> {
+                        _detailsDeleteComplaint.value = response.data.details
+                        _deleteComplaint.value = response.data.state
+                    }
+                    is Resources.Error -> {
+                        _detailsDeleteComplaint.value = response.message
+                        _deleteComplaint.value = false
+                    }
+                }
+            }catch (e:Exception){
+                _detailsDeleteComplaint.value = e.message.toString()
+                _updateComplaint.value = false
             }
         }
     }

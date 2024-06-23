@@ -1,4 +1,4 @@
-package com.app.denuncia.sivar.model
+package com.app.denuncia.sivar.remote.model
 
 data class Estado(
     val _id: Int,
@@ -10,5 +10,4 @@ val EstadoList = listOf(
     Estado(2, "En proceso"),
     Estado(3, "Resuelta"),
     Estado(4, "Descartada"),
-
-)
+    )

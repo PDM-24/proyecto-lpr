@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.app.denuncia.sivar.model.DepartamentList
+import com.app.denuncia.sivar.remote.model.DepartamentList
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50

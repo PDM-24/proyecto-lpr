@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.denuncia.sivar.R
-import com.app.denuncia.sivar.model.EstadoList
+import com.app.denuncia.sivar.remote.model.EstadoList
 import com.app.denuncia.sivar.model.mongoose.publicacion
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownEstatus
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
@@ -101,6 +101,16 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
     val supportState by viewModelMain.supportState.collectAsState()
     val supportDetails by viewModelMain.supportDetails.collectAsState()
     val loadingSupport by viewModelMain.loadingSupport.collectAsState()
+
+    //Update
+    val updateComplaint by viewModelMain.updateComplaint.collectAsState()
+    val detailsUpdate by viewModelMain.detailsUpdateComplaint.collectAsState()
+    var launchUpdate by remember { mutableStateOf(false) }
+
+    //Delete
+    var launchDelete by remember { mutableStateOf(false) }
+    val stateDelete by viewModelMain.deleteComplaint.collectAsState()
+    val detailsDelete by viewModelMain.detailsDeleteComplaint.collectAsState()
 
     fun getTiempo(fecha: String): String {
         val inicio = LocalDateTime.parse(fecha, formatter)
@@ -229,7 +239,13 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                                                 tint = blue20
                                             )
                                         },
-                                        onClick = { expanded = false }
+                                        onClick = {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                viewModelMain.deleteComplaint(post._id)
+                                                delay(1000)
+                                                launchDelete = true
+                                            }
+                                        }
                                     )
                                 }
 
@@ -277,7 +293,14 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         CustomDropdownEstatus(
                             options = EstadoList,
                             selectedOption = estado.ifEmpty { post.state }
-                        ) { estado = it.nombre }
+                        ) {
+                            estado = it.nombre
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModelMain.updateComplaint(post._id, estado)
+                                delay(1000)
+                                launchUpdate = true
+                            }
+                        }
                     }else{
                         Text(
                             text = "Estado:",
@@ -520,13 +543,13 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
     }
 
     //Support complaint
-
     if(launchSupport){
         if(!loadingSupport){
             if(supportState){
                 Toast.makeText(context, supportDetails, Toast.LENGTH_SHORT).show()
                 launchSupport = false
                 launchSendEmail = false
+                viewModelMain.getComplainst("","","")
             }else{
                 Toast.makeText(context, supportDetails, Toast.LENGTH_SHORT).show()
             }
@@ -547,6 +570,30 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                 onDismissRequest = { },
                 confirmButton = {}
             )
+        }
+    }
+
+    //Update Complaint
+    if(launchUpdate){
+        if(updateComplaint){
+            Toast.makeText(context, detailsUpdate, Toast.LENGTH_SHORT).show()
+            launchUpdate = false
+            viewModelMain.getComplainst("","","")
+        }else{
+            Toast.makeText(context, detailsUpdate, Toast.LENGTH_SHORT).show()
+            launchUpdate = false
+        }
+    }
+
+    //Delete Complaint
+    if(launchDelete){
+        if(stateDelete){
+            Toast.makeText(context, detailsDelete, Toast.LENGTH_SHORT).show()
+            launchDelete = false
+            viewModelMain.getComplainst("","","")
+        }else{
+            Toast.makeText(context, detailsDelete, Toast.LENGTH_SHORT).show()
+            launchDelete = false
         }
     }
 }

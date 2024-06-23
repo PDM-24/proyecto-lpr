@@ -307,7 +307,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                                 onClick = {
                                         if (img != null) {
                                             CoroutineScope(Dispatchers.IO).launch {
-                                                viewModel.updatePhoto(profile._id, photo(img))
+                                                viewModel.updatePhoto(profile._id, photo(img), context)
                                                 delay(1000)
                                                 launchPhoto = true
                                             }
@@ -425,7 +425,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                                 onClick = {
                                     if(tempMail.isNotEmpty() && tempUsername.isNotEmpty() && tempFirstName.isNotEmpty() && tempLastName.isNotEmpty()){
                                         CoroutineScope(Dispatchers.IO).launch {
-                                            viewModel.updateProfile(profile._id, userBody(tempUsername, tempFirstName, tempLastName, tempMail, "","",""))
+                                            viewModel.updateProfile(profile._id, userBody(tempUsername, tempFirstName, tempLastName, tempMail, "","",""), context)
                                             delay(1000)
                                             launchProfile = true
                                         }

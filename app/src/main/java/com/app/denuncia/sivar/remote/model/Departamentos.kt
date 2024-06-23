@@ -1,4 +1,9 @@
-package com.app.denuncia.sivar.model
+package com.app.denuncia.sivar.remote.model
+
+data class Departamentos(
+    val id: Int,
+    val nombre: String
+)
 
 val DepartamentList = listOf(
     Departamentos(1, "Ahuachapán"),

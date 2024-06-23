@@ -30,9 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.denuncia.sivar.remote.model.Departamentos
+import com.app.denuncia.sivar.remote.model.Estado
 import com.app.denuncia.sivar.remote.model.mongoose.Categoria
-import com.app.denuncia.sivar.model.Departamentos
-import com.app.denuncia.sivar.model.Estado
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80

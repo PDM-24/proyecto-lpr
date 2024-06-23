@@ -54,6 +54,9 @@ interface Services {
     @DELETE("deleteuser/{Id}")
     suspend fun deleteUser(@Path("Id") id: String): Response<JsonResponse>
 
+    @DELETE("deletecomplaint/{Id}")
+    suspend fun deleteComplaint(@Path("Id") id: String): Response<JsonResponse>
+
     //Patch
     @PATCH("changerol/{Id}/{Rol}")
     suspend fun changeRol(@Path("Id") id: String, @Path("Rol") rol: String): Response<JsonResponse>
@@ -63,6 +66,9 @@ interface Services {
 
     @PATCH("supportcomplaint/{Id}")
     suspend fun supportComplaint(@Path("Id") id: String, @Body body: Apoyo): Response<JsonResponse>
+
+    @PATCH("updatecomplaint/{Id}")
+    suspend fun updateComplaint(@Path("Id") id: String, @Query("state") state: String): Response<JsonResponse>
 
     @PUT("updateprofile/{Id}")
     suspend fun updateProfile(@Path("Id") id: String, @Body body: userBody): Response<TokenJson>

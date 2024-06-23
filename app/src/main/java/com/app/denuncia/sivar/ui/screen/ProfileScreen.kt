@@ -110,6 +110,7 @@ fun ProfileScreen(
             onConfirm = {
                 //TO-DO: CLEAR TOKEN FROM DATA STORE
                 //NAVIGATION
+                viewModel.logout(context)
                 exitDialog = false
                 toastMessage = "Sesión cerrada"
                 showToast = true

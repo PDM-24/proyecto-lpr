@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.app.denuncia.sivar.model.DepartamentList
+import com.app.denuncia.sivar.remote.model.DepartamentList
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp

@@ -79,6 +79,27 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
 
     val launchLogin = remember {mutableStateOf(false)}
 
+    val session by viewModel.session.collectAsState()
+    val loadingSession by viewModel.loadingSession.collectAsState()
+    val launchSession = remember {mutableStateOf(false)}
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.verifyToken(context)
+            delay(1000)
+            launchSession.value = true
+        }
+    }
+
+    if(launchSession.value){
+        if(!loadingSession){
+            if(session){
+                navController.navigate(ScreenRoute.Home.route) {
+                    popUpTo(ScreenRoute.Login.route) { inclusive = true }
+                }
+            }
+        }
+    }
 
     if(launchLogin.value){
         if(!isLoading){
@@ -207,7 +228,7 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                     Button(
                         onClick = {
                             CoroutineScope(Dispatchers.IO).launch {
-                                viewModel.loginUser(usernameState.value, passwordState.value)
+                                viewModel.loginUser(usernameState.value, passwordState.value, context)
                                 delay(1000)
                                 launchLogin.value = true
                             }

@@ -232,6 +232,44 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
+    override suspend fun updateComplaint(id: String, state: String): Resources<JsonResponse> {
+        try {
+            val response = service.updateComplaint(id, state)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch (e:Exception){
+                    return Resources.Error(errorBody)
+                }
+            }
+        }catch (e:Exception){
+            return  Resources.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun deleteComplaint(id: String): Resources<JsonResponse> {
+        try {
+            val response = service.deleteComplaint(id)
+            if(response.isSuccessful){
+                return Resources.Success(response.body()!!)
+            }else{
+                val errorBody = response.errorBody()?.string()!!
+                try {
+                    val exception = gson.fromJson(errorBody, ErrorResponse::class.java)
+                    return Resources.Error(exception.details)
+                }catch (e:Exception){
+                    return Resources.Error(errorBody)
+                }
+            }
+        }catch (e:Exception){
+            return  Resources.Error(e.message.toString())
+        }
+    }
+
     override suspend fun getComplaints(search: String,departamento: String,categorie: String): Resources<List<publicacion>> {
         try {
             val response = service.getComplaints(search, departamento, categorie)

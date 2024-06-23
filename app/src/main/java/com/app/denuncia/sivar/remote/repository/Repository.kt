@@ -28,5 +28,6 @@ interface Repository {
     suspend fun updateProfile(id:String, body:userBody): Resources<TokenJson>
     suspend fun getEmailCode(id:String): Resources<JsonCodeResponse>
     suspend fun supportComplaint(id:String, body:Apoyo): Resources<JsonResponse>
-
+    suspend fun updateComplaint(id:String, state:String): Resources<JsonResponse>
+    suspend fun deleteComplaint(id:String): Resources<JsonResponse>
 }
