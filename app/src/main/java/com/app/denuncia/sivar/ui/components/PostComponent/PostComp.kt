@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Timelapse
@@ -53,12 +52,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -85,20 +81,26 @@ import java.time.temporal.ChronoUnit
 fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
 
     var estado by remember { mutableStateOf("") }
-    var showSupportDialog by remember { mutableStateOf(false) }
-    var showSupportTextFieldDialog by remember { mutableStateOf(false) }
+
     var expanded by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val formatter = DateTimeFormatter.ISO_DATE_TIME
-
     val profile by viewModelMain.profile.collectAsState()
 
     //Email
+    var launchSendEmail by remember { mutableStateOf(false) }
     val loadingEmail by viewModelMain.loadingEmail.collectAsState()
     val stateEmail by viewModelMain.email.collectAsState()
     val detailsError by viewModelMain.detailsErrorEmail.collectAsState()
-    var launchSendEmail by remember { mutableStateOf(false) }
+
+    //Support
+    val code by viewModelMain.code.collectAsState()
+    val txtCode = remember { mutableStateOf("") }
+    var launchSupport by remember { mutableStateOf(false) }
+    val supportState by viewModelMain.supportState.collectAsState()
+    val supportDetails by viewModelMain.supportDetails.collectAsState()
+    val loadingSupport by viewModelMain.loadingSupport.collectAsState()
 
     fun getTiempo(fecha: String): String {
         val inicio = LocalDateTime.parse(fecha, formatter)
@@ -126,7 +128,6 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
             "hace $years años"
         }
     }
-
 
     OutlinedCard(
         modifier = Modifier
@@ -352,8 +353,16 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                     )
 
                     Button(
-                        onClick = { showSupportDialog = true },
-                        modifier = Modifier.weight(1f).height(30.dp),
+                        onClick = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModelMain.getEmailCode()
+                                delay(1000)
+                                launchSendEmail = true
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(30.dp),
                         enabled = post.apoyo.find{ it.usuario == profile._id } == null,
                         contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -383,233 +392,161 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
             }
         }
     }
-    if (showSupportDialog) {
-        DialogSupport(
-            usuario = if(post.usuario != null) post.usuario!!.username else "Usuario",
-            correo = profile.email,
-            onDismissRequest = { showSupportDialog = false ; launchSendEmail = false },
-            onConfirm = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModelMain.getEmailCode()
-                    delay(1000)
-                    launchSendEmail = true
-                }
 
-            }
-        )
-    }
-
+    //Email support
     if (launchSendEmail) {
         if(!loadingEmail){
             if(stateEmail){
-                showSupportDialog = false
-                showSupportTextFieldDialog = true
-                launchSendEmail = false
-            }else{
-                Toast.makeText(context, detailsError, Toast.LENGTH_SHORT).show()
-            }
-        }
-        launchSendEmail = false
-    }
-
-    if (showSupportTextFieldDialog) {
-        DialogSupportTextField(onDismissRequest = { showSupportTextFieldDialog = false }, viewModelMain, post._id)
-    }
-}
-
-@Composable
-fun DialogSupport(usuario: String, correo: String, onDismissRequest: () -> Unit, onConfirm: () -> Unit){
-
-    AlertDialog(
-        modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
-        containerColor = blue100,
-        onDismissRequest = { },
-        confirmButton = {
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(blue80)
-                    .height(30.dp)
-                    .padding(start = 10.dp, end = 10.dp)
-                    .clickable(onClick = onConfirm),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(imageVector = Icons.Default.Mail, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.size(5.dp))
-                Text(text = "Enviar código", color = blue20)
-            }
-        },
-        dismissButton = {
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(blue80)
-                    .height(30.dp)
-                    .padding(start = 10.dp, end = 10.dp)
-                    .clickable(onClick = onDismissRequest),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(imageVector = Icons.Default.Cancel, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.size(5.dp))
-                Text(text = "Cancelar", color = blue20)
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "¿Está seguro que desea apoyar esta denuncia de ${usuario}?",
-                    color = blue20,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center,
-                    fontFamily = IstokWebFamily
+                AlertDialog(
+                    modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
+                    containerColor = blue100,
+                    onDismissRequest = { },
+                    confirmButton = {
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(blue80)
+                                .height(30.dp)
+                                .padding(start = 10.dp, end = 10.dp)
+                                .clickable(onClick = {
+                                    if (txtCode.value == code) {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            viewModelMain.supportComplaint(post._id)
+                                            delay(1000)
+                                            launchSupport = true
+                                        }
+                                    } else {
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                "El codigo ingresado no es el correcto!",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                            .show()
+                                    }
+                                }),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(imageVector = Icons.Default.Send, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text(text = "Confirmar", color = blue20)
+                        }
+                    },
+                    dismissButton = {
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(blue80)
+                                .height(30.dp)
+                                .padding(start = 10.dp, end = 10.dp)
+                                .clickable(onClick = {
+                                    launchSendEmail = false
+                                    launchSupport = false
+                                }),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(imageVector = Icons.Default.Cancel, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text(text = "Cancelar", color = blue20)
+                        }
+                    },
+                    text = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Digite el codigo que se le envio a su correo electrónico para apoyar la denuncia de: ${if(post.usuario != null) post.usuario!!.username else "Usuario"}!",
+                                color = blue20,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                fontFamily = IstokWebFamily
+                            )
+                            Spacer(modifier = Modifier.size(10.dp))
+                            OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    cursorColor = blue20,
+                                    focusedBorderColor = blue20,
+                                    unfocusedBorderColor = blue20,
+                                    disabledBorderColor = blue20,
+                                    errorBorderColor = blue20,
+                                    errorLabelColor = blue20,
+                                    errorLeadingIconColor = blue20,
+                                    errorTrailingIconColor = blue20,
+                                    errorPlaceholderColor = blue20,
+                                    focusedLabelColor = blue20,
+                                    unfocusedLabelColor = blue20,
+                                    errorTextColor = Color.Red,
+                                ),
+                                value = txtCode.value,
+                                onValueChange = { txtCode.value = it },
+                                label = {
+                                    Text(text = "Ingrese su código")
+                                }
+                            )
+                        }
+                    }
                 )
-                Spacer(modifier = Modifier.size(10.dp))
-                Column {
-                    Text(
-                        text = buildAnnotatedString {
-                            append("Para confirmar el apoyo a esta denuncia le enviaremos un código de verificación a su correo electrónico: ")
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(correo)
-                            }
-                        },
-                        color = blue20,
-                        fontSize = 16.sp,
-                    )
+            }else{
+                if(detailsError.isNotEmpty()){
+                    Toast.makeText(context, detailsError, Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context, "Error al enviar el código a su correo", Toast.LENGTH_SHORT).show()
                 }
             }
+        }else{
+            AlertDialog(
+                modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
+                containerColor = blue100,
+                text = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Enviando codigo de apoyo a su correo por favopr espere!",
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                },
+                onDismissRequest = { },
+                confirmButton = {}
+            )
         }
-    )
-}
+    }
 
-@Composable
-fun DialogSupportTextField(onDismissRequest: () -> Unit, viewModelMain: ViewModelMain, publicacion: String){
-
-    val context = LocalContext.current
-    val code by viewModelMain.code.collectAsState()
-    val supportComplaint by viewModelMain.supportState.collectAsState()
-    val supportComplaintDetails by viewModelMain.supportDetails.collectAsState()
-    val loadingSupport by viewModelMain.loadingSupport.collectAsState()
-
-    val txtCode = remember { mutableStateOf("") }
-    var launchSupport by remember { mutableStateOf(false) }
+    //Support complaint
 
     if(launchSupport){
         if(!loadingSupport){
-            if(supportComplaint){
-                Toast.makeText(context, supportComplaintDetails, Toast.LENGTH_SHORT).show()
+            if(supportState){
+                Toast.makeText(context, supportDetails, Toast.LENGTH_SHORT).show()
                 launchSupport = false
+                launchSendEmail = false
             }else{
-                Toast.makeText(context, supportComplaintDetails, Toast.LENGTH_SHORT).show()
-                launchSupport = false
+                Toast.makeText(context, supportDetails, Toast.LENGTH_SHORT).show()
             }
+        }else{
+            AlertDialog(
+                modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
+                containerColor = blue100,
+                text = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Enviando informacion por favor espere..",
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                },
+                onDismissRequest = { },
+                confirmButton = {}
+            )
         }
     }
-
-    AlertDialog(
-        modifier = Modifier.border(1.dp, blue20, RoundedCornerShape(20.dp)),
-        containerColor = blue100,
-        onDismissRequest = { },
-        confirmButton = {
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(blue80)
-                    .height(30.dp)
-                    .padding(start = 10.dp, end = 10.dp)
-                    .clickable(onClick = {
-                        if(txtCode.value == code){
-                            CoroutineScope(Dispatchers.IO).launch {
-                                viewModelMain.supportComplaint(publicacion)
-                                delay(1000)
-                                launchSupport = true
-                            }
-                        }else {
-                            Toast.makeText(context, "El codigo ingresado no es el correcto!", Toast.LENGTH_SHORT).show()
-                        }
-                    }),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(imageVector = Icons.Default.Send, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.size(5.dp))
-                Text(text = "Confirmar", color = blue20)
-            }
-        },
-        dismissButton = {
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(blue80)
-                    .height(30.dp)
-                    .padding(start = 10.dp, end = 10.dp)
-                    .clickable(onClick = onDismissRequest),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(imageVector = Icons.Default.Cancel, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.size(5.dp))
-                Text(text = "Cancelar", color = blue20)
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Digite el codigo recibido en su correo electrónico!",
-                    color = blue20,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center,
-                    fontFamily = IstokWebFamily
-                )
-                Spacer(modifier = Modifier.size(10.dp))
-                OutlinedTextField(
-                    colors = OutlinedTextFieldDefaults.colors(
-                        cursorColor = blue20,
-                        focusedBorderColor = blue20,
-                        unfocusedBorderColor = blue20,
-                        disabledBorderColor = blue20,
-                        errorBorderColor = blue20,
-                        errorLabelColor = blue20,
-                        errorLeadingIconColor = blue20,
-                        errorTrailingIconColor = blue20,
-                        errorPlaceholderColor = blue20,
-                        focusedLabelColor = blue20,
-                        unfocusedLabelColor = blue20,
-                        errorTextColor = Color.Red,
-                    ),
-                    value = txtCode.value,
-                    onValueChange = { txtCode.value = it },
-                    label = {
-                        Text(text = "Ingrese su código")
-                    }
-                )
-            }
-        }
-    )
-}
-
-
-@Preview
-@Composable
-fun DialogSupportPreview() {
-    DialogSupport("No se","david",{},{})
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PostCompPreview() {
-    PostComp(publicacion(), ViewModelMain())
 }

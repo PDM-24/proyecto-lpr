@@ -419,6 +419,7 @@ class ViewModelMain : ViewModel() {
                     is Resources.Success -> {
                         _supportState.value = response.data.state
                         _supportDetails.value = response.data.details
+                        _code.value = ""
                         _loadingSupport.value = false
                     }
                     is Resources.Error -> {
