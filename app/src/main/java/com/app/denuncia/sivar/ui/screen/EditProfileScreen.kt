@@ -138,7 +138,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                     Text(text = "Subiendo....")
                 }else{
                     if (stateUpdateProfile) {
-                        Text(text = "En hora buena")
+                        Text(text = "Enhorabuena")
                     }else{
                         Text(text = "Error")
                     }

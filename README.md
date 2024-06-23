@@ -15,16 +15,15 @@ Denuncia Sivar se destaca por el seguimiento de las denuncias, buscando minimiza
 - Aporte Social
 
 ### Funcionalidades
-
-    1. Publicación de denuncias 
-    2. Búsqueda perzonalizada de denuncias
-    3. Acualización de perfil de usuario
-    4. Recolección de firmas como muestra de apoyo a una denuncia
-    5. Seguimiento de denuncias por medio de estados: 
-        - En revisión
-        - En proceso
-        - Resuelta
-        - Descartado
+  1. Publicación de denuncias
+  2. Búsqueda perzonalizada de denuncias
+  3. Acualización de perfil de usuario
+  4. Recolección de firmas como muestra de apoyo a una denuncia
+  5. Seguimiento de denuncias por medio de estados:
+     - En revisión
+     - En proceso
+     - Resuelta
+     - Descartado   
 - NOTA: Denuncia Sivar es una aplicación móvil desarrolla para dispositivos con sistema operativo Android 7.0 o superiores (No disponible para iOS)
 
 ## Autores y Contactos

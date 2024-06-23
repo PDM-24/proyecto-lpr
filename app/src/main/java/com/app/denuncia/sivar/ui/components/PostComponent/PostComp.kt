@@ -265,7 +265,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         tint = gray
                     )
                     Text(
-                        text = "Categoria:",
+                        text = "categoría:",
                         fontWeight = FontWeight.Bold,
                         color = gray,
                     )
