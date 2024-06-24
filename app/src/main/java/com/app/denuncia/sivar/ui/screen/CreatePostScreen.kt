@@ -229,10 +229,11 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                         Spacer(modifier = Modifier.height(5.dp))
                         CustomDropdownDepartment(
                             options = DepartamentList,
-                            selectedOption = departamento
-                        ) {
-                            departamento = it.nombre
-                        }
+                            selectedOption = departamento,
+                            onOptionSelected = { departamento = it.nombre },
+                            height = 35,
+                            background = blue80,
+                        )
                         Spacer(modifier = Modifier.height(7.dp))
                         CustomDropdownKind(
                             options = categories,
@@ -240,7 +241,9 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                             onOptionSelected = {
                                 categoria = it.name
                                 idcateoria = it._id
-                            }
+                            },
+                            height = 35,
+                            background = blue80
                         )
                         OutlinedTextField(
                             shape = RoundedCornerShape(12.dp),
