@@ -42,26 +42,22 @@ import com.denuncia.sivar.ui.theme.blue80
 fun CustomDropdownDepartment(
     options: List<Departamentos>,
     selectedOption: String,
-    onOptionSelected: (Departamentos) -> Unit
+    onOptionSelected: (Departamentos) -> Unit,
+    height: Int,
+    background: Color,
 ) {
     val expanded = remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
+    Column {
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(blue80)
-                .height(35.dp)
-                .width(250.dp),
+                .background(background)
+                .height(height.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Row(
                 modifier = Modifier
-                    .padding(6.dp)
-                    .fillMaxWidth()
                     .clickable { expanded.value = true },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -104,26 +100,23 @@ fun CustomDropdownDepartment(
 fun CustomDropdownKind(
     options: List<Categoria>,
     selectedOption: String,
-    onOptionSelected: (Categoria) -> Unit
+    onOptionSelected: (Categoria) -> Unit,
+    height: Int,
+    background: Color,
 ) {
     val expanded = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(blue80)
-                .height(35.dp)
-                .width(250.dp),
+                .background(background)
+                .height(height.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Row(
                 modifier = Modifier
-                    .padding(6.dp)
-                    .fillMaxWidth()
                     .clickable { expanded.value = true },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween

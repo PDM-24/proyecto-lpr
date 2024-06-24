@@ -24,7 +24,7 @@ Denuncia Sivar se destaca por el seguimiento de las denuncias, buscando minimiza
      - En proceso
      - Resuelta
      - Descartado   
-- NOTA: Denuncia Sivar es una aplicación móvil desarrolla para dispositivos con sistema operativo Android 7.0 o superiores (No disponible para iOS)
+- NOTA: Denuncia Sivar es una aplicación móvil desarrollada para dispositivos con sistema operativo Android 7.0 o superiores (No disponible para iOS)
 
 ## Autores y Contactos
 

@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,10 +27,13 @@ import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 
 @Composable
 fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain){
     val userDenuncias = viewModel.getUserDenuncias()
+    val isRefreshing by viewModel.loading.collectAsState()
 
     Column(
         modifier = Modifier
@@ -49,9 +53,16 @@ fun HistorialScreen(navController: NavHostController, innerPadding: PaddingValue
                 modifier = Modifier.padding(10.dp)
             )
         }
-        LazyColumn(){
-            items(userDenuncias) { postItem ->
-                PostComp(postItem, viewModel)
+        SwipeRefresh(
+            state = SwipeRefreshState(isRefreshing),
+            onRefresh = {
+                viewModel.getComplainst("", "", "")
+            }
+        ) {
+            LazyColumn(){
+                items(userDenuncias) { postItem ->
+                    PostComp(postItem, viewModel)
+                }
             }
         }
     }
