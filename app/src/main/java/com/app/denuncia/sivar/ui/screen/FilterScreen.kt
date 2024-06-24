@@ -35,10 +35,9 @@ import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
-import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
-import com.denuncia.sivar.ui.theme.blue80
+import com.denuncia.sivar.ui.theme.blue50
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,10 +61,11 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
             .padding(innerPadding)
             .background(blue100),
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -74,22 +74,30 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
                     imageVector = Icons.Default.FilterList,
                     contentDescription = "Filter Icon",
                     tint = blue20,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(25.dp)
                 )
                 Spacer(modifier = Modifier.size(5.dp))
-                Text(text = "Filtrar", color = blue20, fontSize = 16.sp)
+                //Text(text = "Filtrar", color = blue20, fontSize = 16.sp)
             }
+            Spacer(modifier = Modifier.size(5.dp))
             CustomDropdownDepartment(
                 options = DepartamentList,
-                selectedOption = departamento.ifEmpty { "Departamento" }
-            ) { departamento = it.nombre }
+                selectedOption = departamento.ifEmpty { "Departamento" },
+                onOptionSelected = {
+                    departamento = it.nombre
+                },
+                height = 25,
+                background = blue50
+            )
             Spacer(modifier = Modifier.size(5.dp))
             CustomDropdownKind(
                 options = categorias,
                 selectedOption = categorie.ifEmpty { "Categoría" },
                 onOptionSelected = {
                     categorie = it.name
-                }
+                },
+                height = 25,
+                background = blue50
             )
         }
         LazyColumn(
