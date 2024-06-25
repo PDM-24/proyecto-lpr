@@ -240,8 +240,8 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                             onClick = {
                                 if (nameState.value.isEmpty() || surnameState.value.isEmpty() || usernameState.value.isEmpty() || emailState.value.isEmpty() || birthdateState.value.isEmpty() || passwordState.value.isEmpty()) {
                                     Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
-                                } else if (!emailState.value.endsWith("@gmail.com") && !emailState.value.endsWith("@uca.edu.sv")) {
-                                    Toast.makeText(context, "El correo debe terminar en @gmail.com o @uca.edu.sv", Toast.LENGTH_SHORT).show()
+                                } else if (!emailState.value.endsWith("@gmail.com") && !emailState.value.endsWith("@uca.edu.sv") && !emailState.value.endsWith("@hotmail.com") && !emailState.value.endsWith("@outlook.com")) {
+                                    Toast.makeText(context, "Por favor ingrese un correo valido", Toast.LENGTH_SHORT).show()
                                 } else {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         viewModel.singUp(usernameState.value,nameState.value,surnameState.value,emailState.value,birthdateState.value,passwordState.value,rolState.value)

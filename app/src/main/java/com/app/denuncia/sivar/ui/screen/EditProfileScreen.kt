@@ -425,8 +425,8 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                                 onClick = {
                                     if(tempMail.isEmpty() || tempUsername.isEmpty() || tempFirstName.isEmpty() || tempLastName.isEmpty()){
                                         Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
-                                    } else if (!tempMail.endsWith("@gmail.com") && !tempMail.endsWith("@uca.edu.sv")) {
-                                        Toast.makeText(context, "El correo debe terminar en @gmail.com o @uca.edu.sv", Toast.LENGTH_SHORT).show()
+                                    } else if (!tempMail.endsWith("@gmail.com") && !tempMail.endsWith("@uca.edu.sv") && !tempMail.endsWith("@hotmail.com") && !tempMail.endsWith("@outlook.com")) {
+                                        Toast.makeText(context, "Por favor ingrese un correo valido", Toast.LENGTH_SHORT).show()
                                     } else {
                                         CoroutineScope(Dispatchers.IO).launch {
                                             viewModel.updateProfile(profile._id, userBody(tempUsername, tempFirstName, tempLastName, tempMail, "","",""), context)
