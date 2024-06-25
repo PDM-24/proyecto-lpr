@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
@@ -256,19 +254,6 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                             color = blue20,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        if (selectedImageUri != null) {
-                            Image(
-                                painter = rememberAsyncImagePainter(selectedImageUri),
-                                contentDescription = "Selected Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                                    .clip(RoundedCornerShape(20.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-
-                        }
-
                         if (profile.image.url.isNotEmpty()) {
                             AsyncImage(
                                 model = "https://${profile.image.url.removePrefix("http://")}",
