@@ -206,7 +206,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if (profile.rol == "Administrador") {
+                        if (profile.rol == "Administrador" || post.usuario!!._id == profile._id) {
                             Icon(
                                 modifier = Modifier
                                     .size(25.dp)
