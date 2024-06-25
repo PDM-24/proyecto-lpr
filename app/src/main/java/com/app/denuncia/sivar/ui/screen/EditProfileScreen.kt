@@ -181,7 +181,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                     Text(text = "Subiendo....")
                 }else{
                     if (stateUpdateProfile) {
-                        Text(text = "En hora buena")
+                        Text(text = "Enhorabuena")
                     }else{
                         Text(text = "Error")
                     }
@@ -396,7 +396,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                         Spacer(modifier = Modifier.height(16.dp))
                         Row {
                             Button(
-                                onClick = { launchProfile = true },
+                                onClick = { navController.navigate(ScreenRoute.Profile.route) },
                                 shape = RoundedCornerShape(50),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = blue20
