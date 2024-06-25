@@ -406,7 +406,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                         Spacer(modifier = Modifier.height(16.dp))
                         Row {
                             Button(
-                                onClick = { launchProfile = true },
+                                onClick = { navController.navigate(ScreenRoute.Profile.route) },
                                 shape = RoundedCornerShape(50),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = blue20
