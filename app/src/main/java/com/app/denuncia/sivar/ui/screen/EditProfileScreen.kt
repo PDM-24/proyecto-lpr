@@ -51,19 +51,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import com.app.denuncia.sivar.R
 import com.app.denuncia.sivar.model.body.photo
 import com.app.denuncia.sivar.model.body.userBody
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
-import com.app.denuncia.sivar.ui.components.TopBar.TopBar
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
@@ -260,10 +254,6 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                             color = blue20,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        if (selectedImageUri != null) {
-
-                        }
-
                         if (profile.image.url.isNotEmpty()) {
                             AsyncImage(
                                 model = "https://${profile.image.url.removePrefix("http://")}",
