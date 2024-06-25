@@ -198,7 +198,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                             color = blue20,
                         )
                         Text(
-                            text = "realizo una denuncia",
+                            text = "realizó una denuncia",
                             color = blue20,
                         )
                     }
@@ -265,7 +265,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         tint = gray
                     )
                     Text(
-                        text = "categoría:",
+                        text = "Categoría:",
                         fontWeight = FontWeight.Bold,
                         color = gray,
                     )
@@ -279,7 +279,7 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Icon(
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(16.dp),
                         imageVector = Icons.Default.Timelapse,
                         contentDescription = "senIcon",
                         tint = gray
