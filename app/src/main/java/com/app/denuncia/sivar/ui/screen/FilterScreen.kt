@@ -13,9 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.remote.model.DepartamentList
@@ -39,7 +36,6 @@ import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
 
@@ -47,7 +43,7 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
     var categorie by remember { mutableStateOf("") }
     val search by viewModel.search
 
-    var denuncias = viewModel.denuncias.collectAsState().value
+    val denuncias = viewModel.denuncias.collectAsState().value
 
     val categorias = viewModel.categorias.collectAsState().value
 
