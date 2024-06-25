@@ -17,7 +17,7 @@ Denuncia Sivar se destaca por el seguimiento de las denuncias, buscando minimiza
 ### Funcionalidades
   1. Publicación de denuncias
   2. Búsqueda perzonalizada de denuncias
-  3. Acualización de perfil de usuario
+  3. Actualización de perfil de usuario
   4. Recolección de firmas como muestra de apoyo a una denuncia
   5. Seguimiento de denuncias por medio de estados:
      - En revisión
