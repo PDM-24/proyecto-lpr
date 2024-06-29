@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://backendlpr.vercel.app/backend/api/rest/sivardenuncias/server/node/route/fetch/axios/")
+            .baseUrl("https://sivardenuncias.vercel.app/backend/api/rest/sivardenuncias/server/node/route/fetch/axios/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
