@@ -39,6 +39,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -87,6 +88,31 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
     }
 
     val context = LocalContext.current
+
+
+    val session by viewModel.session.collectAsState()
+    val loadingSession by viewModel.loadingSession.collectAsState()
+    val launchSession = remember {mutableStateOf(false)}
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.verifyToken(context)
+            delay(1000)
+            launchSession.value = true
+        }
+    }
+
+    if(launchSession.value){
+        if(!loadingSession){
+            if(!session){
+                navController.navigate(ScreenRoute.Login.route) {
+                    popUpTo(ScreenRoute.Home.route) { inclusive = true }
+                }
+            }
+        }
+    }
+
+
 
     //IMAGE PICKER
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -297,9 +323,16 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                                 onClick = {
                                         if (img != null) {
                                             CoroutineScope(Dispatchers.IO).launch {
-                                                viewModel.updatePhoto(profile._id, photo(img), context)
+                                                viewModel.verifyToken(context)
                                                 delay(1000)
-                                                launchPhoto = true
+                                                launchSession.value = true
+                                                if(!loadingSession){
+                                                    if(session){
+                                                        viewModel.updatePhoto(profile._id, photo(img), context)
+                                                        delay(1000)
+                                                        launchPhoto = true
+                                                    }
+                                                }
                                             }
                                         }
                                 },
@@ -419,9 +452,16 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                                         Toast.makeText(context, "Por favor ingrese un correo valido", Toast.LENGTH_SHORT).show()
                                     } else {
                                         CoroutineScope(Dispatchers.IO).launch {
-                                            viewModel.updateProfile(profile._id, userBody(tempUsername, tempFirstName, tempLastName, tempMail, "","",""), context)
+                                            viewModel.verifyToken(context)
                                             delay(1000)
-                                            launchProfile = true
+                                            launchSession.value = true
+                                            if(!loadingSession){
+                                                if(session){
+                                                    viewModel.updateProfile(profile._id, userBody(tempUsername, tempFirstName, tempLastName, tempMail, "","",""), context)
+                                                    delay(1000)
+                                                    launchProfile = true
+                                                }
+                                            }
                                         }
                                     }
                                 },

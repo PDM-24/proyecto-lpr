@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.model.mongoose.Usuario
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.ListUsersComps.UserTable
 import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
@@ -55,15 +56,42 @@ import kotlinx.coroutines.launch
 @Composable
 fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues,  viewModel: ViewModelMain) {
 
+
     var search by remember { mutableStateOf("") }
     val users by viewModel.usuarios.collectAsState()
     val loading by viewModel.loading.collectAsState()
+
+    val profile by viewModel.profile.collectAsState()
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var selectedUser by remember { mutableStateOf(Usuario()) }
     var showRoleChangeDialog by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+
+    val session by viewModel.session.collectAsState()
+    val loadingSession by viewModel.loadingSession.collectAsState()
+    val launchSession = remember {mutableStateOf(false)}
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            search = ""
+            viewModel.getComplainst(search, "", "")
+            viewModel.verifyToken(context)
+            delay(1000)
+            launchSession.value = true
+        }
+    }
+
+    if(launchSession.value){
+        if(!loadingSession){
+            if(!session){
+                navController.navigate(ScreenRoute.Login.route) {
+                    popUpTo(ScreenRoute.Manage.route) { inclusive = true }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(search) {
        if(!loading){
@@ -88,23 +116,30 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
 
     fun confirmRoleChange() {
         CoroutineScope(Dispatchers.Main).launch {
-            val updated = selectedUser.copy(rol = if (selectedUser.rol == "Administrador") "Usuario" else "Administrador")
-            viewModel.changeRol(updated._id, updated.rol)
-            delay(1000)
-            if (!viewModel.loading.value){
-                if (viewModel.stateUpdateUser.value) {
-                    viewModel.getUsers(search)
-                    Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show()
-                }else{
-                    if(viewModel.errorRequest.value){
-                        Toast.makeText(context, viewModel.detailsErrorRequest.value, Toast.LENGTH_SHORT).show()
+            viewModel.verifyToken(context)
+            delay(500)
+            if(profile.rol == "Administrador"){
+                val updated = selectedUser.copy(rol = if (selectedUser.rol == "Moderador") "Usuario" else "Moderador")
+                viewModel.changeRol(updated._id, updated.rol)
+                delay(1000)
+                if (!viewModel.loading.value){
+                    if (viewModel.stateUpdateUser.value) {
+                        viewModel.getUsers(search)
+                        Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show()
                     }else{
-                        Toast.makeText(context, "Error al cambiar el rol", Toast.LENGTH_SHORT).show()
+                        if(viewModel.errorRequest.value){
+                            Toast.makeText(context, viewModel.detailsErrorRequest.value, Toast.LENGTH_SHORT).show()
+                        }else{
+                            Toast.makeText(context, "Error al cambiar el rol", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
+                selectedUser = Usuario()
+            }else{
+                Toast.makeText(context, "No tienes permiso de modificar usuarios", Toast.LENGTH_SHORT).show()
             }
-            selectedUser = Usuario()
         }
+
         showRoleChangeDialog = false
     }
 
@@ -112,19 +147,25 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
 
     fun confirmDelete() {
         CoroutineScope(Dispatchers.Main).launch {
-            viewModel.deleteUser(selectedUser._id)
-            delay(1000)
-            if(viewModel.stateDeleteUser.value){
-                viewModel.getUsers(search)
-                Toast.makeText(context, "Usuario eliminado", Toast.LENGTH_SHORT).show()
-            }else{
-                if(viewModel.errorRequest.value){
-                    Toast.makeText(context, viewModel.detailsErrorRequest.value, Toast.LENGTH_SHORT).show()
+            viewModel.verifyToken(context)
+            delay(500)
+            if(profile.rol == "Administrador"){
+                viewModel.deleteUser(selectedUser._id)
+                delay(1000)
+                if(viewModel.stateDeleteUser.value){
+                    viewModel.getUsers(search)
+                    Toast.makeText(context, "Usuario eliminado", Toast.LENGTH_SHORT).show()
                 }else{
-                    Toast.makeText(context, "Error al eliminar el usuario", Toast.LENGTH_SHORT).show()
+                    if(viewModel.errorRequest.value){
+                        Toast.makeText(context, viewModel.detailsErrorRequest.value, Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(context, "Error al eliminar el usuario", Toast.LENGTH_SHORT).show()
+                    }
                 }
+                    selectedUser = Usuario()
+            }else{
+                Toast.makeText(context, "No tienes permiso de eliminar usuarios", Toast.LENGTH_SHORT).show()
             }
-            selectedUser = Usuario()
         }
         showDeleteDialog = false
     }
@@ -214,15 +255,21 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
         AlertDialog(
             onDismissRequest = { showRoleChangeDialog = false },
             title = { Text("Cambiar Rol") },
-            text = { Text("¿Estás seguro de que quieres cambiar el rol de este usuario?") },
+            text = {
+                if(selectedUser.rol === "Moderador"){
+                Text("¿Estás seguro de que quieres cambiar el rol de ${selectedUser.username} a Usuario?")
+                }else{
+                Text("¿Estás seguro de que quieres cambiar el rol de ${selectedUser.username} a Moderador?")
+                }
+            },
             confirmButton = {
                 Button(onClick = { confirmRoleChange() }) {
-                    Text(text= "Sí", color = blue20)
+                    Text(text= "Aceptar", color = blue20)
                 }
             },
             dismissButton = {
                 Button(onClick = { showRoleChangeDialog = false }) {
-                    Text(text= "No", color = blue20)
+                    Text(text= "Cancelar", color = blue20)
                 }
             }
         )

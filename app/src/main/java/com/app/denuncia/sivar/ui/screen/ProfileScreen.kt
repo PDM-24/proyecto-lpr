@@ -57,6 +57,10 @@ import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
@@ -76,7 +80,33 @@ fun ProfileScreen(
     //TOAST
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
+
     val context = LocalContext.current
+
+
+    val session by viewModel.session.collectAsState()
+    val loadingSession by viewModel.loadingSession.collectAsState()
+    val launchSession = remember {mutableStateOf(false)}
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.verifyToken(context)
+            delay(1000)
+            launchSession.value = true
+        }
+    }
+
+    if(launchSession.value){
+        if(!loadingSession){
+            if(!session){
+                navController.navigate(ScreenRoute.Login.route) {
+                    popUpTo(ScreenRoute.Home.route) { inclusive = true }
+                }
+            }
+        }
+    }
+
+
     LaunchedEffect(showToast) {
         if (showToast) {
             Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()

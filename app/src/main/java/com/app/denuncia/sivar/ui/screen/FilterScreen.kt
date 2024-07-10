@@ -23,11 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.denuncia.sivar.remote.model.DepartamentList
+import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownDepartment
 import com.app.denuncia.sivar.ui.components.FilterComp.CustomDropdownKind
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
@@ -35,6 +37,10 @@ import com.app.denuncia.sivar.viewmodel.ViewModelMain
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
 import com.denuncia.sivar.ui.theme.blue50
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, viewModel: ViewModelMain) {
@@ -49,6 +55,30 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
 
     LaunchedEffect(search, departamento, categorie) {
         viewModel.getComplainst(search, departamento, categorie)
+    }
+
+    val session by viewModel.session.collectAsState()
+    val loadingSession by viewModel.loadingSession.collectAsState()
+    val launchSession = remember {mutableStateOf(false)}
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.verifyToken(context)
+            delay(1000)
+            launchSession.value = true
+        }
+    }
+
+    if(launchSession.value){
+        if(!loadingSession){
+            if(!session){
+                navController.navigate(ScreenRoute.Login.route) {
+                    popUpTo(ScreenRoute.Home.route) { inclusive = true }
+                }
+            }
+        }
     }
 
     Column(

@@ -156,7 +156,7 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun updatePhoto(id: String, body: photo): Resources<TokenJson> {
+    override suspend fun updatePhoto(id: String, body: photo): Resources<JsonResponse> {
         try {
             val response = service.updatePhoto(id, body)
             if(response.isSuccessful){
@@ -175,7 +175,7 @@ class RepositoryImpl(private val service:Services, private val gson: Gson): Repo
         }
     }
 
-    override suspend fun updateProfile(id: String, body: userBody): Resources<TokenJson> {
+    override suspend fun updateProfile(id: String, body: userBody): Resources<JsonResponse> {
         try {
             val response = service.updateProfile(id, body)
             if(response.isSuccessful){

@@ -97,6 +97,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
     val error by viewModel.errorRequest.collectAsState()
     val detailsError by viewModel.detailsErrorRequest.collectAsState()
 
+
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     val user = profile._id
@@ -120,6 +121,29 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
             popUpTo(ScreenRoute.CreatePost.route) { inclusive = true }
         }
         launch.value = false
+    }
+
+
+    val session by viewModel.session.collectAsState()
+    val loadingSession by viewModel.loadingSession.collectAsState()
+    val launchSession = remember {mutableStateOf(false)}
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.verifyToken(context)
+            delay(1000)
+            launchSession.value = true
+        }
+    }
+
+    if(launchSession.value){
+        if(!loadingSession){
+            if(!session){
+                navController.navigate(ScreenRoute.Login.route) {
+                    popUpTo(ScreenRoute.Home.route) { inclusive = true }
+                }
+            }
+        }
     }
 
     if(launchUpload){
@@ -305,14 +329,21 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 .fillMaxWidth()
                                 .clickable {
                                     CoroutineScope(Dispatchers.IO).launch {
-                                        if (img != null) {
-                                            viewModel.uploadComplaint(user, idcateoria, departamento, details, date, img)
-                                            delay(1000)
-                                            launchUpload = true
-                                        }else{
-                                            viewModel.uploadComplaint(user, idcateoria ,departamento, details, date, "")
-                                            delay(1000)
-                                            launchUpload = true
+                                        viewModel.verifyToken(context)
+                                        delay(1000)
+                                        launchSession.value = true
+                                        if(!loadingSession){
+                                            if (session){
+                                                if (img != null) {
+                                                    viewModel.uploadComplaint(user, idcateoria, departamento, details, date, img)
+                                                    delay(500)
+                                                    launchUpload = true
+                                                }else{
+                                                    viewModel.uploadComplaint(user, idcateoria ,departamento, details, date, "")
+                                                    delay(500)
+                                                    launchUpload = true
+                                                }
+                                            }
                                         }
                                     }
                                 },

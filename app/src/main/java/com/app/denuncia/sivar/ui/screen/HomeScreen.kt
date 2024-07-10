@@ -26,10 +26,12 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, vi
 
     val context = LocalContext.current
 
+
+    var search by viewModel.search
+
     val session by viewModel.session.collectAsState()
     val loadingSession by viewModel.loadingSession.collectAsState()
     val launchSession = remember {mutableStateOf(false)}
-    var search by viewModel.search
 
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.IO).launch {

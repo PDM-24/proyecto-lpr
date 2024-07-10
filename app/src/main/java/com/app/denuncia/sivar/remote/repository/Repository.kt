@@ -24,8 +24,8 @@ interface Repository {
     suspend fun getUsers(search:String): Resources<List<Usuario>>
     suspend fun changeRol(id:String, rol:String): Resources<JsonResponse>
     suspend fun deleteUser(id:String): Resources<JsonResponse>
-    suspend fun updatePhoto(id:String, body:photo): Resources<TokenJson>
-    suspend fun updateProfile(id:String, body:userBody): Resources<TokenJson>
+    suspend fun updatePhoto(id:String, body:photo): Resources<JsonResponse>
+    suspend fun updateProfile(id:String, body:userBody): Resources<JsonResponse>
     suspend fun getEmailCode(id:String): Resources<JsonCodeResponse>
     suspend fun supportComplaint(id:String, body:Apoyo): Resources<JsonResponse>
     suspend fun updateComplaint(id:String, state:String): Resources<JsonResponse>

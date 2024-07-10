@@ -140,7 +140,6 @@ class ViewModelMain : ViewModel() {
             try {
                 when (val response = apiRest.verifyToken(store.getToken().toString())) {
                     is Resources.Success -> {
-                        Log.i("Token", store.getToken().toString())
                         _session.value = response.data.state
                         _profile.value = response.data.usuario!!
                         _loadingSession.value = false
@@ -378,7 +377,6 @@ class ViewModelMain : ViewModel() {
                 if(response is Resources.Success){
                     _stateUpdateProfile.value = true
                     _errorRequest.value = false
-                    store.saveToken(response.data.token)
                     verifyToken(context)
                     _loading.value = false
                 }
@@ -406,7 +404,6 @@ class ViewModelMain : ViewModel() {
                 if(response is Resources.Success){
                     _stateUpdateProfile.value = true
                     _errorRequest.value = false
-                    store.saveToken(response.data.token)
                     verifyToken(context)
                     _loading.value = false
                 }
