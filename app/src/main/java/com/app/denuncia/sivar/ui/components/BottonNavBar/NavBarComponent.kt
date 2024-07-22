@@ -51,11 +51,11 @@ fun NavBarComponent(
                 selected = currentRoute == navBarItem.route,
                 onClick = { onClick(navBarItem) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = blue20,
-                    selectedTextColor = blue20,
-                    unselectedIconColor = blue20,
+                    selectedIconColor = Color.White,
+                    selectedTextColor = Color.White,
+                    unselectedIconColor = Color.White,
                     indicatorColor = blue50,
-                    unselectedTextColor = blue20,
+                    unselectedTextColor = Color.White,
                 ),
                 icon = {
                     Icon(

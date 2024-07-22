@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,7 +87,6 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
-            .background(blue100),
     ) {
         Row(
             modifier = Modifier
@@ -99,7 +100,6 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
                 Icon(
                     imageVector = Icons.Default.FilterList,
                     contentDescription = "Filter Icon",
-                    tint = blue20,
                     modifier = Modifier.size(25.dp)
                 )
                 Spacer(modifier = Modifier.size(5.dp))
@@ -126,11 +126,13 @@ fun FilterScreen(navController: NavHostController, innerPadding: PaddingValues, 
                 background = blue50
             )
         }
+        Divider(modifier = Modifier.height(0.7.dp))
         LazyColumn(
             modifier = Modifier
         ){
             items(denuncias){
                     postItem -> PostComp(postItem, viewModel)
+                Divider(modifier = Modifier.height(0.7.dp))
             }
         }
     }

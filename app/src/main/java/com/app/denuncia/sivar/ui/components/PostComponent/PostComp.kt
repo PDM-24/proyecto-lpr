@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AccessTimeFilled
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.List
@@ -27,13 +29,16 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Timelapse
+import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -48,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -123,30 +129,21 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
         val mounths = ChronoUnit.MONTHS.between(inicio, fin)
         val years = ChronoUnit.YEARS.between(inicio, fin)
 
-        return if(segundos < 60){
-            "hace $segundos segundos"
-        }
-        else if (minutes < 60 ) {
-            "hace $minutes minutos"
-        } else if (horas < 24) {
-            "hace $horas horas"
-        }else if(dias < 30 ){
-            "hace $dias dias"
-        }else if(mounths < 12){
-            "hace $mounths meses"
-        }else{
-            "hace $years años"
+        return when {
+            segundos < 60 -> "$segundos s"
+            minutes < 60 -> "$minutes m"
+            horas < 24 -> "$horas h"
+            dias < 30 -> "$dias d"
+            mounths < 12 -> "$mounths meses"
+            else -> "$years a"
         }
     }
 
-    OutlinedCard(
-        modifier = Modifier
-            .padding(5.dp),
+    Card(
+        modifier = Modifier,
         colors = CardDefaults.cardColors(
-            containerColor = blue100,
-        ),
-        border = BorderStroke(2.dp, blue50),
-        shape = RoundedCornerShape(20.dp),
+            containerColor = Color.Transparent,
+        )
     ) {
         Row(
             modifier = Modifier
@@ -190,23 +187,30 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = if(post.usuario != null) post.usuario!!.username else "Usuario",
                             fontWeight = FontWeight.Bold,
-                            color = blue20,
+                        )
+                        Spacer(modifier = Modifier.size(4.dp))
+                        Icon(
+                            modifier = Modifier.size(13.dp),
+                            imageVector = Icons.Outlined.AccessTime,
+                            contentDescription = "senIcon",
+                            tint = Color(0xFF7E7E7E),
                         )
                         Text(
-                            text = "realizó una denuncia",
-                            color = blue20,
+                            text = getTiempo(post.date),
+                            color = Color(0xFF7E7E7E),
                         )
                     }
                     Row(
                         modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if (profile.rol == "Administrador" || profile.rol == "Moderador" || post.usuario!!._id == profile._id) {
+                        //if (profile.rol == "Administrador" || profile.rol == "Moderador" || post.usuario!!._id == profile._id)
+                        if (profile?.rol == "Administrador" || post.usuario?.let { it._id == profile?._id } == true) {
                             Icon(
                                 modifier = Modifier
                                     .size(25.dp)
@@ -215,39 +219,33 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                                     },
                                 imageVector = Icons.Default.MoreVert,
                                 contentDescription = "senIcon",
-                                tint = blue20
                             )
                             DropdownMenu(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .border(1.dp, blue20, RoundedCornerShape(10.dp)),
-                                ) {
-                                    DropdownMenuItem(
-                                        text = { (
-                                                Text(
-                                                    text = "Eliminar denuncia",
-                                                    color = blue20)) },
-                                        leadingIcon = {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(20.dp),
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = "delete",
-                                                tint = blue20
+                                DropdownMenuItem(
+                                    text = { (
+                                            Text(
+                                                text = "Eliminar denuncia",
                                             )
-                                        },
-                                        onClick = {
-                                            CoroutineScope(Dispatchers.IO).launch {
-                                                viewModelMain.deleteComplaint(post._id)
-                                                delay(1000)
-                                                launchDelete = true
-                                            }
+                                            ) },
+                                    leadingIcon = {
+                                        Icon(
+                                            modifier = Modifier
+                                                .size(20.dp),
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "delete",
+                                        )
+                                    },
+                                    onClick = {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            viewModelMain.deleteComplaint(post._id)
+                                            delay(1000)
+                                            launchDelete = true
                                         }
-                                    )
-                                }
+                                    }
+                                )
 
                             }
                         }
@@ -262,16 +260,11 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         modifier = Modifier.size(16.dp),
                         imageVector = Icons.Default.List,
                         contentDescription = "senIcon",
-                        tint = gray
-                    )
-                    Text(
-                        text = "Categoría:",
-                        fontWeight = FontWeight.Bold,
-                        color = gray,
+                        tint = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                     )
                     Text(
                         text = post.categoria.name,
-                        color = gray
+                        color = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                     )
                 }
                 Row(
@@ -282,14 +275,10 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         modifier = Modifier.size(16.dp),
                         imageVector = Icons.Default.Timelapse,
                         contentDescription = "senIcon",
-                        tint = gray
+                        tint = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                     )
-                    if (profile.rol == "Administrador"){
-                        Text(
-                            text = "Estado:",
-                            fontWeight = FontWeight.Bold,
-                            color = gray,
-                        )
+                    //if (profile.rol == "Administrador" || profile.rol == "Moderador" || post.usuario!!._id == profile._id)
+                    if (profile.rol == "Administrador" || profile.rol == "Moderador" ) {
                         CustomDropdownEstatus(
                             options = EstadoList,
                             selectedOption = estado.ifEmpty { post.state }
@@ -301,15 +290,11 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                                 launchUpdate = true
                             }
                         }
-                    }else{
-                        Text(
-                            text = "Estado:",
-                            fontWeight = FontWeight.Bold,
-                            color = gray,
-                        )
+                    }
+                    else{
                         Text(
                             text = post.state,
-                            color = gray,
+                            color = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                         )
                     }
                 }
@@ -321,37 +306,18 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         modifier = Modifier.size(16.dp),
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = "senIcon",
-                        tint = gray
-                    )
-                    Text(
-                        text = "Ubicación:",
-                        fontWeight = FontWeight.Bold,
-                        color = gray,
+                        tint = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                     )
                     Text(
                         text = post.departamento,
-                        color = gray,
+                        color = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                     )
+
                 }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Default.AccessTime,
-                        contentDescription = "senIcon",
-                        tint = gray
-                    )
-                    Text(
-                        text = getTiempo(post.date),
-                        color = gray,
-                    )
-                }
+
                 Spacer(modifier = Modifier.size(2.dp))
                 Text(
                     text = post.details,
-                    color = blue20
                 )
                 Spacer(modifier = Modifier.size(5.dp))
                 if (post.image.url != "") {
@@ -361,113 +327,145 @@ fun PostComp(post: publicacion, viewModelMain: ViewModelMain) {
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(15.dp))
+                            .clip(RoundedCornerShape(10.dp))
                         )
                 }
-                Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(2.dp))
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_sign),
-                        contentDescription = "sign",
-                        modifier = Modifier.size(25.dp)
-                    )
-
-                    if(post.usuario != null){
-                        if(post.usuario!!._id != profile._id){
-                            Button(
+                    // IconButton for support
+                    Box(
+                        modifier = Modifier
+                            .size(25.dp)
+                            .clickable(
+                                enabled = post.usuario?._id != profile._id && post.apoyo.find { it.usuario == profile._id } == null,
                                 onClick = {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         viewModelMain.getEmailCode()
                                         delay(1000)
                                         launchSendEmail = true
                                     }
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(30.dp),
-                                enabled = post.apoyo.find{ it.usuario == profile._id } == null,
-                                contentPadding = PaddingValues(0.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = blue80)
-                            ){
-                                Text(
-                                    text = if(post.apoyo.find{ it.usuario == profile._id } != null) "Denuncia apoyada" else "Apoyar denuncia",
-                                    color = blue20,
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .width(40.dp)
-                                    .height(30.dp)
-                                    .background(gray, shape = RoundedCornerShape(50))
-                                    .clip(RoundedCornerShape(50))
-                                    .padding(5.dp),
-                                contentAlignment = Alignment.Center
-                            ){
-                                Text(
-                                    text = post.apoyo.size.toString(),
-                                    fontSize = 13.sp,
-                                    color = colorResource(id = R.color.white),
-                                )
-                            }
-                        }else{
-                            Button(
-                                onClick = {},
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(30.dp),
-                                enabled = false,
-                                contentPadding = PaddingValues(0.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = blue80)
-                            ){
-                                Text(
-                                    text = "Apoyos de tu denuncia:  ${post.apoyo.size}",
-                                    color = blue20,
-                                )
-                            }
-
-                        }
-                    }else{
-                        Button(
-                            onClick = {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModelMain.getEmailCode()
-                                    delay(1000)
-                                    launchSendEmail = true
                                 }
+                            )
+                    ){
+                        val iconId = if (post.apoyo.find { it.usuario == profile._id } != null) {
+                            R.drawable.supportfilled
+                        } else {
+                            R.drawable.supportoutlined
+                        }
+                        val isDarkTheme = isSystemInDarkTheme()
+
+                        Image(
+                            painter = painterResource(id = iconId),
+                            contentDescription = "Support",
+                            colorFilter =
+                            if(isDarkTheme){
+                                ColorFilter.tint(Color.White)
+                            }
+                            else{
+                                ColorFilter.tint(Color.Black)
                             },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(30.dp),
-                            enabled = post.apoyo.find{ it.usuario == profile._id } == null,
-                            contentPadding = PaddingValues(0.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = blue80)
-                        ){
-                            Text(
-                                text = if(post.apoyo.find{ it.usuario == profile._id } != null) "Denuncia apoyada" else "Apoyar denuncia",
-                                color = blue20,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.size(5.dp))
+                    // Support count
+                    Row {
+                        Text(
+                            text = post.apoyo.size.toString(), fontSize = 13.sp,
+                        )
+                        Text(
+                            text = " apoyo(s)", fontSize = 13.sp
+                        )
+                    }
+                }
+
+                // Handle the email sending and support process
+                if (launchSendEmail) {
+                    if (!viewModelMain.loadingEmail.collectAsState().value) {
+                        if (viewModelMain.email.collectAsState().value) {
+                            AlertDialog(
+                                onDismissRequest = { },
+                                confirmButton = {
+                                    Row(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(blue80)
+                                            .height(30.dp)
+                                            .padding(start = 10.dp, end = 10.dp)
+                                            .clickable(onClick = {
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    viewModelMain.supportComplaint(post._id)
+                                                    delay(1000)
+                                                    launchSendEmail = false
+                                                }
+                                            }),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(imageVector = Icons.Default.Send, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                                        Spacer(modifier = Modifier.size(5.dp))
+                                        Text(text = "Confirmar", color = blue20)
+                                    }
+                                },
+                                dismissButton = {
+                                    Row(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(blue80)
+                                            .height(30.dp)
+                                            .padding(start = 10.dp, end = 10.dp)
+                                            .clickable(onClick = {
+                                                launchSendEmail = false
+                                            }),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(imageVector = Icons.Default.Cancel, contentDescription = "mail", tint = blue20, modifier = Modifier.size(20.dp))
+                                        Spacer(modifier = Modifier.size(5.dp))
+                                        Text(text = "Cancelar", color = blue20)
+                                    }
+                                },
+                                text = {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        verticalArrangement = Arrangement.SpaceBetween,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = "Digite el codigo que se le envio a su correo electrónico para apoyar la denuncia de: ${post.usuario?.username ?: "Usuario"}!",
+                                            color = blue20,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 20.sp,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
                             )
+                        } else {
+                            if (viewModelMain.detailsErrorEmail.collectAsState().value.isNotEmpty()) {
+                                Toast.makeText(context, viewModelMain.detailsErrorEmail.collectAsState().value, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al enviar el código a su correo", Toast.LENGTH_SHORT).show()
+                            }
+                            launchSendEmail = false
                         }
-                        Box(
-                            modifier = Modifier
-                                .width(40.dp)
-                                .height(30.dp)
-                                .background(gray, shape = RoundedCornerShape(50))
-                                .clip(RoundedCornerShape(50))
-                                .padding(5.dp),
-                            contentAlignment = Alignment.Center
-                        ){
-                            Text(
-                                text = post.apoyo.size.toString(),
-                                fontSize = 13.sp,
-                                color = colorResource(id = R.color.white),
-                            )
-                        }
+                    } else {
+                        AlertDialog(
+                            onDismissRequest = { },
+                            text = {
+                                Text(
+                                    text = "Enviando codigo de apoyo a su correo por favor espere!",
+                                    fontStyle = FontStyle.Italic,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            confirmButton = {}
+                        )
                     }
                 }
             }

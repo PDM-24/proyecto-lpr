@@ -3,6 +3,7 @@ package com.app.denuncia.sivar.ui.screen
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -175,7 +177,6 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
-            .background(blue100)
     ) {
         Column(
             modifier = Modifier
@@ -190,50 +191,51 @@ fun ManageScreen(navController: NavHostController, innerPadding: PaddingValues, 
             ) {
                 Text(
                     text = "Usuarios Registrados",
-                    color = blue20,
                     fontSize = 19.sp
                 )
             }
             Spacer(modifier = Modifier.height(5.dp))
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(blue50)
-                    .height(30.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Row(
+            Box(modifier = Modifier.padding(start = 16.dp)) {
+                Column(
                     modifier = Modifier
-                        .padding(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(blue50)
+                        .height(30.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                        tint = blue20,
-                        modifier = Modifier.size(25.dp)
-                    )
-                    BasicTextField(
-                        value = search,
-                        onValueChange = {
-                            search = it
-                        },
-                        singleLine = true,
-                        textStyle = TextStyle(
-                            color = blue20,
-                            fontSize = 16.sp
-                        ),
-                        cursorBrush = SolidColor(blue20),
-                        modifier = Modifier.width(130.dp),
-                    ) { innerTextField ->
-                        if (search.isEmpty()) {
-                            Text(
-                                text = "Buscar...",
+                    Row(
+                        modifier = Modifier
+                            .padding(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(25.dp)
+                        )
+                        BasicTextField(
+                            value = search,
+                            onValueChange = {
+                                search = it
+                            },
+                            singleLine = true,
+                            textStyle = TextStyle(
                                 color = blue20,
                                 fontSize = 16.sp
-                            )
+                            ),
+                            cursorBrush = SolidColor(blue20),
+                            modifier = Modifier.width(130.dp),
+                        ) { innerTextField ->
+                            if (search.isEmpty()) {
+                                Text(
+                                    text = "Buscar...",
+                                    color = Color.White,
+                                    fontSize = 16.sp
+                                )
+                            }
+                            innerTextField()
                         }
-                        innerTextField()
                     }
                 }
             }

@@ -56,7 +56,6 @@ class MainActivity : ComponentActivity() {
 
         Scaffold(
             modifier = Modifier,
-            containerColor = blue100,
             topBar = { TopBarForRoute(currentRoute, navController, viewModel) },
             bottomBar = {
                 if (shouldShowBottomBar) {

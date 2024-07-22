@@ -2,6 +2,7 @@ package com.app.denuncia.sivar.ui.components.FilterComp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,7 +52,7 @@ fun CustomDropdownDepartment(
     Column {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(10.dp))
                 .background(background)
                 .height(height.dp),
             verticalArrangement = Arrangement.Center
@@ -65,12 +66,12 @@ fun CustomDropdownDepartment(
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
                     text = selectedOption,
-                    color = blue20
+                    color = Color.White
                 )
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "Dropdown Icon",
-                    tint = blue20,
+                    tint = Color.White,
                     modifier = Modifier
                         .size(25.dp)
                         .padding(end = 5.dp)
@@ -79,11 +80,11 @@ fun CustomDropdownDepartment(
             DropdownMenu(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
-                modifier = Modifier.background(blue80)
+                modifier = Modifier.background(blue50)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option.nombre) },
+                        text = { Text( text = option.nombre, color = Color.White) },
                         onClick = {
                             onOptionSelected(option)
                             expanded.value = false
@@ -110,7 +111,7 @@ fun CustomDropdownKind(
     ) {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(10.dp))
                 .background(background)
                 .height(height.dp),
             verticalArrangement = Arrangement.Center
@@ -124,12 +125,12 @@ fun CustomDropdownKind(
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
                     text = selectedOption,
-                    color = blue20
+                    color = Color.White
                 )
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "Dropdown Icon",
-                    tint = blue20,
+                    tint = Color.White,
                     modifier = Modifier
                         .size(25.dp)
                         .padding(end = 5.dp)
@@ -138,11 +139,11 @@ fun CustomDropdownKind(
             DropdownMenu(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
-                modifier = Modifier.background(blue80)
+                modifier = Modifier.background(blue50)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option.name) },
+                        text = { Text( text = option.name, color = Color.White) },
                         onClick = {
                             onOptionSelected(option)
                             expanded.value = false
@@ -180,14 +181,13 @@ fun CustomDropdownEstatus(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 5.dp),
                     text = selectedOption,
-                    color = blue20
+                    color = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                 )
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Dropdown Icon",
-                    tint = blue20,
+                    tint = if(isSystemInDarkTheme()) Color(0xFFCCCCCC) else Color(0xFF505050),
                     modifier = Modifier
                         .size(30.dp)
                         .padding(start = 10.dp, end = 5.dp)
@@ -196,11 +196,10 @@ fun CustomDropdownEstatus(
             DropdownMenu(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
-                modifier = Modifier.background(blue80)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option.nombre) },
+                        text = { Text( text = option.nombre) },
                         onClick = {
                             onOptionSelected(option)
                             expanded.value = false

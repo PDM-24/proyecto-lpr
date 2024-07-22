@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -168,7 +170,9 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                 if(loading){
                     CircularProgressIndicator(
                         color = blue50,
-                        modifier = Modifier.size(200.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .size(200.dp)
+                            .fillMaxWidth()
                     )
                 }else{
                     if (stateUpdateProfile) {
@@ -192,7 +196,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                             launchProfile = false
                         }
                     ){
-                        Text(text = "OK")
+                        Text(text = "OK", color = Color.White)
                     }
                 }
             }
@@ -217,7 +221,9 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                 if(loading){
                     CircularProgressIndicator(
                         color = blue50,
-                        modifier = Modifier.size(200.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .size(200.dp)
+                            .fillMaxWidth()
                     )
                 }else{
                     if (stateUpdateProfile) {
@@ -252,20 +258,16 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
-                .background(blue100),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             item {
-                OutlinedCard(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
                         .wrapContentHeight(),
-                    colors = CardDefaults.cardColors(containerColor = blue100),
-                    border = BorderStroke(2.dp, blue50),
-                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                 ) {
                     Column(
                         modifier = Modifier
@@ -277,7 +279,6 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                             text = "Edita tu perfil",
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
-                            color = blue20,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         if (profile.image.url.isNotEmpty()) {
@@ -354,7 +355,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                         OutlinedTextField(
                             value = tempMail,
                             onValueChange = { tempMail = it },
-                            label = { Text("Correo electronico", color = blue20) },
+                            label = { Text(text = "Correo electronico", color = if (isSystemInDarkTheme()) blue20 else blue80 ) },
                             maxLines = 1,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -373,7 +374,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                         OutlinedTextField(
                             value = tempUsername,
                             onValueChange = { tempUsername = it },
-                            label = { Text("Nombre de usuario", color = blue20) },
+                            label = { Text(text = "Nombre de usuario", color = if (isSystemInDarkTheme()) blue20 else blue80 ) },
                             maxLines = 1,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -392,7 +393,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                         OutlinedTextField(
                             value = tempFirstName,
                             onValueChange = { tempFirstName = it },
-                            label = { Text("Nombre", color = blue20) },
+                            label = { Text(text = "Nombre" , color = if (isSystemInDarkTheme()) blue20 else blue80 ) },
                             maxLines = 1,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -411,7 +412,7 @@ fun EditProfileScreen(navController: NavHostController,innerPadding: PaddingValu
                         OutlinedTextField(
                             value = tempLastName,
                             onValueChange = { tempLastName = it },
-                            label = { Text("Apellido", color = blue20) },
+                            label = { Text(text = "Apellido", color = if (isSystemInDarkTheme()) blue20 else blue80 ) },
                             maxLines = 1,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),

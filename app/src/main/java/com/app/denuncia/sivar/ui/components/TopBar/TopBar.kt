@@ -19,6 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +44,7 @@ fun TopBar(
         title = { },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = blue80,
-            titleContentColor = blue20,
+            titleContentColor = Color.White,
         ),
         navigationIcon = {
             if (showBackIcon) {
@@ -52,7 +53,7 @@ fun TopBar(
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        tint = blue20,
+                        tint = Color.White,
                         contentDescription = "Back"
                     )
                 }
@@ -68,14 +69,12 @@ fun TopBar(
             ) {
                 Text(
                     text = title,
-                    color = blue20,
+                    color = Color.White,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
                     fontFamily = IstokWebFamily,
                     fontSize = 18.sp
                 )
-                Spacer(modifier = Modifier.size(5.dp))
-                Image(painter = painterResource(id = icon), contentDescription = "history icon", modifier = Modifier.size(24.dp))
             }
         }
     )
