@@ -62,7 +62,7 @@ interface Services {
     suspend fun changeRol(@Path("Id") id: String, @Path("Rol") rol: String): Response<JsonResponse>
 
     @PATCH("updatephoto/{Id}")
-    suspend fun updatePhoto(@Path("Id") id: String, @Body body: photo): Response<TokenJson>
+    suspend fun updatePhoto(@Path("Id") id: String, @Body body: photo): Response<JsonResponse>
 
     @PATCH("supportcomplaint/{Id}")
     suspend fun supportComplaint(@Path("Id") id: String, @Body body: Apoyo): Response<JsonResponse>
@@ -71,5 +71,5 @@ interface Services {
     suspend fun updateComplaint(@Path("Id") id: String, @Query("state") state: String): Response<JsonResponse>
 
     @PUT("updateprofile/{Id}")
-    suspend fun updateProfile(@Path("Id") id: String, @Body body: userBody): Response<TokenJson>
+    suspend fun updateProfile(@Path("Id") id: String, @Body body: userBody): Response<JsonResponse>
 }

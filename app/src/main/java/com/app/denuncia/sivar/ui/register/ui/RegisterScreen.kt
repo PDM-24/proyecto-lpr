@@ -3,6 +3,7 @@ package com.app.denuncia.sivar.ui.register.ui
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -104,7 +105,6 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = blue100)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -118,7 +118,7 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                     contentAlignment = Alignment.Center
                 ){
                     Image(
-                        painter = painterResource(id = R.drawable.logowhite),
+                        painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.logowhite) else painterResource(id = R.drawable.logo),
                         contentDescription = "Logo Denuncia Sivar",
                         modifier = Modifier
                             .size(width = 200.dp, height = 200.dp),
@@ -133,12 +133,6 @@ fun RegisterScreen(navController: NavController,  viewModel: ViewModelMain) {
                         .padding(15.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if(isSmallScreenHeight()){
-                        Spacer(modifier = Modifier.fillMaxSize(0.05f))
-                    }
-                    else{
-                        Spacer(modifier = Modifier.fillMaxSize(0.05f))
-                    }
                     Text(
                         text = "Registrarte",
                         fontFamily = IstokWebFamily,

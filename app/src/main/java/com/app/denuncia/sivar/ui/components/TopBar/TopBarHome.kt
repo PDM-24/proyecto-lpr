@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.denuncia.sivar.ui.theme.IstokWebFamily
 import com.denuncia.sivar.ui.theme.blue100
 import com.denuncia.sivar.ui.theme.blue20
+import com.denuncia.sivar.ui.theme.blue50
 import com.denuncia.sivar.ui.theme.blue80
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +39,7 @@ fun TopAppBarHome(navController: NavHostController) {
             title = {  },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = blue80,
-                titleContentColor = blue20,
+                titleContentColor = Color.White,
             ),
             actions = {
                 Image(
@@ -49,12 +51,12 @@ fun TopAppBarHome(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = blue100
+                        containerColor = blue100,
                     )
                 ) {
                     Text(
                         text = "¿Desea realizar una denuncia?",
-                        color = blue20,
+                        color = Color.White,
                         fontStyle = FontStyle.Normal,
                         fontFamily = IstokWebFamily)
                 }
@@ -67,7 +69,7 @@ fun TopAppBarHome(navController: NavHostController) {
                         modifier = Modifier.size(27.dp),
                         imageVector = Icons.Default.Search,
                         contentDescription = "searchIcon",
-                        tint = blue20
+                        tint = Color.White
                     )
                 }
             }

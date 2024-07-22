@@ -2,12 +2,15 @@ package com.app.denuncia.sivar.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.denuncia.sivar.ui.components.BottonNavBar.ScreenRoute
 import com.app.denuncia.sivar.ui.components.PostComponent.PostComp
@@ -26,10 +29,12 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, vi
 
     val context = LocalContext.current
 
+
+    var search by viewModel.search
+
     val session by viewModel.session.collectAsState()
     val loadingSession by viewModel.loadingSession.collectAsState()
     val launchSession = remember {mutableStateOf(false)}
-    var search by viewModel.search
 
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -64,6 +69,7 @@ fun HomeScreen(navController: NavHostController, innerPadding: PaddingValues, vi
             ) {
                 items(denuncias) { postItem ->
                     PostComp(postItem, viewModel)
+                    Divider(modifier = Modifier.height(0.7.dp))
                 }
             }
         }

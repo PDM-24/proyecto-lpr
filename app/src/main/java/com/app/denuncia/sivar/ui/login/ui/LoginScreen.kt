@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -120,7 +121,6 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = blue100)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -133,7 +133,7 @@ fun LoginScreen(navController: NavController, viewModel: ViewModelMain) {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logowhite),
+                    painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.logowhite) else painterResource(id = R.drawable.logo),
                     contentDescription = "Logo Denuncia Sivar",
                     modifier = Modifier
                         .size(width = 200.dp, height = 200.dp),

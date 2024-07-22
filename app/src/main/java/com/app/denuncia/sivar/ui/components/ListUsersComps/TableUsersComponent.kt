@@ -43,8 +43,7 @@ fun UserTable(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .background(blue100)
-            .border(2.dp, blue50, RoundedCornerShape(20.dp)),
+            .background(Color.Transparent)
     ) {
         item {
             Row(
@@ -57,7 +56,6 @@ fun UserTable(
                     modifier = Modifier
                         .weight(3f)
                         .padding(top = 6.dp),
-                    color = blue20,
                     fontWeight = FontWeight.Bold,
                     fontFamily = IstokWebFamily,
                     fontSize = 16.sp
@@ -67,7 +65,6 @@ fun UserTable(
                     modifier = Modifier
                         .weight(3f)
                         .padding(top = 6.dp),
-                    color = blue20,
                     fontWeight = FontWeight.Bold,
                     fontFamily = IstokWebFamily,
                     fontSize = 16.sp
@@ -77,7 +74,6 @@ fun UserTable(
                     modifier = Modifier
                         .weight(2f)
                         .padding(top = 6.dp),
-                    color = blue20,
                     fontWeight = FontWeight.Bold,
                     fontFamily = IstokWebFamily,
                     fontSize = 16.sp
@@ -100,7 +96,6 @@ fun UserTable(
             ) {
                 Text(
                     text = user.username,
-                    color = blue20,
                     modifier = Modifier.weight(3f),
                     fontSize = 14.sp,
                     maxLines = 1,
@@ -119,13 +114,13 @@ fun UserTable(
                     Icon(
                         imageVector = Icons.Default.ChangeCircle,
                         contentDescription = "Cambiar Rol",
-                        tint = blue20,
+                        tint = Color.White,
                         modifier = Modifier
                             .size(15.dp)
                     )
                     Text(
                         text = user.rol,
-                        color = blue20,
+                        color = Color.White,
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
@@ -139,7 +134,6 @@ fun UserTable(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Eliminar",
-                        tint = blue20
                     )
                 }
             }

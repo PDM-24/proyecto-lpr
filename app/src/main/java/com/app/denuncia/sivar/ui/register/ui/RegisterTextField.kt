@@ -1,5 +1,6 @@
 package com.app.denuncia.sivar.ui.register.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,7 +54,6 @@ fun RegisterTextField(
                 Text(
                     text = placeholder,
                     modifier = Modifier,
-                    color = blue20.copy(alpha = 0.5f),
                     fontFamily = IstokWebFamily,
                     fontSize = 15.sp
                 )
@@ -61,10 +61,10 @@ fun RegisterTextField(
             keyboardOptions = keyboardOptions,
             singleLine = true,
             maxLines = 1,
-            textStyle = TextStyle(color = blue20, fontSize = 15.sp, fontFamily = IstokWebFamily),
+            textStyle = TextStyle(fontSize = 15.sp, fontFamily = IstokWebFamily),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = blue100,
-                unfocusedContainerColor = blue100,
+                focusedContainerColor = if(isSystemInDarkTheme()) blue100 else Color.White,
+                unfocusedContainerColor = if(isSystemInDarkTheme()) blue100 else Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             )

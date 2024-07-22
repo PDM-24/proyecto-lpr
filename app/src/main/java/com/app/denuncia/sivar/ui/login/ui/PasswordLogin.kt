@@ -1,6 +1,7 @@
 package com.app.denuncia.sivar.ui.login.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -73,7 +74,6 @@ fun PasswordLogin(
             placeholder = {
                 Text(
                     text = placeholder,
-                    color = blue20.copy(alpha = 0.5f),
                     fontFamily = IstokWebFamily
                 )
             },
@@ -81,10 +81,10 @@ fun PasswordLogin(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             singleLine = true,
             maxLines = 1,
-            textStyle = TextStyle(color = blue20, fontSize = 15.sp, fontFamily = IstokWebFamily),
+            textStyle = TextStyle(fontSize = 15.sp, fontFamily = IstokWebFamily),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = blue100,
-                unfocusedContainerColor = blue100,
+                focusedContainerColor = if(isSystemInDarkTheme()) blue100 else Color.White,
+                unfocusedContainerColor = if(isSystemInDarkTheme()) blue100 else Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             )
