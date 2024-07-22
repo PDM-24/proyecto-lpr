@@ -52,7 +52,9 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -200,23 +202,20 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .background(blue100),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                OutlinedCard(
+                Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = blue100,
+                        containerColor = Color.Transparent,
                     ),
-                    border = BorderStroke(2.dp, blue50),
-                    shape = RoundedCornerShape(20.dp),
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(0.dp)
                             .fillMaxWidth()
                     ) {
                         Row(
@@ -229,7 +228,7 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                     contentDescription = "profilePhoto",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
-                                        .size(60.dp)
+                                        .size(50.dp)
                                         .clip(RoundedCornerShape(50.dp))
                                 )
                             }else{
@@ -247,7 +246,6 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 text = profile.username,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = blue20,
                             )
                         }
                         Spacer(modifier = Modifier.height(5.dp))
@@ -255,8 +253,8 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                             options = DepartamentList,
                             selectedOption = departamento,
                             onOptionSelected = { departamento = it.nombre },
-                            height = 35,
-                            background = blue80,
+                            height = 30,
+                            background = blue50,
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         CustomDropdownKind(
@@ -266,17 +264,20 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 categoria = it.name
                                 idcateoria = it._id
                             },
-                            height = 35,
-                            background = blue80
+                            height = 30,
+                            background = blue50
                         )
                         OutlinedTextField(
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(10.dp),
                             value = details,
                             onValueChange = { details = it },
-                            label = { Text(text = "Descripción de la denuncia", color = blue20) },
+                            label = {
+                                        Text(
+                                            text = "Descripción de la denuncia",
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                        )
+                                    },
                             colors = OutlinedTextFieldDefaults.colors(
-                                cursorColor = blue50,
-                                focusedBorderColor = blue50,
                                 unfocusedBorderColor = blue50,
                                 disabledBorderColor = blue50,
                                 errorBorderColor = Color.Red,
@@ -297,16 +298,16 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(200.dp)
-                                    .clip(RoundedCornerShape(20.dp)),
+                                    .clip(RoundedCornerShape(10.dp)),
                                 contentScale = ContentScale.Crop
                             )
                         }
                         Spacer(modifier = Modifier.height(7.dp))
                         Row(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(blue80)
-                                .height(35.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(blue50)
+                                .height(30.dp)
                                 .width(180.dp)
                                 .clickable { imagePickerLauncher.launch("image/*") },
                             verticalAlignment = Alignment.CenterVertically,
@@ -316,16 +317,16 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.Image, contentDescription = "senIcon", tint = blue20)
-                                Text("Agregar imagen", color = blue20)
+                                Icon(imageVector = Icons.Default.Image, contentDescription = "senIcon", tint = Color.White)
+                                Text("Agregar imagen", color = Color.White)
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(blue80)
-                                .height(35.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(blue50)
+                                .height(30.dp)
                                 .fillMaxWidth()
                                 .clickable {
                                     CoroutineScope(Dispatchers.IO).launch {
@@ -355,8 +356,8 @@ fun CreatePostScreen(navController: NavHostController, innerPadding: PaddingValu
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(Icons.Default.Publish, contentDescription = "Send Icon", tint = blue20)
-                                Text("Realizar denuncia", color = blue20)
+                                Icon(Icons.Default.Publish, contentDescription = "Send Icon", tint = Color.White)
+                                Text("Realizar denuncia", color = Color.White)
                             }
                         }
                     }

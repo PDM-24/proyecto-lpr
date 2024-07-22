@@ -1,5 +1,6 @@
 package com.app.denuncia.sivar.ui.register.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -123,7 +124,6 @@ fun SelectedDate(
             placeholder = {
                 Text(
                     text = "DD/MM/YYYY",
-                    color = blue20.copy(alpha = 0.5f),
                     fontFamily = IstokWebFamily,
                     fontSize = 15.sp
                 )
@@ -133,8 +133,8 @@ fun SelectedDate(
             maxLines = 1,
             readOnly = true,
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = blue100,
-                unfocusedContainerColor = blue100,
+                focusedContainerColor = if(isSystemInDarkTheme()) blue100 else Color.White,
+                unfocusedContainerColor = if(isSystemInDarkTheme()) blue100 else Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             )

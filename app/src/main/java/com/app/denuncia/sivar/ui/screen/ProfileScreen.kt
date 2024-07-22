@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +25,9 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -38,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -152,20 +156,19 @@ fun ProfileScreen(
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
-                .background(blue100),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             item {
-                OutlinedCard(
+                Divider(modifier = Modifier.height(0.7.dp))
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
                         .wrapContentHeight(),
-                    colors = CardDefaults.cardColors(containerColor = blue100),
-                    border = BorderStroke(2.dp, blue50),
-                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent,
+                    ),
                 ) {
                     Column(
                         modifier = Modifier
@@ -174,7 +177,11 @@ fun ProfileScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.logowhite),
+                            painter = if (isSystemInDarkTheme()) {
+                                painterResource(id = R.drawable.logowhite)
+                            } else {
+                                painterResource(id = R.drawable.logo)
+                            },
                             contentDescription = "Logo",
                             modifier = Modifier
                                 .size(width = 100.dp, height = 100.dp),
@@ -186,7 +193,7 @@ fun ProfileScreen(
                                 model = "https://${profile.image.url.removePrefix("http://")}",
                                 contentDescription = "profile picture",
                                 modifier = Modifier
-                                    .size(150.dp)
+                                    .size(100.dp)
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop
                             )
@@ -205,27 +212,23 @@ fun ProfileScreen(
                             text = "¡Bienvenido ${username}!",
                             fontWeight = FontWeight.Bold,
                             fontSize = 22.sp,
-                            color = blue20,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = mail,
                             textDecoration = TextDecoration.Underline,
                             fontSize = 20.sp,
-                            color = blue20,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = firstName,
                             fontSize = 18.sp,
-                            color = blue20,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = lastName,
                             fontSize = 18.sp,
-                            color = blue20,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -239,10 +242,10 @@ fun ProfileScreen(
                             Icon(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "Edit Icon",
-                                tint = blue20
+                                tint = Color.White
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "Editar tu perfil", color = blue20)
+                            Text(text = "Editar tu perfil", color = Color.White)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
@@ -264,7 +267,7 @@ fun ProfileScreen(
                         }
                     }
                 }
-
+                Divider(modifier = Modifier.height(0.7.dp))
             }
         }
     }
@@ -297,10 +300,10 @@ fun ExitDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
             }
         },
         title = {
-            Text(text = "Cerrar sesión", color = blue20)
+            Text(text = "Cerrar sesión")
         },
         text = {
-            Text("¿Estás seguro de que deseas cerrar sesión?", color = blue20)
+            Text("¿Estás seguro de que deseas cerrar sesión?")
         }
     )
 }
